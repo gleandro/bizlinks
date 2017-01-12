@@ -1,0 +1,4 @@
+shadow:!0,snap:Kb?25:10,style:{color:"#333333",cursor:"default",fontSize:"12px",padding:"8px",whiteSpace:"nowrap"}},credits:{enabled:!0,text:"Highcharts.com",href:"http://www.highcharts.com",position:{align:"right",x:-10,verticalAlign:"bottom",y:-5}
+
+
+SE MODIFICO EN highcharts.js PARA QUE NO APARESCA LA LINEA Highcharts.com

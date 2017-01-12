@@ -1,0 +1,320 @@
+
+/*------------------------------------*/
+.control {
+border-radius: 2px;
+color: #112135;/*#1e395b*/
+font: 11px Verdana;
+border: 1px solid #8ba0bc;
+background-color: white; 
+
+}
+
+.control_desable  
+{ 
+	border:solid 1px #DEDEDE; 
+	color:#888888; 
+	display:block; 
+	float:left; 
+	font-weight:bold; /*
+	margin-right:2px; 
+	padding:5px 10px; */
+}
+
+.divButton{
+display: block;
+float: left;
+/*margin: 5px 10px 20px 10px;*/
+/*height: 40px; 
+width: 100px;*/
+}
+div.divButton button {
+/*height: 40px;*/
+width: 100px;
+font: 14px Verdana;
+text-align: center; 
+border-radius: 4px;
+
+}
+.btn_style{ 
+background-color: rgb(30, 140, 190);
+color: rgb(255, 255, 255);
+font-size: 15px;
+font-weight: 30;
+text-align: center;
+vertical-align: middle;
+position:absolute; 
+
+border-radius:2px; 
+-moz-border-radius:2px; /* Firefox */ 
+-webkit-border-radius:2px; /* Safari y Chrome */ 
+-webkit-box-shadow: rgba(0, 0, 0, 0.701961) 0px 1px 2px;
+box-shadow: rgba(0, 0, 0, 0.701961) 0px 1px 5px;
+    
+    cursor:pointer;
+ 
+
+}
+div.btn_style:hover{
+  background-color: #2094CC; 
+}
+
+
+
+
+
+.headerFilter {
+padding: 2px 2px 2px 0;
+vertical-align: middle;
+}
+.header {
+   
+
+	/*border-bottom: 1px solid #bbc8d7; */
+    height: 20px;
+    padding: 7px 0px 7px 0;
+   /* border-width: 1px;*/
+    color: rgb(31, 125, 165);
+    /*background: none repeat-x scroll left top rgb(228, 238, 250);*/
+    white-space: nowrap;
+    text-align: center;
+    /*border-bottom: 1px solid rgb(187, 200, 215);*/
+	margin-top: 8px;
+	margin-bottom: 8px;
+	background:#F5F5F5;
+	font-weight: normal;
+	font-size: 10px;
+	font-family: tahoma;
+}
+ 
+.headerControls{
+    border-width: 1px;
+    color: #1e395b;
+    background: #e4eefa  repeat-x left top; 
+    white-space: nowrap;
+    text-align: left;
+    cursor: pointer; 
+    
+}
+ 
+.headerText {
+padding: 3px 4px;
+}
+/*
+.control:hover {
+background-color: #F2F6FC;
+ 
+}
+*/
+
+
+ 
+/* ---------------------------------------------*/
+.controls-degradado {  
+  /* Color alternativo para versiones que no soporten degradados */  
+  background-color:#50A6DA;  
+  
+  /* Safari 4+ y Chrome 1+ */  
+  background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0, #50A6DA), color-stop(1, #8DC8EB));  
+  
+  /* Safari 5.1+ y Chrome 10+ */  
+  background-image:-webkit-linear-gradient(#50A6DA, #8DC8EB);  
+  
+  /* Firefox 3.6+ */  
+  background-image:-moz-linear-gradient(top, #50A6DA, #8DC8EB);  
+  
+  /* Opera 11.10+ */  
+  background-image:-o-linear-gradient(top, #50A6DA, #8DC8EB);  
+  
+  /* Internet Explorer 5.5+ */  
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#50A6DA', EndColorStr='#8DC8EB');  
+}  
+
+/* Control de portada */
+
+
+.controls-homebox{
+/*   border-radius:20px; 
+-moz-border-radius:20px;  Firefox  
+-webkit-border-radius:20px;  Safari y Chrome  */
+    height: 500px;
+    width:800px;
+/*    -webkit-box-shadow: rgba(0, 0, 0, 0.701961) 0px 1px 2px;
+    box-shadow: rgba(0, 0, 0, 0.701961) 0px 1px 2px;*/
+    
+}
+
+.controls-homeintro{
+border-radius:20px; 
+-moz-border-radius:20px; /* Firefox */ 
+-webkit-border-radius:20px; /* Safari y Chrome */ 
+-webkit-box-shadow: rgba(0, 0, 0, 0.701961) 0px 1px 2px;
+box-shadow: rgba(0, 0, 0, 0.701961) 0px 1px 15px;
+    
+    cursor:pointer;
+ 
+background-position: center center;
+background-repeat: no-repeat;
+background-size: 224px 213px;
+background-color: #1E8CBE;
+color: #fff;
+display: block;
+float: left;
+font-size: 26px; 
+font-weight: 300;
+
+height: 150px;
+width:300px;
+
+margin: 35px 0 0 35px;
+margin: 3.5rem 0 0 3.5rem;
+text-align: center;
+vertical-align: middle;
+ 
+}
+div.controls-homeintro:hover{
+  background-color: #2094CC;
+  }
+.controls-homestitle {
+  font-weight: bold;
+margin: 7% auto;  
+
+}
+.controls-homessubtitle  {
+ font-size: 22px;  
+ 
+
+}   
+/*------------------------------------Popup-----------------------------------*/
+.bubbleInfo {
+            position: relative;
+			
+ }
+.trigger {
+           width:100%; height:25px; padding-top:5px;
+} 
+.popup_tool {
+        	position: absolute;
+        	z-index: 50;
+        	border-collapse: collapse;
+			opacity: 0; 
+			top: -110px; 
+			left: -33px; 
+			background:#F7F4F5 ;
+
+width: 300px;
+height: auto;
+display: inline-block;
+-webkit-transition: border 0.2s ease-in-out;
+-moz-transition: border 0.2s ease-in-out;
+transition: border 0.2s ease-in-out;
+border: 10px solid #EBE9EA;
+font-weight: none;
+
+} 
+.popup_desc{
+color: #767676;
+font-size: 12px;
+line-height: 17px;
+
+}
+.popup_camp{
+position:relative;  
+text-align: left;
+color: #1F7DA5;
+width:250px;
+margin-bottom:2px;
+font-weight: normal;
+}
+.popup_resaltar img{
+float: right;
+ 
+		filter:progid:DXImageTransform.Microsoft.Alpha(opacity=50);
+		-moz-opacity: 0.5;
+		opacity: 0.5;
+}
+.popup_resaltar:hover img{ 
+	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=100);
+	-moz-opacity: 1;
+	opacity: 1;
+}
+.popup_cont{
+ background: #f7f4f5;
+ padding: 10px;
+}
+div.popup_cont:hover {
+  background: #FFFFFF; 
+}
+.btn_barra{
+ background: #0186C7; 
+ cursor:pointer; 
+}
+.btn_barra img{
+		 
+		filter:progid:DXImageTransform.Microsoft.Alpha(opacity=50);
+		-moz-opacity: 0.5;
+		opacity: 0.5;
+}
+div.btn_barra:hover {
+  background: #3AB34A; 
+}
+.btn_barra:hover img{ 
+	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=100);
+	-moz-opacity: 1;
+	opacity: 1;
+}
+.popup_cell_serv{
+ background: #FFF;
+ float:left;width:100%;height:30px; border-bottom: 1px solid #E7E7E7; 
+  color:#444444;
+}
+div.popup_cell_serv:hover {
+  background: #444444; 
+  color:#FFF;
+}
+.popup_cont_serv{ 
+ float:left;width:95%;height:20px;margin:5px;
+}
+ 
+/*------------------------------------------------------------------------------*/
+
+/*-----------------------------Boton de google---------------------------------*/
+  
+/*------------------------------------------------------------------------------*/
+
+
+
+
+
+.disablediv
+{
+	pointer-events: none;
+  	opacity: 0.2;
+}
+/*Disable scrolling on child elements*/
+/*
+.disablediv div
+{
+	overflow: inherit;
+}
+.disablediv textarea 
+{
+	overflow: inherit;
+}
+.disablediv img 
+{
+	overflow: inherit;
+}
+*/
+
+.enablediv
+{
+  opacity: 1;
+  pointer-events:inherit;;
+}
+
+
+
+
+
+
+

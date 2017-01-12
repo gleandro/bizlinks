@@ -1,0 +1,27 @@
+/*@import url("controls.css");
+@import url("container.css");
+@import url("font.css");
+*/
+body{
+        padding:0px;
+    }
+#titulo_div{
+        width: 100%; border:1px solid silver;margin-bottom: 10px;
+    }    
+#registro input{    
+/*background-color: #BDE5F8;*/
+}
+.fila_registro_par{
+    background-color:#E4ECFA; 
+}
+.fila_registro_impar{
+    background-color:#CBDBF5; 
+}
+#registro table tr td{
+    margin:5px 5px 5px 5px;
+}
+.required_color{
+	color:red;
+}
+
+

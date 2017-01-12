@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<parametros>
+  <parametro nodo="1">
+    <cod_vari>1</cod_vari>
+    <id_vari>00001</id_vari>
+    <valor_vari>1</valor_vari>
+    <nom_vari>¿El precio de Venta Incluye IGV? (Se considera en el Precio de Compra)</nom_vari>
+    <tip_objet>2</tip_objet>
+    <tip_dato>3</tip_dato>
+  </parametro>
+  <parametro nodo="2">
+    <cod_vari>2</cod_vari>
+    <id_vari>00002</id_vari>
+    <valor_vari></valor_vari>
+    <nom_vari>Nomenclatura Inicial para el codigo del Producto</nom_vari>
+    <tip_objet>1</tip_objet>
+    <tip_dato>2</tip_dato>
+  </parametro>
+  <parametro nodo="3">
+    <cod_vari>3</cod_vari>
+    <id_vari>00003</id_vari>
+    <valor_vari>20</valor_vari>
+    <nom_vari>Numero de Inicio del Codigo Producto</nom_vari>
+    <tip_objet>1</tip_objet>
+    <tip_dato>1</tip_dato>
+  </parametro>
+  <parametro nodo="4">
+    <cod_vari>4</cod_vari>
+    <id_vari>00004</id_vari>
+    <valor_vari>5</valor_vari>
+    <nom_vari>Numero de Ceros a la Izquierda del codigo del producto</nom_vari>
+    <tip_objet>1</tip_objet>
+    <tip_dato>1</tip_dato>
+  </parametro>
+  <parametro nodo="5">
+    <cod_vari>5</cod_vari>
+    <id_vari>00005</id_vari>
+    <valor_vari>0</valor_vari>
+    <nom_vari>¿Actualizar el Precio del Producto con la Ultima Compra?</nom_vari>
+    <tip_objet>2</tip_objet>
+    <tip_dato>3</tip_dato>
+  </parametro>
+  <parametro nodo="6">
+    <cod_vari>6</cod_vari>
+    <id_vari>00006</id_vari>
+    <valor_vari>8</valor_vari>
+    <nom_vari>Numero de Ceros a la Izquierda del codigo de la Guia de Ingreso</nom_vari>
+    <tip_objet>1</tip_objet>
+    <tip_dato>1</tip_dato>
+  </parametro>
+  <parametro nodo="7">
+    <cod_vari>7</cod_vari>
+    <id_vari>00007</id_vari>
+    <valor_vari>8</valor_vari>
+    <nom_vari>Numero de Ceros a la Izquierda del codigo de la Guia de Salida</nom_vari>
+    <tip_objet>1</tip_objet>
+    <tip_dato>1</tip_dato>
+  </parametro>
+  <parametro nodo="8">
+    <cod_vari>8</cod_vari>
+    <id_vari>00008</id_vari>
+    <valor_vari>8</valor_vari>
+    <nom_vari>Numero de Ceros a la Izquierda del codigo de la Orden de Compra</nom_vari>
+    <tip_objet>1</tip_objet>
+    <tip_dato>1</tip_dato>
+  </parametro>
+  <parametro nodo="9">
+    <cod_vari>9</cod_vari>
+    <id_vari>00009</id_vari>
+    <valor_vari>8</valor_vari>
+    <nom_vari>Numero de Ceros a la Izquierda del codigo de la Solicitud de Compra</nom_vari>
+    <tip_objet>1</tip_objet>
+    <tip_dato>1</tip_dato>
+  </parametro>
+  <parametro nodo="10">
+    <cod_vari>10</cod_vari>
+    <id_vari>00010</id_vari>
+    <valor_vari>8</valor_vari>
+    <nom_vari>Numero de Ceros a la Izquierda del codigo de la Factura y Boletas</nom_vari>
+    <tip_objet>1</tip_objet>
+    <tip_dato>1</tip_dato>
+  </parametro>
+  <parametro nodo="11">
+    <cod_vari>11</cod_vari>
+    <id_vari>00012</id_vari>
+    <valor_vari>18</valor_vari>
+    <nom_vari>Valor del IGV en Porcentaje (Ejemplo 18 %)</nom_vari>
+    <tip_objet>1</tip_objet>
+    <tip_dato>1</tip_dato>
+  </parametro>
+  <parametro nodo="12">
+    <cod_vari>12</cod_vari>
+    <id_vari>00013</id_vari>
+    <valor_vari>8</valor_vari>
+    <nom_vari>Numero de Ceros a la Izquierda del codigo de las Compras</nom_vari>
+    <tip_objet>1</tip_objet>
+    <tip_dato>1</tip_dato>
+  </parametro>
+  <parametro nodo="13">
+    <cod_vari>13</cod_vari>
+    <id_vari>00014</id_vari>
+    <valor_vari>1</valor_vari>
+    <nom_vari>Metodo de costo PROMEDIO</nom_vari>
+    <tip_objet>2</tip_objet>
+    <tip_dato>3</tip_dato>
+  </parametro>
+  <parametro nodo="14">
+    <cod_vari>27</cod_vari>
+    <id_vari>00015</id_vari>
+    <valor_vari>8</valor_vari>
+    <nom_vari>Numero de Ceros a la Izquierda del codigo de la guia de remision</nom_vari>
+    <tip_objet>1</tip_objet>
+    <tip_dato>1</tip_dato>
+  </parametro>
+</parametros>
