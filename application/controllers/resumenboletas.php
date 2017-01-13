@@ -286,12 +286,13 @@ class Resumenboletas extends CI_Controller {
 			echo json_encode($result);
 			exit;
 		}
-		$result['codigo_baja']='';
+		$result['codigo_resumen']='';
 
 		$prm_numerodocumentoemisor=trim($this->input->post('txt_RucEmpresa'));
-		$fecha_actual =date("d/m/Y");
+		$fecha_actual = explode('/',date("d/m/Y"));
 		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
-		$Buscar_CorrelativoDocumento=$this->Resumenboletas_model->Buscar_CorrelativoDocumento($prm_cod_empr,$fecha_actual);
+		$Buscar_CorrelativoDocumento=$this->Resumenboletas_model->Buscar_CorrelativoDocumento($prm_cod_empr,$fecha_actual[2].'-'.$fecha_actual[1].'-'.$fecha_actual[0]);
+		//print_r($Buscar_CorrelativoDocumento);
 		if (!empty($Buscar_CorrelativoDocumento))
 		{
 			$correlativo=$Buscar_CorrelativoDocumento[0]['valorentero'];
@@ -306,8 +307,8 @@ class Resumenboletas extends CI_Controller {
 		$prm_tipodocumentoemisor=trim($this->input->post('txt_tipdocemisor'));
 		$prm_correoemisor=$this->Usuarioinicio_model->Get_Email_UsuAdm();
 		$prm_fechaemisioncomprobante=trim($this->input->post('txt_fecemisiondoc'));
-		$prm_fechaemisioncomprobantetmp=explode('/',$prm_fechaemisioncomprobante);
-		$prm_fechaemisioncomprobante=($prm_fechaemisioncomprobantetmp[2].'-'.$prm_fechaemisioncomprobantetmp[1].'-'.$prm_fechaemisioncomprobantetmp[0]);
+		//$prm_fechaemisioncomprobantetmp=explode('/',$prm_fechaemisioncomprobante);
+		//$prm_fechaemisioncomprobante=($prm_fechaemisioncomprobantetmp[2].'-'.$prm_fechaemisioncomprobantetmp[1].'-'.$prm_fechaemisioncomprobantetmp[0]);
 
 		$prm_fechageneracionresumen=($fecha_actual[2].'-'.$fecha_actual[1].'-'.$fecha_actual[0]);
 		$prm_inhabilitado='1';
@@ -338,12 +339,12 @@ class Resumenboletas extends CI_Controller {
 		if ($consulta['result']==1)
 		{
 			$result['status']=1;
-			$result['codigo_baja']=$prm_resumenid;
+			$result['codigo_resumen']=$prm_resumenid;
 		}
 		else
 		{
 			$result['status']=0;
-			$result['codigo_baja']='';
+			$result['codigo_resumen']='';
 		}
 		echo json_encode($result);
     }

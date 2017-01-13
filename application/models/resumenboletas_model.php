@@ -103,10 +103,10 @@ class Resumenboletas_model extends CI_Model
 			0 tmp_reg,
 			'' ser_doc,
 			a.serienumero num_doc,
-			0 tip_reg,
+			1 tip_reg,
 			0 cod_empr,
 			(select b.no_corto from tm_tabla_multiple b where b.no_tabla='TIPO_DOCUMENTO' and b.in_habilitado=1 and b.co_item_tabla=a.tipodocumento) tip_doc ,
-			a.bl_fecharespuestasunat fec_emision,
+			b.fechaEmision fec_emision,
 			a.tipodocumentoemisor tip_docemisor,
 			upper(a.bl_estadoproceso) bl_estadoproceso,
 			a.tipodocumento cod_tipdoc,
@@ -214,7 +214,31 @@ class Resumenboletas_model extends CI_Model
 			return $result;
 		}
 
+$consulta = $this->db_client->query("select 	
+								a.bl_estadoProceso,							
+								b.serieNumero 'ser_doc',
+								b.tipoDocumento 'tip_doc',
+								b.tipodocumentoadquiriente,
+								SUBSTRING(b.serieNumero,1,4) 'ser_gru',
+								SUBSTRING(b.serieNumero,6,8) 'num_doc',
+								b.numerodocumentoadquiriente ,
+								b.tipomoneda,
+								b.totalvalorventanetoopgravadas,
+								b.totaligv,
+								b.totalisc,
+								b.totalotroscargos,
+								b.totalotrostributos,
+								b.totalvalorventanetoopexonerada,
+								b.totalvalorventanetoopgratuitas,
+								b.totalvalorventanetoopgravadas,
+								b.totalvalorventanetoopnogravada,
+								b.totalventa
 
+								 from SPE_EINVOICEHEADER b join SPE_EINVOICE_RESPONSE a on b.serieNumero = a.serieNumero
+								 where numeroDocumentoEmisor = '".$prm_ruc_empr."'
+								 and b.tipoDocumento = '03' 
+								 and b.fechaEmision = '".$prm_fechaemisioncomprobante."' ;");
+/*		
 		$consulta = $this->db_client->query("select
 								a.tmp_reg,
 								a.ser_doc,
@@ -239,7 +263,7 @@ class Resumenboletas_model extends CI_Model
 											and b.serienumero=a.num_doc and b.tipodocumento=a.tip_doc
 							where a.cod_usu='".$prm_cod_usu."'
 								and a.cod_empr='".$prm_cod_empr."' ;");
-
+*/
 		if ($this->db_client->trans_status() === FALSE)
 		{
 			$this->db_client->trans_rollback();
@@ -249,58 +273,60 @@ class Resumenboletas_model extends CI_Model
 		$detalledocumento=$consulta->result_array();
 		$contador=1;
 		foreach($detalledocumento as $key=>$v):
+			
+				$aux_totaligv = (trim($v['totaligv']) == '') ? '0.00' : trim($v['totaligv']);
+				$aux_totalisc = (trim($v['totalisc']) == '') ? '0.00' : trim($v['totalisc']);
+				$aux_totalotroscargos = (trim($v['totalotroscargos']) == '') ? '0.00' : trim($v['totalotroscargos']);
+				$aux_totalotrostributos = (trim($v['totalotrostributos']) == '') ? '0.00' : trim($v['totalotrostributos']);
+				$aux_totalvalorventanetoopexonerada = (trim($v['totalvalorventanetoopexonerada']) == '') ? '0.00' : trim($v['totalvalorventanetoopexonerada']);
+				$aux_totalvalorventanetoopgratuitas = (trim($v['totalvalorventanetoopgratuitas']) == '') ? '0.00' : trim($v['totalvalorventanetoopgratuitas']);
+				$aux_totalvalorventanetoopgravadas = (trim($v['totalvalorventanetoopgravadas']) == '') ? '0.00' : trim($v['totalvalorventanetoopgravadas']);
+				$aux_totalvalorventanetoopnogravada = (trim($v['totalvalorventanetoopnogravada']) == '') ? '0.00' : trim($v['totalvalorventanetoopnogravada']);
+				$aux_totalventa = (trim($v['totalventa']) == '') ? '0.00' : trim($v['totalventa']);
 
-			$query="insert into spe_summary_item
+
+			$query="insert into SPE_SUMMARYDETAIL
 			(
-
-				numerodocumentoemisor,
-				tipodocumentoemisor,
-				resumenid,
-				numerofila,
-				tipodocumento,
-				numerocorrelativo,
-				tipodocumentoadquiriente,
-				numerodocumentoadquiriente,
-				numerocorrboletamodificada,
-				tipodocumentomodificado,
-				estadoitem,
-				tipomoneda,
-				totaligv,
-				totalisc,
-				totalotroscargos,
-				totalotrostributos,
-				totalvalorventaopexoneradasigv,
-				totalvalorventaopgratuitas,
-				totalvalorventaopgravadaconigv,
-				totalvalorventaopinafectasigv,
-				totalventa
-
+			numeroDocumentoEmisor
+           ,tipoDocumentoEmisor
+           ,resumenId
+           ,numeroFila
+           ,numeroCorrelativoFin
+           ,numeroCorrelativoInicio
+           ,serieGrupoDocumento
+           ,tipoDocumento
+           ,tipoMoneda
+           ,totalIgv
+           ,totalIsc
+           ,totalOtrosCargos
+           ,totalOtrosTributos
+           ,totalValorVentaOpExoneradasIgv
+           ,totalValorVentaOpGratuitas
+           ,totalValorVentaOpGravadaConIgv
+           ,totalValorVentaOpInafectasIgv
+           ,totalVenta
 			)
 			values
 			(
 				'".$prm_numerodocumentoemisor."',
 				'".$prm_tipodocumentoemisor."',
-				'".$prm_resumenid."',
-				'".$contador."',
-				'".trim($v['tip_doc'])."',
-				'".trim($v['num_doc'])."',
+					'".$prm_resumenid."',
+					'".$contador."',
+					'".trim($v['num_doc'])."',
+					'".trim($v['num_doc'])."',
+					'".trim($v['ser_gru'])."',
 				'".trim($v['tipodocumentoadquiriente'])."',
-				'".trim($v['numerodocumentoadquiriente'])."',
-				'".'-'."',
-				'".'-'."',
-				'".'-'."',
 				'".trim($v['tipomoneda'])."',
-				'".trim($v['totaligv'])."',
-				'".trim($v['totalisc'])."',
-				'".trim($v['totalotroscargos'])."',
-				'".trim($v['totalotrostributos'])."',
-
-				'".trim($v['totalvalorventanetoopexonerada'])."',
-				'".trim($v['totalvalorventanetoopgratuitas'])."',
-				'".trim($v['totalvalorventanetoopgravadas'])."',
-				'".trim($v['totalvalorventanetoopnogravada'])."',
-				'".trim($v['totalventa'])."'
-			);";
+				'".$aux_totaligv."',
+				'".$aux_totalisc."',
+				'".$aux_totalotroscargos."',
+				'".$aux_totalotrostributos."',
+				'".$aux_totalvalorventanetoopexonerada."',
+				'".$aux_totalvalorventanetoopgratuitas."',
+				'".$aux_totalvalorventanetoopgravadas."',
+				'".$aux_totalvalorventanetoopnogravada."',
+				'".$aux_totalventa."'
+				);";
 			//print_r($query);
 			$this->db_client->query($query);
 			if ($this->db_client->trans_status() === FALSE)
@@ -314,7 +340,7 @@ class Resumenboletas_model extends CI_Model
 
 
 
-
+/*
 		$query="delete from sgr_resumenboletas_temp where cod_empr='".$prm_cod_empr."' and cod_usu ='".$prm_cod_usu."';";
 		$this->db_client->query($query);
 		if ($this->db_client->trans_status() === FALSE)
@@ -323,7 +349,7 @@ class Resumenboletas_model extends CI_Model
 			$result['result']=0;
 			return $result;
 		}
-
+*/
 		$nuevocodigo=explode('-',$prm_resumenid);
 		if (number_format($nuevocodigo[2], 2, '.', '')==1)
 		{
@@ -354,6 +380,7 @@ class Resumenboletas_model extends CI_Model
 
 		$this->db_client->trans_commit();
 		$result['result']=1;
+
 		return $result;
 	}
 
@@ -384,6 +411,7 @@ class Resumenboletas_model extends CI_Model
 		$query="select (num_corre+1) valorentero from sgr_correlativoresumen
 				where cod_empr=".$prm_cod_empr." and tip_resum=2 and fec_resum='".$prm_fecha."' and est_reg=1;";
 		$consulta=$this->db->query($query);
+		//print_r($prm_fecha);
 		return $consulta->result_array();
 	}
 

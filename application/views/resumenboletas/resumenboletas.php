@@ -122,13 +122,13 @@
 
 				Listar_DocumentosdeResumen:function(tipo_busqueda)
 				{
-					console.log("ingresa ready2");
+					//console.log("ingresa ready2");
 					var txt_RucEmpresa=$.trim($('#txt_RucEmpresa').val());
 					var txt_FechaEmision=$.trim($('#txt_FechaEmision').val());
 					var txt_RazonSocialEmpresa=$.trim($('#txt_RazonSocialEmpresa').val());
-					console.log(txt_RucEmpresa);
-					console.log(txt_FechaEmision);
-					console.log(txt_RazonSocialEmpresa);
+					//console.log(txt_RucEmpresa);
+					//console.log(txt_FechaEmision);
+					//console.log(txt_RazonSocialEmpresa);
 
 					$.ajax({
 						url:'<?php echo base_url()?>resumenboletas/Listar_DocumentosdeResumen',
@@ -168,7 +168,7 @@
 
 				Listar_DocumentosdeResumenTabla:function(data,tipodocumento)
 				{
-					console.log("ingresa");
+					//console.log("ingresa");
 					$('#div_ListadoEmpresa').empty().append('');
 					$('#txt_fecemisiondoc').val('');
 					$('#txt_tipdocemisor').val('');
@@ -180,7 +180,7 @@
 					newHtml+='<thead>';
 					newHtml+='<tr>';
 						newHtml+='<th width:3%>Nro.</td>';
-						newHtml+='<th width:5%>Opcion</td>';
+						//newHtml+='<th width:5%>Opcion</td>';
 						newHtml+='<th width:10%>T.Doc.</td>';
 						newHtml+='<th width:20%>Documento</td>';
 						newHtml+='<th width:20%>F.Emis.</td>';
@@ -204,16 +204,17 @@
 
 						newHtml+='<tr>';
 							newHtml+='<td style="text-align:center">'+rs.nro_secuencia+'</td>';
-
+							
 							if (rs.tip_reg==1)
 							{
-								newHtml+='<td style="text-align:center"></td>';
+								//newHtml+='<td style="text-align:center"></td>';
 								contador++;
 							}
 							else
 							{
 								newHtml+='<td style="text-align:left"><input id="cbox_seleccion_'+key+'" type="checkbox" value="" name="cbox_seleccion_'+key+'" onChange="javascrip:Seleccionar_DatosBusqueda('+key+',\''+rs.cod_tipdoc+'\',\''+rs.numer_doc+'\')"></td>';
 							}
+							
 							newHtml+='<td style="text-align:left">'+rs.tipo_doc+'</td>';
 							newHtml+='<td style="text-align:left">'+rs.numer_doc+'</td>';
 							newHtml+='<td style="text-align:left">'+rs.fec_emision+'</td>';
@@ -245,7 +246,7 @@
 					});
 					newHtml+='</tbody>';
 					newHtml+='</table>';
-					console.log(newHtml);
+					//console.log(newHtml);
 
 					$('#txt_cantidad').val(contador);
 
@@ -321,10 +322,12 @@
 						{
 							if(result.status==1)
 							{
-
+								/*
 								$('#div_MensajeValidacionEmpresa').fadeIn(0);
 								$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/information.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Se gener� el resumen '+result.codigo_baja+'</div>');
 								setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
+								*/
+								alert('Se generó el '+result.codigo_resumen);
 								Limpiar_DatosRegistroDocBajas();
 								//ncsistema.Listar_DocumentosdeResumen(0);
 								ncsistema.Listar_DocumentosdeResumenTabla("",'');
