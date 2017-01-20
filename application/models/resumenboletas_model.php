@@ -66,7 +66,7 @@ class Resumenboletas_model extends CI_Model
 	}
 
 
-	function Listar_DocumentosdeResumen($prm_cod_usu,$prm_cod_empr,$cod_tipbusqueda,$prm_ruc_empr,$prm_fechabusqueda)
+	function Listar_DocumentosdeResumen($prm_cod_usu,$prm_cod_empr,$prm_ruc_empr,$prm_fechabusqueda)
 	{
 
 		$this->load->database('ncserver',TRUE);
@@ -125,7 +125,7 @@ class Resumenboletas_model extends CI_Model
 							and b.serienumero=a.serienumero and b.tipodocumento=a.tipodocumento
 		where a.numerodocumentoemisor='".$prm_ruc_empr."'
 			and a.serienumero like 'B%'
-			and (upper(a.bl_estadoproceso)  like '%PE_09%' or upper(a.bl_estadoproceso)  like '%AC_03%')
+				
 			and a.tipodocumento in ('03','07','08')
 			and b.fechaEmision='".$prm_fechabusqueda."'
 
@@ -235,7 +235,7 @@ $consulta = $this->db_client->query("select
 								b.totalventa
 
 								 from SPE_EINVOICEHEADER b join SPE_EINVOICE_RESPONSE a on b.serieNumero = a.serieNumero
-								 where numeroDocumentoEmisor = '".$prm_ruc_empr."'
+								 where b.numeroDocumentoEmisor = '".$prm_ruc_empr."'
 								 and b.tipoDocumento = '03' 
 								 and b.fechaEmision = '".$prm_fechaemisioncomprobante."' ;");
 /*		
@@ -273,7 +273,13 @@ $consulta = $this->db_client->query("select
 		$detalledocumento=$consulta->result_array();
 		$contador=1;
 		foreach($detalledocumento as $key=>$v):
-			
+
+				if($v['bl_estadoProceso'] == 'SIGNED' || !$v['bl_estadoProceso']){
+					$this->db_client->trans_rollback();
+					$result['result']=2;
+					return $result;
+				}
+
 				$aux_totaligv = (trim($v['totaligv']) == '') ? '0.00' : trim($v['totaligv']);
 				$aux_totalisc = (trim($v['totalisc']) == '') ? '0.00' : trim($v['totalisc']);
 				$aux_totalotroscargos = (trim($v['totalotroscargos']) == '') ? '0.00' : trim($v['totalotroscargos']);
@@ -744,6 +750,45 @@ $consulta = $this->db_client->query("select
 		//return;
 		$consulta =  $this->db_client->query($query);
 		return $consulta->result_array();
+	}
+
+	function Declarar_Comprobante($prm_ruc,$prm_comprobante,$prm_tipo_doc)
+	{
+		$result['result']=0;
+		//return $result;
+		$this->db_client =$this->load->database('ncserver',TRUE);
+		$this->db_client->trans_begin();
+		$query="delete from SPE_EINVOICE_RESPONSE
+					where serieNumero = '".$prm_comprobante."' and 
+					numerodocumentoemisor = '".$prm_ruc."' and
+					tipoDocumento = '".$prm_tipo_doc."'	";
+		$this->db_client->query($query);
+
+		if ($this->db_client->trans_status() === FALSE)
+		{
+			$this->db_client->trans_rollback();
+			$result['result']=0;
+			return $result;
+		}
+
+		$query="update SPE_EINVOICEHEADER set bl_estadoRegistro = 'A', bl_reintento = '0'
+					where serieNumero = '".$prm_comprobante."' and 
+					numerodocumentoemisor = '".$prm_ruc."' and
+					tipoDocumento = '".$prm_tipo_doc."'	";
+		$this->db_client->query($query);
+
+		if ($this->db_client->trans_status() === FALSE)
+		{
+			$this->db_client->trans_rollback();
+			$result['result']=0;
+			return $result;
+		}
+
+
+		$this->db_client->trans_commit();
+
+		$result['result']=1;
+		return $result;
 	}
 
 }
