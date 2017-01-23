@@ -243,7 +243,9 @@ class Resumenboletas extends CI_Controller {
 			{
 				$result['status']=0;
 				$result['data']="";
-				$result['cod']=1;
+				if($codigo_temp==1) {
+					$result['cod']=1;
+				}
 			}
 			echo json_encode($result);
 		}
@@ -305,9 +307,6 @@ class Resumenboletas extends CI_Controller {
 				$result['mensaje']='';
 			}
 			echo json_encode($result);
-
-
-
 		}
 
 		public function Guardar_SummaryHeader()
@@ -389,10 +388,8 @@ class Resumenboletas extends CI_Controller {
 			echo json_encode($result);
 		}
 
-		public function Eliminar_DocumentoBoletaBaja()
+		public function Eliminar_DocumentoBoletaResumen()
 		{
-			$arr=NULL;
-			$Contador=0;
 			$result['status']=0;
 			if(!$this->Usuarioinicio_model->SessionExiste())
 			{
@@ -400,8 +397,11 @@ class Resumenboletas extends CI_Controller {
 				echo json_encode($result);
 				exit;
 			}
-			$prm_tmp_reg=trim($this->input->post('tmp_reg'));
-			$consulta =$this->Resumenboletas_model->Eliminar_DocumentoBoletaBaja($prm_tmp_reg);
+			$prm_comprobante=trim($this->input->post('var_comprobante'));
+			$prm_tipo_doc=trim($this->input->post('var_tipo_doc'));
+			$prm_ruc=trim($this->input->post('var_ruc'));
+
+			$consulta =$this->Resumenboletas_model->Eliminar_DocumentoBoletaResumen($prm_ruc,$prm_tipo_doc,$prm_comprobante);
 			if ($consulta['result']==1)
 			{
 				$result['status']=1;

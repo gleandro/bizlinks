@@ -319,7 +319,7 @@
 								if (codigo_tabla == 1) {
 									newHtml+='<td style="text-align:center"><a href="javascript:Declarar_Comprobante('+contador+')" ><img align="center" src="<?php echo base_url();?>application/helpers/image/ico/actualizar.png" title="Declarar" width="15"  height="15" border="0" ></a></td>';
 								}
-								newHtml+='<td style="text-align:center"><a href="javascript:Eliminar_DocumentoBoletaBaja('+rs.tmp_reg+')" ><img align="center" src="<?php echo base_url();?>application/helpers/image/ico/nceliminar.png" title="Eliminar" width="15"  height="15" border="0" ></a></td>';
+								newHtml+='<td style="text-align:center"><a href="javascript:Eliminar_DocumentoBoletaResumen('+contador+','+codigo_tabla+')" ><img align="center" src="<?php echo base_url();?>application/helpers/image/ico/nceliminar.png" title="Eliminar" width="15"  height="15" border="0" ></a></td>';
 								$('#txt_fecemisiondoc').val(rs.fec_emision);
 							}
 							else
@@ -534,16 +534,28 @@
 					});
 			}
 
-			function Eliminar_DocumentoBoletaBaja(tmp_reg)
-			{
+			function Eliminar_DocumentoBoletaResumen(codigo,tabla)
+			{	
+				if (tabla == 0) {
+					var var_comprobante = $("[id='comprobante_"+codigo+"']").text();
+					var var_tipo_doc = $("[id='tipo_doc_"+codigo+"']").text();
+					var var_ruc=$.trim($('#txt_RucEmpresa').val());
+				}
+				else{
+					var var_comprobante = $("[id='modal_comprobante_"+codigo+"']").text();
+					var var_tipo_doc = $("[id='modal_tipo_doc_"+codigo+"']").text();
+					var var_ruc=$.trim($('#txt_RucEmpresa').val());
+				}
 				if(confirm("� Esta Seguro de Eliminar el documento ?"))
 				{
 					$.ajax
 					({
-						url:'<?php echo base_url()?>resumenboletas/Eliminar_DocumentoBoletaBaja',type:'post',dataType:'json',
+						url:'<?php echo base_url()?>resumenboletas/Eliminar_DocumentoBoletaResumen',type:'post',dataType:'json',
 						data:
 						{
-							tmp_reg:tmp_reg,
+							var_ruc:var_ruc,
+							var_tipo_doc:var_tipo_doc,
+							var_comprobante:var_comprobante
 						},
 						beforeSend:function()
 						{
@@ -557,6 +569,7 @@
 								$('#div_MensajeValidacionEmpresa').fadeIn(0);
 								$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/information.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">La eliminaci&oacute;n del Documento se realiz&oacute; con &eacute;xito</div>');
 								setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
+								ncsistema.Listar_DocumentosdeResumen(1);
 								ncsistema.Listar_DocumentosdeResumen();
 								return;
 
