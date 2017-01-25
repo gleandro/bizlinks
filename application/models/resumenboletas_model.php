@@ -392,12 +392,26 @@ $consulta = $this->db_client->query("select
 
 
 
-	function Eliminar_DocumentoBoletaBaja($prm_tmp_reg)
+	function Eliminar_DocumentoBoletaResumen($prm_ruc,$prm_tipo_doc,$prm_comprobante)
 	{
 		$result['result']=0;
 		$this->db_client =$this->load->database('ncserver',TRUE);
 		$this->db_client->trans_begin();
-		$query="delete from sgr_resumenboletas_temp where tmp_reg='".$prm_tmp_reg."';";
+		$query="delete from SPE_EINVOICEHEADER 
+					where serieNumero = '".$prm_comprobante."' and 
+					numerodocumentoemisor = '".$prm_ruc."' and
+					tipoDocumento = '".$prm_tipo_doc."'	";
+		$this->db_client->query($query);
+		if ($this->db_client->trans_status() === FALSE)
+		{
+			$this->db_client->trans_rollback();
+			$result['result']=0;
+			return $result;
+		}
+		$query="delete from SPE_EINVOICEDETAIL 
+					where serieNumero = '".$prm_comprobante."' and 
+					numerodocumentoemisor = '".$prm_ruc."' and
+					tipoDocumento = '".$prm_tipo_doc."'	";
 		$this->db_client->query($query);
 		if ($this->db_client->trans_status() === FALSE)
 		{
