@@ -152,6 +152,7 @@ class producto extends CI_Controller {
 				$arr[$key]['nom_corto'] =trim($v['nom_corto']);				
 				$arr[$key]['nom_largo'] =trim($v['nom_largo']);
 				$arr[$key]['valor_venta'] = trim($v['valor_venta']); 
+				$arr[$key]['precio_venta'] = trim($v['precio_venta']); 
 				$arr[$key]['id_categoria'] =  trim($v['id_categoria']);					
 				$arr[$key]['categoria'] =  trim($v['categoria']);
 				$arr[$key]['med'] =  trim($v['med']);
@@ -201,7 +202,9 @@ class producto extends CI_Controller {
 					$arr[$key]['nom_corto'] =trim($v['nom_corto']);
 					$arr[$key]['nom_largo'] =trim($v['nom_largo']);
 					$arr[$key]['valor_venta'] = number_format($v['valor_venta'],10,'.',','); 
+					$arr[$key]['valor_venta_real'] = $v['valor_venta']; 
 					$arr[$key]['precio_venta'] = number_format($v['precio_venta'],10,'.',','); 
+					$arr[$key]['precio_venta_real'] = $v['precio_venta']; 
 					$arr[$key]['cod_unidmedsunat'] =  trim($v['cod_unidmedsunat']);
 					$arr[$key]['idmed'] =  trim($v['idmed']);
 					//a.id, a.cod_producto, a.nom_corto, a.valor_venta, d.cod_unidmedsunat, idmed
@@ -306,13 +309,72 @@ class producto extends CI_Controller {
 			exit;
 		}
 		$prm_id=trim($this->input->post('cod_id'));
-		$resultado =$this->Producto_model->Eliminar_Producto($prm_id);		
+		//print_r($prm_id);
+		//return;
+		$resultado =$this->producto_model->Eliminar_Producto($prm_id);		
 		if ($resultado['result']==1)
 		{
 			$result['status']=1;	
 		}
 		echo json_encode($result);
-	}	
+	}
+	
+	public function Valida_Producto()
+	{
+		$arr=NULL;
+		$contador=0;
+		$result['status']=0;
+		if(!$this->Usuarioinicio_model->SessionExiste())
+		{
+			$result['status']=1000;
+			echo json_encode($result);
+			exit;
+		}
+		$prm_codigo=trim($this->input->post('txt_codigo'));
+		
+        $consulta =$this->producto_model->Valida_Producto($prm_codigo);
+		
+		if(!empty($consulta))//SI NO ES NULO O VACIO
+		{
+			//id
+			//cod_producto
+			//nom_corto
+			//nom_largo
+			//valor_venta
+			//id_categoria
+			//categoria
+			//med
+			//cod_unidmedsunat 
+			foreach($consulta as $key=>$v):
+				$contador=$contador+1;
+				$arr[$key]['nro_secuencia'] = $contador;				
+				$arr[$key]['id'] = trim($v['id']);
+				$arr[$key]['cod_producto'] = trim($v['cod_producto']);
+				$arr[$key]['nom_corto'] =trim($v['nom_corto']);				
+				$arr[$key]['nom_largo'] =trim($v['nom_largo']);
+				$arr[$key]['valor_venta'] = trim($v['valor_venta']); 
+				$arr[$key]['precio_venta'] = trim($v['precio_venta']); 
+				$arr[$key]['id_categoria'] =  trim($v['id_categoria']);					
+				$arr[$key]['categoria'] =  trim($v['categoria']);
+				$arr[$key]['med'] =  trim($v['med']);
+				$arr[$key]['cod_unidmedsunat'] =  trim($v['cod_unidmedsunat']);
+			endforeach;
+		}
+		
+		//print_r($arr);
+		
+		if(sizeof($arr)>0)
+		{
+			$result['status']=1;
+			$result['data']=$arr;
+		}
+		else
+		{
+			$result['status']=0;
+			$result['data']="";
+		}
+		echo json_encode($result);
+	}
 
 }
 

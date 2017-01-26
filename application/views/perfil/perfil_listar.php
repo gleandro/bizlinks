@@ -760,7 +760,7 @@
 								<select id="Cmb_Roles" style="width:20%;height:22px" onChange="javascrip:ncsistema.Buscar_Permisos(this.value)">
 									<option value="">[SELECCIONAR]</option>
 									<?php foreach ( $Listar_Perfil as $v):	?>
-										<option value="<?php echo trim($v['cod_perfil']); ?>"><?php echo trim(utf8_encode($v['nom_perfil']));?> </option>
+										<option value="<?php echo trim($v['cod_perfil']); ?>"><?php echo trim(utf8_decode($v['nom_perfil']));?> </option>
 									<?php  endforeach; ?>
 								</select>
 							</td>

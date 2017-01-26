@@ -157,9 +157,9 @@ class Empresa_model extends CI_Model
 					(select bb.valorentero from sgr_multitabla bb where bb.activo=1 and bb.grupo_nombre='CONFIGURACION_VENTA') conf_venta
 				from sgr_empresa a 
 				where a.cod_empr=".$prm_cod_empr." and a.est_reg=1;";
-				
+		
 				$consulta = $this->db->query($sql);
-				
+		
 		return $consulta->result_array();
 	}
 
@@ -384,24 +384,21 @@ class Empresa_model extends CI_Model
 		$this->load->database('ncserver',TRUE);		
 		if ($prm_tip_usu==1)//ADMINISTRADOR
 		{
-			$consulta = $this->db->query("select cod_empr,raz_social
-			from sgr_empresa where cod_usuadm=".$prm_cod_usuadm." and est_reg=1;");
+			$consulta = $this->db->query("select a.cod_empr, a.raz_social from sgr_empresa a 
+  				inner join sgr_empresa_er b on a.cod_empr=b.cod_empr 
+			where a.cod_usuadm=".$prm_cod_usuadm." and a.est_reg=1 and b.est_reg=1 and not a.ruc_empr like 'E%'
+			group by a.cod_empr, a.raz_social order by 2;");
 		}
-		else //SI ES INVITADO, SE TIENE Q VER Q SI ESTA CONF. PARA EMISOR Y RESEPTOR
+		else //SI ES INVITADO, SE TIENE Q VER SI ESTA CONF. PARA EMISOR Y RESEPTOR
 		{
 			$consulta = $this->db->query("
-			
-			select cod_empr,raz_social from
-			(
 				select a.cod_empr,a.raz_social
 				from sgr_empresa a 
-					inner join sgr_usuarioacceso b on a.cod_empr=b.cod_empr
-				where a.cod_usuadm=".$prm_cod_usuadm." and b.cod_usu=".$prm_cod_usu." and a.est_reg=1 and b.est_reg=1
-				group by a.cod_empr,a.raz_social
-
-			)aa  group by aa.cod_empr,aa.raz_social
-			
-			;");
+					inner join sgr_usuarioacceso b on a.cod_empr=b.cod_empr 
+					inner join sgr_empresa_er c on a.cod_empr=c.cod_empr 
+				where a.cod_usuadm=".$prm_cod_usuadm." and b.cod_usu=".$prm_cod_usu." 
+					and a.est_reg=1 and b.est_reg=1 and c.est_reg=1 and not a.ruc_empr like 'E%'
+				group by a.cod_empr,a.raz_social;");
 		}		
 		return $consulta->result_array();
 	}

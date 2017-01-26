@@ -495,7 +495,7 @@
 								<select id="cmb_variables" style="width:100%;height:22px" >
 									<option value="0">[SELECCIONAR]</option>								
 									<?php foreach ( $Listar_Variables as $v):	?>
-										<option value="<?php echo trim($v['codigo']); ?>"><?php echo trim(utf8_encode($v['nombre']));?> </option>
+										<option value="<?php echo trim($v['codigo']); ?>"><?php echo trim(utf8_decode($v['nombre']));?> </option>
 									<?php  endforeach; ?>
 								</select>
 							</td>

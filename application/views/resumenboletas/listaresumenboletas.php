@@ -722,11 +722,11 @@
 						<tr>
 							<td style="text-align:right; width:12%"><label class="columna">RUC:</label></td>
 							<td style="text-align:left; width:13%">
-								<input style="width:95%" type="text" id="txt_RucEmpresa" value="<?php echo trim(utf8_encode($Ruc_Empresa));?>"  disabled="disabled" />
+								<input style="width:95%" type="text" id="txt_RucEmpresa" value="<?php echo trim(utf8_decode($Ruc_Empresa));?>"  disabled="disabled" />
 							</td>
 							<td style="text-align:right; width:8%"><label class="columna">Raz&oacute;n Social:</label></td>
 							<td style="text-align:left;width:30%" colspan="2">
-								<input style="width:95%" type="text" id="txt_RazonSocialEmpresa" value="<?php echo trim(utf8_encode($Razon_Social));?>" disabled="disabled" /></td>
+								<input style="width:95%" type="text" id="txt_RazonSocialEmpresa" value="<?php echo trim(utf8_decode($Razon_Social));?>" disabled="disabled" /></td>
 						</tr>
 						<tr>
 							<td style="text-align:right"><label class="columna">C&oacute;digo Resumen:</label></td>

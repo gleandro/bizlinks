@@ -76,8 +76,8 @@ class Certificado_model extends CI_Model
 			}
 		else
 		{
-			$prm_protection_val=md5(trim($prm_protection_val));
-			$prm_protection_key=md5(trim($prm_protection_key));
+			$prm_protection_val=(trim($prm_protection_val));
+			$prm_protection_key=(trim($prm_protection_key));
 		}
 		
 		$this->db_client->query("delete from bl_configuration where id_emisor='6-".$prm_id_emisor."';");//ELIMINAMOS LOS DATOS		

@@ -2190,13 +2190,78 @@ class Comprobante extends CI_Controller {
 		//return;
 		
 		/*BUSCANDO LAS CARACTERISTICAS*/
+		/*
 		$direccioncliente='';
 		$detallecaracteristica=$this->Comprobante_model->Buscar_DetalleCaracteristica('6',$prm_ruc_empremisor,$prm_tipo_documento,$prm_serie_numero,'direccionAdquiriente');
 		if(!empty($detallecaracteristica))//SI NO ES NULO O VACIO
 		{
 			$direccioncliente =  $detallecaracteristica[0]['valor'];
+		}*/
+		/*BUSCANDO LAS CARACTERISTICAS DE DIRECCION*/
+		$direccioncliente='';
+		$opciondireccioncliente=substr($prm_serie_numero,0,1);
+		if ($opciondireccioncliente=='F')
+		{
+			$direccionAdquiriente='';
+			$urbanizacionAdquiriente='';
+			$distritoAdquiriente='';
+			$provinciaAdquiriente='';
+			$departamentoAdquiriente='';
+			$detallecaracteristica=$this->Comprobante_model->Buscar_DetalleCaracteristica('6',$prm_ruc_empremisor,$prm_tipo_documento,$prm_serie_numero);
+			if(!empty($detallecaracteristica))
+			{
+				foreach($detallecaracteristica as $key=>$v):
+					if (trim($v['valor'])<>'-')
+					{
+						switch($v['clave'])
+						{
+							case 'direccionAdquiriente':
+								$direccionAdquiriente=trim($v['valor']);
+								break;
+							case 'urbanizacionAdquiriente':
+								$urbanizacionAdquiriente=trim($v['valor']);
+								break;
+							case 'distritoAdquiriente':
+								$distritoAdquiriente=trim($v['valor']);
+								break;
+							case 'provinciaAdquiriente':
+								$provinciaAdquiriente=trim($v['valor']);
+								break;
+							case 'departamentoAdquiriente':
+								$departamentoAdquiriente=trim($v['valor']);
+								break;
+						}
+					}
+				endforeach;
+				if (trim($direccionAdquiriente)<>''){
+					$direccioncliente=$direccionAdquiriente;
+				}
+				if (trim($urbanizacionAdquiriente)<>''){
+					if (trim($direccioncliente)==''){
+						$direccioncliente=$urbanizacionAdquiriente;
+					}else{
+						$direccioncliente=$direccioncliente.' - '.$urbanizacionAdquiriente;}
+				}
+				if (trim($distritoAdquiriente)<>''){
+					if (trim($direccioncliente)==''){
+						$direccioncliente=$distritoAdquiriente;}
+					else{
+						$direccioncliente=$direccioncliente.' - '.$distritoAdquiriente;}
+				}
+				if (trim($provinciaAdquiriente)<>''){
+					if (trim($direccioncliente)==''){
+						$direccioncliente=$provinciaAdquiriente;}
+					else{
+						$direccioncliente=$direccioncliente.' - '.$provinciaAdquiriente;}
+				}
+				if (trim($departamentoAdquiriente)<>''){
+					if (trim($direccioncliente)==''){
+						$direccioncliente=$departamentoAdquiriente;}
+					else{
+						$direccioncliente=$direccioncliente.' - '.$departamentoAdquiriente;}
+				}
+			}
 		}
-
 
 		if(!empty($consulta))//SI NO ES NULO O VACIO
 		{
@@ -2219,10 +2284,20 @@ class Comprobante extends CI_Controller {
 				$arr[$key]['fechaemision'] = trim($v['fechaemision']);		
 				
 				$arr[$key]['numerodocumentoadquiriente'] =trim($v['numerodocumentoadquiriente']); 
-				$arr[$key]['razonsocialadquiriente'] =trim($v['razonsocialadquiriente']); 	
-				$arr[$key]['direccioncliente'] =$direccioncliente; 
-						
-				$arr[$key]['textoleyenda_1'] =trim($v['textoleyenda_1']);				
+				$arr[$key]['razonsocialadquiriente'] =trim($v['razonsocialadquiriente']);
+				if ($opciondireccioncliente=='F')
+				{
+					$arr[$key]['direccioncliente'] =$direccioncliente; 
+				}else
+				{
+					if (!$v['lugardestino']){
+						if (trim($v['lugardestino'])<>'-'){
+							$arr[$key]['direccioncliente'] =trim($v['lugardestino']);}
+					}else{
+						$arr[$key]['direccioncliente'] ='';
+					}
+				}
+				$arr[$key]['textoleyenda_1'] =trim($v['textoleyenda_1']);			
 				if ($v['tipomoneda']=='PEN')
 				{
 					$arr[$key]['tipomonedacabecera'] =trim($v['tipomoneda']).' - Sol'; 
@@ -2275,7 +2350,171 @@ class Comprobante extends CI_Controller {
 		echo json_encode($result);
     }	
 	
+	public function Listar_DetalleDocumento_Anonimo()
+	{
+		$arr=NULL;
+		$Contador=0;
+		$result['status']=0;
+		$prm_ruc_empremisor=trim($this->input->post('txt_RucEmpresa'));
+		
+		$prm_datosseleccionados=trim($this->input->post('txt_datosseleccionados'));
+		$prm_datosseleccionados=(str_replace(",","",$prm_datosseleccionados));		
+		$datos_seleccionados=explode('-',$prm_datosseleccionados);
+		$prm_tipo_documento=$datos_seleccionados[0];
+		$prm_serie_numero=$datos_seleccionados[1].'-'.$datos_seleccionados[2];
+		
+		$consulta =$this->Comprobante_model->Listar_DetalleDocumento($prm_ruc_empremisor,$prm_tipo_documento,$prm_serie_numero);
+	
+		/*BUSCANDO LAS CARACTERISTICAS DE DIRECCION*/
+		$direccioncliente='';
+		$opciondireccioncliente=substr($prm_serie_numero,0,1);
+		if ($opciondireccioncliente=='F')
+		{
+			$direccionAdquiriente='';
+			$urbanizacionAdquiriente='';
+			$distritoAdquiriente='';
+			$provinciaAdquiriente='';
+			$departamentoAdquiriente='';
+			$detallecaracteristica=$this->Comprobante_model->Buscar_DetalleCaracteristica('6',$prm_ruc_empremisor,$prm_tipo_documento,$prm_serie_numero);
+			if(!empty($detallecaracteristica))
+			{
+				foreach($detallecaracteristica as $key=>$v):
+					if (trim($v['valor'])<>'-')
+					{
+						switch($v['clave'])
+						{
+							case 'direccionAdquiriente':
+								$direccionAdquiriente=trim($v['valor']);
+								break;
+							case 'urbanizacionAdquiriente':
+								$urbanizacionAdquiriente=trim($v['valor']);
+								break;
+							case 'distritoAdquiriente':
+								$distritoAdquiriente=trim($v['valor']);
+								break;
+							case 'provinciaAdquiriente':
+								$provinciaAdquiriente=trim($v['valor']);
+								break;
+							case 'departamentoAdquiriente':
+								$departamentoAdquiriente=trim($v['valor']);
+								break;
+						}
+					}
+				endforeach;
+				if (trim($direccionAdquiriente)<>''){
+					$direccioncliente=$direccionAdquiriente;
+				}
+				if (trim($urbanizacionAdquiriente)<>''){
+					if (trim($direccioncliente)==''){
+						$direccioncliente=$urbanizacionAdquiriente;
+					}else{
+						$direccioncliente=$direccioncliente.' - '.$urbanizacionAdquiriente;}
+				}
+				if (trim($distritoAdquiriente)<>''){
+					if (trim($direccioncliente)==''){
+						$direccioncliente=$distritoAdquiriente;}
+					else{
+						$direccioncliente=$direccioncliente.' - '.$distritoAdquiriente;}
+				}
+				if (trim($provinciaAdquiriente)<>''){
+					if (trim($direccioncliente)==''){
+						$direccioncliente=$provinciaAdquiriente;}
+					else{
+						$direccioncliente=$direccioncliente.' - '.$provinciaAdquiriente;}
+				}
+				if (trim($departamentoAdquiriente)<>''){
+					if (trim($direccioncliente)==''){
+						$direccioncliente=$departamentoAdquiriente;}
+					else{
+						$direccioncliente=$direccioncliente.' - '.$departamentoAdquiriente;}
+				}
+			}
+		}
+		
+		//$detallecaracteristica=$this->Comprobante_model->Buscar_DetalleCaracteristica('6',$prm_ruc_empremisor,$prm_tipo_documento,$prm_serie_numero,'direccionAdquiriente');
+		//if(!empty($detallecaracteristica))//SI NO ES NULO O VACIO
+		//{
+		//	$direccioncliente =  $detallecaracteristica[0]['valor'];
+		//}
 
+		if(!empty($consulta))//SI NO ES NULO O VACIO
+		{
+			foreach($consulta as $key=>$v):
+				$Contador=$Contador+1;
+				$arr[$key]['razonsocialemisor'] =strtoupper(trim($v['razonsocialemisor'])); 
+				$arr[$key]['nombrecomercialemisor'] =trim($v['nombrecomercialemisor']); 
+				$arr[$key]['direccionemisor'] =trim($v['direccionemisor']); 
+				$arr[$key]['distritoemisor'] =trim($v['distritoemisor']); 
+				$arr[$key]['departamentoemisor'] =trim($v['departamentoemisor']); 
+				$arr[$key]['provinciaemisor'] =trim($v['provinciaemisor']); 
+				$arr[$key]['numerodocumentoemisor'] =trim($v['numerodocumentoemisor']); 
+				$arr[$key]['tipodocumentoemisor'] =trim($v['tipodocumentoemisor']); 				
+				$arr[$key]['nombre_tipodocumentoemisor'] =trim($v['nombre_tipodocumentoemisor']); 
+				
+				$arr[$key]['serienumero'] =trim($v['serienumero']); 
+				$arr[$key]['tipodocumento'] =trim($v['tipodocumento']); 
+				$arr[$key]['nombre_tipodocumento'] =trim($v['nombre_tipodocumento']);
+
+				$arr[$key]['fechaemision'] = trim($v['fechaemision']);		
+				
+				$arr[$key]['numerodocumentoadquiriente'] =trim($v['numerodocumentoadquiriente']); 
+				$arr[$key]['razonsocialadquiriente'] =trim($v['razonsocialadquiriente']); 	
+				if ($opciondireccioncliente=='F')
+				{
+					$arr[$key]['direccioncliente'] =$direccioncliente; 
+				}else
+				{
+					if (!$v['lugardestino']){
+						if (trim($v['lugardestino'])<>'-'){
+							$arr[$key]['direccioncliente'] =trim($v['lugardestino']);}
+					}else{
+						$arr[$key]['direccioncliente'] ='';
+					}						
+				}
+						
+				$arr[$key]['textoleyenda_1'] =trim($v['textoleyenda_1']);				
+				if ($v['tipomoneda']=='PEN')
+				{
+					$arr[$key]['tipomonedacabecera'] =trim($v['tipomoneda']).' - Sol'; 
+				}
+				else
+				{
+					$arr[$key]['tipomonedacabecera'] =trim($v['tipomoneda']).' - Dolar';
+				}
+				$arr[$key]['tipomoneda'] =trim($v['tipomoneda']);
+				$arr[$key]['totalvalorventanetoopgravadas'] =trim($v['totalvalorventanetoopgravadas']); 
+				$arr[$key]['totalvalorventanetoopnogravada'] =trim($v['totalvalorventanetoopnogravada']);
+				$arr[$key]['totalvalorventanetoopexonerada'] =trim($v['totalvalorventanetoopexonerada']); 	
+				$arr[$key]['totalvalorventanetoopgratuitas'] =trim($v['totalvalorventanetoopgratuitas']);							
+				$arr[$key]['totaldescuentos'] =trim($v['totaldescuentos']); 
+				 
+				$arr[$key]['totaligv'] =trim($v['totaligv']); 
+				$arr[$key]['totalventa'] =trim($v['totalventa']); 
+
+				$arr[$key]['totaldetraccion'] =trim($v['totaldetraccion']); 
+				$arr[$key]['totalbonificacion'] =trim($v['totalbonificacion']); 
+				
+				$arr[$key]['numeroordenitem'] =trim($v['numeroordenitem']); 
+				$arr[$key]['codigoproducto'] =trim($v['codigoproducto']); 
+				$arr[$key]['descripcion'] =trim($v['descripcion']); 
+				$arr[$key]['unidadmedida'] =trim($v['unidadmedida']); 
+				$arr[$key]['cantidad'] =trim($v['cantidad']); 
+				$arr[$key]['importeunitariosinimpuesto'] =trim($v['importeunitariosinimpuesto']); 
+				$arr[$key]['importeunitarioconimpuesto'] =trim($v['importeunitarioconimpuesto']); 				
+				$arr[$key]['importedescuento'] =trim($v['importedescuento']); 
+				$arr[$key]['importetotalsinimpuesto'] =trim($v['importetotalsinimpuesto']); 
+			endforeach;
+		}
+		if(sizeof($arr)>0)
+		{
+			$result['status']=1;
+			$result['data']=$arr;
+		}else{
+			$result['status']=0;
+			$result['data']="";
+		}
+		echo json_encode($result);
+    }	
 
 
 	public function existe_comprobante()
@@ -2395,7 +2634,7 @@ class Comprobante extends CI_Controller {
 
 		$consulta =$this->Comprobante_model->Listar_Comprobantes($prm_ruc_empr,$prm_documento_cliente,$prm_serie_numeroinicio,
 					$prm_serie_numerofinal,$prm_cod_estdoc,$prm_fec_emisinicio,$prm_fec_emisfinal,
-					$prm_tipo_documentosunat,$prm_estado_documentosunat,$prm_tipomoneda);
+					$prm_tipo_documentosunat,$prm_estado_documentosunat,$prm_tipomoneda, $prm_razonsocialcliente);
 
 		$estado_documento='';
 		$tipo_documentosunat='';

@@ -153,7 +153,7 @@
 					if (txt_cantidadseleccionados==1)
 					{
 						$.ajax({
-							url:'<?php echo base_url()?>comprobante/Listar_DetalleDocumento',
+							url:'<?php echo base_url()?>comprobante/Listar_DetalleDocumento_Anonimo',
 							type: 'post',
 							dataType: 'json',
 							data:
@@ -578,7 +578,7 @@
 																<select id="cmb_tipodedocumento" style="width:80%;font-size:10px;height:23px">
 																	<option value="0">[SELECCIONAR]</option>
 																	<?php foreach ( $Listar_TipodeDocumento as $v):	?>
-																		<option value="<?php echo trim($v['co_item_tabla']); ?>"><?php echo trim(utf8_encode($v['no_corto']));?> </option>
+																		<option value="<?php echo trim($v['co_item_tabla']); ?>"><?php echo trim(utf8_decode($v['no_corto']));?> </option>
 																	<?php  endforeach; ?>
 																</select>
 																
@@ -589,7 +589,7 @@
 																<label class="columna">Serie-N&uacute;mero:</label>
 															</td>
 															<td >
-																<input class="negritaEstandar" style="width:130px" id="txt_serienumero"  type="text"  value="" />
+																<input class="negritaEstandar" style="width:130px; text-transform:uppercase" id="txt_serienumero"  type="text"  value="" maxlength="13"/>
 															</td> 
 														</tr>														
 														<tr> 
@@ -597,7 +597,7 @@
 																<label class="columna">Monto Total:</label>
 															</td>
 															<td >
-																<input class="negritaEstandar" style="width:130px" id="txt_montototal" type="text"  value="0.00" />
+																<input class="negritaEstandar" style="width:130px" id="txt_montototal" type="text"  placeholder="0.00" />
 															</td> 
 														</tr>														
 														<tr> 
@@ -613,7 +613,7 @@
 																<label class="columna">R.U.C. Proveedor:</label>
 															</td>
 															<td >
-																<input class="negritaEstandar" style="width:130px" id="text_rucproveedor"  type="text"  value="" />
+																<input class="negritaEstandar" style="width:130px" id="text_rucproveedor"  type="text"  value="" maxlength="11"/>
 															</td> 
 														</tr>														
 

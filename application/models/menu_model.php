@@ -97,8 +97,6 @@ class Menu_model extends CI_Model
 					and b.cod_rol=".$prm_cod_rolseleccion."
 					order by ord_ejec;");
 					
-					
-					
 					/*Adicionamos las opciones basicas*/
 					$this->db->query("insert into sgr_generandomenu
 					(
@@ -137,32 +135,15 @@ class Menu_model extends CI_Model
 				  )b on a.cod_men=b.cod_menpad
 				where a.est_reg=1
 				order by a.ord_ejec;");
-				
-				
-				
 				$vcod_nivmen = $vcod_nivmen - 1;
-	
 			}			
-			
 		}
-		
-
 		return true;//$consulta->result_array();
-		
-		
 	}
-	
-	
-	
 	
 	function Listar_UsuarioAccesosInvitado($prm_cod_usuadm,$prm_cod_empr,$prm_cod_usu,$prm_tip_usu)
 	{
-	
-	
-		
-		
 		$sql="";
-		
 		if ($prm_tip_usu==1) /*ADMINISTRADOR*/
 		{	
 			$sql="select
@@ -174,6 +155,7 @@ class Menu_model extends CI_Model
 				group by cod_men,nom_men,url_pag,cod_menpad,cod_nivmen,order_men,tien_hij,ord_ejec
 				order by ord_ejec;";
 				//and	cod_empr=".$prm_cod_empr." 
+				//print_r($sql);
 		}
 		else
 		{

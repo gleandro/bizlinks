@@ -627,9 +627,9 @@
 						</tr>
 						<tr>
 							<td style="text-align:right;width:5%" ><label class="columna">RUC:</label></td>
-							<td style="text-align:left;width:15%"><input style="width:90%" type="text" id="txt_RucEmpresa" value="<?php echo trim(utf8_encode($Ruc_Empresa));?>"  disabled="disabled" /></td>
+							<td style="text-align:left;width:15%"><input style="width:90%" type="text" id="txt_RucEmpresa" value="<?php echo trim(utf8_decode($Ruc_Empresa));?>"  disabled="disabled" /></td>
 							<td style="text-align:right;width:8%"><label class="columna">Raz&oacute;n Social:</label></td>
-							<td style="text-align:left;width:30%"><input style="width:95%" type="text" id="txt_RazonSocialEmpresa" value="<?php echo trim(utf8_encode($Razon_Social));?>" disabled="disabled" /></td>	
+							<td style="text-align:left;width:30%"><input style="width:95%" type="text" id="txt_RazonSocialEmpresa" value="<?php echo trim(utf8_decode($Razon_Social));?>" disabled="disabled" /></td>	
 						</tr>
 						<tr>
 							<td style="text-align:right"><label class="columna">Documento:</label></td>
@@ -637,7 +637,7 @@
 								<select id="Cmb_TipoDocumento" style="width:92%;height:25px" >
 									<option value="0">[SELECCIONAR]</option>
 									<?php foreach ( $Listar_TipodeDocumento as $v):	?>
-										<option value="<?php echo trim($v['co_item_tabla']); ?>"><?php echo trim(utf8_encode($v['no_corto']));?> </option>
+										<option value="<?php echo trim($v['co_item_tabla']); ?>"><?php echo trim(utf8_decode($v['no_corto']));?> </option>
 									<?php  endforeach; ?>
 								</select>
 							</td>

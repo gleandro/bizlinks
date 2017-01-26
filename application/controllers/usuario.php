@@ -407,8 +407,8 @@ class Usuario extends CI_Controller {
 				$arr[$key]['cod_usu'] = trim($v['cod_usu']);
 				$arr[$key]['cod_usuadm'] =trim($v['cod_usuadm']);
 				//$arr[$key]['login_usu'] = trim($v['login_usu']); 
-				$arr[$key]['nom_usu'] =  strtoupper($v['nom_usu']);					
-				$arr[$key]['apell_usu'] =  strtoupper($v['apell_usu']);		
+				$arr[$key]['nom_usu'] =  trim($v['nom_usu']);					
+				$arr[$key]['apell_usu'] =  trim($v['apell_usu']);		
 				$arr[$key]['email_usu'] =  trim($v['email_usu']);
 				$arr[$key]['cod_tipusu'] =  trim($v['cod_tipusu']);				
 				$arr[$key]['cod_tipusuconect'] = $_SESSION['SES_InicioSystem'][0]['cod_tipusu'];
@@ -602,8 +602,8 @@ class Usuario extends CI_Controller {
 		{
 			foreach($consulta as $key=>$v):
 				$arr[$key]['cod_usu'] = trim($v['cod_usu']);
-				$arr[$key]['nom_usu'] =  strtoupper($v['nom_usu']);					
-				$arr[$key]['apell_usu'] =  strtoupper($v['apell_usu']);
+				$arr[$key]['nom_usu'] =  trim($v['nom_usu']);					
+				$arr[$key]['apell_usu'] =  trim($v['apell_usu']);
 			endforeach;
 		}
 		if(sizeof($arr)>0)

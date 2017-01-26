@@ -882,7 +882,7 @@
 						<tr>
 							<td style="text-align:right;width:30%"><label class="columna">Emisor:</label></td>
 							<td style="text-align:left;;width:70%" >
-								<input style="width:98%" type="text" id="txt_RazonSocialEmpresa" value="<?php echo trim(utf8_encode($Razon_Social));?>"
+								<input style="width:98%" type="text" id="txt_RazonSocialEmpresa" value="<?php echo trim(utf8_decode($Razon_Social));?>"
 									disabled="disabled" />
 							</td>
 						</tr>	
@@ -899,7 +899,7 @@
 								<select id="cmb_tipodocumento" style="width:40%;height:22px" onChange="javascrip:Completar_TipoDocumento(this.value)">
 									<option value="0">[SELECCIONAR]</option>
 									<?php foreach ( $Listar_TipodeDocumento as $v):	?>
-										<option value="<?php echo trim($v['co_item_tabla']); ?>"><?php echo trim(utf8_encode($v['no_corto']));?> </option>
+										<option value="<?php echo trim($v['co_item_tabla']); ?>"><?php echo trim(utf8_decode($v['no_corto']));?> </option>
 									<?php  endforeach; ?>
 								</select>
 							</td>

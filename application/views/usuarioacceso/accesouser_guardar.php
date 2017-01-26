@@ -354,7 +354,7 @@
 								<select id="Cmb_Empresa" style="width:50%;height:30px" onChange="javascrip:ncsistema.Buscar_Permisos(this.value)">
 									<option value="">[SELECCIONAR]</option>
 									<?php foreach ( $Listar_Empresa as $v):	?>
-										<option value="<?php echo trim($v['cod_empr']); ?>"><?php echo trim(utf8_encode($v['raz_social']));?> </option>
+										<option value="<?php echo trim($v['cod_empr']); ?>"><?php echo trim(utf8_decode($v['raz_social']));?> </option>
 									<?php  endforeach; ?>
 								</select>
 							</td>
@@ -369,7 +369,7 @@
 										if ($v['cod_tipusu']==0)
 											{	
 										?>
-										<option value="<?php echo trim($v['cod_usu']); ?>"><?php echo trim(utf8_encode($v['apell_usu'])).', '.trim(utf8_encode($v['nom_usu'])).'  [ '.trim(utf8_encode($v['login_usu'])).' ]';?> </option>
+										<option value="<?php echo trim($v['cod_usu']); ?>"><?php echo trim(utf8_decode($v['apell_usu'])).', '.trim(utf8_decode($v['nom_usu'])).'  [ '.trim(utf8_decode($v['login_usu'])).' ]';?> </option>
 									<?php }  endforeach; ?>
 								</select>
 							</td>

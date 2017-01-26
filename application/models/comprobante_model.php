@@ -375,6 +375,8 @@ class Comprobante_model extends CI_Model
 			$query_colum=$query_colum."tipodocumentoadquiriente,";	$query_valores=$query_valores."'".$prm_tipodocumentoadquiriente."',";
 		}
 		if ($prm_razonsocialadquiriente!=''){
+			if ($prm_razonsocialadquiriente=='GENERICO')
+				$prm_razonsocialadquiriente='-';
 			$query_colum=$query_colum."razonsocialadquiriente,";	$query_valores=$query_valores."'".$prm_razonsocialadquiriente."',";
 		}
 		if ($prm_tipomoneda!=''){
@@ -410,9 +412,10 @@ class Comprobante_model extends CI_Model
 		//Requerimiento de cambio 4: Porcentaje de Otros cargos
 		if ($prm_totalotroscargos!='')
 		{
+			if(floatval($prm_porcentajeotroscargos)>0){
 			$query_colum=$query_colum."totalOtrosCargos,";				$query_valores=$query_valores."'".$prm_totalotroscargos."',";
 			$query_colum=$query_colum."codigoAuxiliar40_2,"; 			$query_valores=$query_valores."'9370',";
-			$query_colum=$query_colum."textoAuxiliar40_2,"; 			$query_valores=$query_valores."'".$prm_porcentajeotroscargos."%',";
+			$query_colum=$query_colum."textoAuxiliar40_2,"; 			$query_valores=$query_valores."'".$prm_porcentajeotroscargos."%',";}
 		}
 		//Fin Requerimiento
 		//Requerimiento de cambio 4: Registro del valor de IGV
@@ -445,15 +448,19 @@ class Comprobante_model extends CI_Model
 		if($prm_tipodocumento=='03')//BOLETA
 		{
 			$datosadquiriente=substr($datosadquiriente, 0, 100);
-			$query_colum=$query_colum."lugardestino,";					$query_valores=$query_valores."'".$datosadquiriente."',";
+			if ($datosadquiriente!=''){
+				$query_colum=$query_colum."lugardestino,";					$query_valores=$query_valores."'".$datosadquiriente."',";
+				}
 		}else
 		{
-			if ($prm_tipodocumento=='07' or $prm_tipodocumento=='08') //es nc o dn
+			if ($prm_tipodocumento=='07' || $prm_tipodocumento=='08') //es nc o dn
 			{
 				if ($prm_tipodocumentoreferenciaprincip=='03')// es boleta
 				{
 					$datosadquiriente=substr($datosadquiriente, 0, 100);
-					$query_colum=$query_colum."lugardestino,";			$query_valores=$query_valores."'".$datosadquiriente."',";
+					if ($datosadquiriente!=''){
+						$query_colum=$query_colum."lugardestino,";			$query_valores=$query_valores."'".$datosadquiriente."',";
+						}
 				}
 			}
 		}//end if
@@ -511,7 +518,7 @@ class Comprobante_model extends CI_Model
 				$query_colum=$query_colum."codigoserienumeroafectado,";	$query_valores=$query_valores."'".$prm_codigoserienumeroafectado."',";
 			}
 			if ($prm_serienumeroafectado!=''){
-				$query_colum=$query_colum."serienumeroafectado,";		$query_valores=$query_valores."'".$prm_serienumeroafectado."',";
+				$query_colum=$query_colum."serienumeroafectado,";		$query_valores=$query_valores."'".strtoupper($prm_serienumeroafectado)."',";
 			}
 			if ($prm_motivodocumento!=''){
 				$query_colum=$query_colum."motivodocumento,";			$query_valores=$query_valores."'".$prm_motivodocumento."',";
@@ -520,7 +527,7 @@ class Comprobante_model extends CI_Model
 				$query_colum=$query_colum."tipodocumentoreferenciaprincip,"; 	$query_valores=$query_valores."'".$prm_tipodocumentoreferenciaprincip."',";
 			}
 			if ($prm_numerodocumentoreferenciaprinc!=''){
-				$query_colum=$query_colum."numerodocumentoreferenciaprinc,";	$query_valores=$query_valores."'".$prm_numerodocumentoreferenciaprinc."',";
+				$query_colum=$query_colum."numerodocumentoreferenciaprinc,";	$query_valores=$query_valores."'".strtoupper($prm_numerodocumentoreferenciaprinc)."',";
 			}
 			if ($prm_tipodocumentoreferenciacorregi!=''){
 				$query_colum=$query_colum."tipodocumentoreferenciacorregi,";	$query_valores=$query_valores."'".$prm_tipodocumentoreferenciacorregi."',";
@@ -709,9 +716,13 @@ class Comprobante_model extends CI_Model
 			}
 			//Requerimiento 4: Insertar Precio total
 			if ($valor_Aditional==3){
-				$PrecioTotal_tmp=(($v['cant_prod'])*($val_precioconigv))-($val_descuento*(1+$valorigv));
-				$query_colum=$query_colum."codigoauxiliar40_1,"; 		$query_valores=$query_valores."'9122',";
-				$query_colum=$query_colum."textoAuxiliar40_1,"; 		$query_valores=$query_valores."'".number_format(trim($PrecioTotal_tmp), 2, '.', '')."',";
+				//Se condiciona solo para factura y boleta
+				if($prm_tipodocumento=='03' || $prm_tipodocumento=='01')
+				{
+					$PrecioTotal_tmp=(($v['cant_prod'])*($val_precioconigv))-($val_descuento*(1+$valorigv));
+					$query_colum=$query_colum."codigoauxiliar40_1,"; 		$query_valores=$query_valores."'9122',";
+					$query_colum=$query_colum."textoAuxiliar40_1,"; 		$query_valores=$query_valores."'".number_format(trim($PrecioTotal_tmp), 2, '.', '')."',";
+				}
 			}
 			//Fin requerimiento 4
 				
@@ -783,9 +794,10 @@ class Comprobante_model extends CI_Model
 	}	
 	
 	
-	function Listar_Comprobantes($prm_ruc_empr,$prm_documento_cliente,$prm_serie_numeroinicio,
-					$prm_serie_numerofinal,$prm_cod_estdoc,$prm_fec_emisinicio,$prm_fec_emisfinal,
-					$prm_tipo_documentosunat,$prm_estado_documentosunat,$prm_tipomoneda, $prm_razonsocialcliente)
+	function Listar_Comprobantes($prm_ruc_empr,			$prm_documento_cliente,	$prm_serie_numeroinicio,
+								$prm_serie_numerofinal,	$prm_cod_estdoc,		$prm_fec_emisinicio,
+								$prm_fec_emisfinal,		$prm_tipo_documentosunat,$prm_estado_documentosunat,
+								$prm_tipomoneda, $prm_razonsocialcliente)
 	{
 		$prm_conect_db='ncserver';
 		$this->db_client = $this->load->database($prm_conect_db, true);
@@ -1055,6 +1067,7 @@ class Comprobante_model extends CI_Model
 					a.fechaemision,
 					a.numerodocumentoadquiriente,
 					a.razonsocialadquiriente,
+					a.lugardestino,
 					a.textoleyenda_1,
 					a.tipomoneda,
 					a.totalbonificacion,
@@ -1338,23 +1351,19 @@ class Comprobante_model extends CI_Model
 		return $result;
 	}
 	
-	function Buscar_DetalleCaracteristica($prm_tipodocumentoemisor,$prm_numerodocumentoemisor,$prm_tipodedocumento,$prm_serienumero,$prm_clave)
+	function Buscar_DetalleCaracteristica($prm_tipodocumentoemisor,$prm_numerodocumentoemisor,$prm_tipodedocumento,$prm_serienumero)//,$prm_clave)
 	{
 		$prm_conect_db='ncserver';
 		$this->db_client = $this->load->database($prm_conect_db, true);
 
 		$query="";
-		$query="select valor from spe_einvoiceheader_add 
+		$query="select clave, valor from spe_einvoiceheader_add 
 			where 
 				tipodocumentoemisor='".$prm_tipodocumentoemisor."'
 				and numerodocumentoemisor='".$prm_numerodocumentoemisor."'
 				and tipodocumento= '".$prm_tipodedocumento."'
-				and serienumero= '".$prm_serienumero."' 
-				and clave= '".$prm_clave."' ";
-
-		//print_r($query);
-		//return;
-					
+				and serienumero= '".$prm_serienumero."';" ;
+				//and clave= '".$prm_clave."' ";
 		$consulta =  $this->db_client->query($query);		
 		return $consulta->result_array();
 
@@ -1372,7 +1381,7 @@ class Comprobante_model extends CI_Model
 				tipodocumentoemisor='".$prm_tipodocumentoemisor."'
 				and numerodocumentoemisor='".$prm_numerodocumentoemisor."'
 				and tipodocumento= '".$prm_tipodedocumento."'
-				and serienumero> '".$prm_serienumero."' order by  serienumero";
+				and serienumero> '".$prm_serienumero."' order by  serienumero;";
 
 		//print_r($query);
 		//return;
@@ -1393,7 +1402,7 @@ class Comprobante_model extends CI_Model
 				tipodocumentoemisor='".$prm_tipodocumentoemisor."'
 				and numerodocumentoemisor='".$prm_numerodocumentoemisor."'
 				and tipodocumento= '".$prm_tipodedocumento."'
-				and serienumero< '".$prm_serienumero."' order by  serienumero desc";
+				and serienumero< '".$prm_serienumero."' order by  serienumero desc;";
 
 		//print_r($query);
 		//return;

@@ -386,7 +386,7 @@ class Clientes_model extends CI_Model
 				and a.est_reg=1;";
 		
 		//print_r($query);
-		
+		//return;
 		$consulta = $this->db->query($query);
 		
 		return $consulta->result_array();

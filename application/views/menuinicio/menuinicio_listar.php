@@ -1493,7 +1493,7 @@
 								<select id="Cmb_Planes" style="width:40%;height:30px" onChange="javascrip:ncsistema.Buscar_Permisos(this.value)">
 									<option value="">[SELECCIONAR]</option>
 									<?php foreach ( $Listar_TipoLicencia as $v):	?>
-										<option value="<?php echo trim($v['cod_tiplic']); ?>"><?php echo trim(utf8_encode($v['nom_tiplic']));?> </option>
+										<option value="<?php echo trim($v['cod_tiplic']); ?>"><?php echo trim(utf8_decode($v['nom_tiplic']));?> </option>
 									<?php  endforeach; ?>
 								</select>
 							</td>
@@ -1557,7 +1557,7 @@
 									<option value="">[SELECCIONAR]</option>
 										<option value="0">NINGUNO</option>
 									<?php foreach ( $Listar_TipoLicencia as $v):	?>
-										<option value="<?php echo trim($v['cod_tiplic']); ?>"><?php echo trim(utf8_encode($v['nom_tiplic']));?> </option>
+										<option value="<?php echo trim($v['cod_tiplic']); ?>"><?php echo trim(utf8_decode($v['nom_tiplic']));?> </option>
 									<?php  endforeach; ?>
 								</select>
 							</td>							
@@ -1619,7 +1619,7 @@
 								<select id="Cmb_PlanAdmiLicen" style="width:70%;height:30px" >
 									<option value="">[SELECCIONAR]</option>
 									<?php foreach ( $Listar_TipoLicencia as $v):	?>
-										<option value="<?php echo trim($v['cod_tiplic']); ?>"><?php echo trim(utf8_encode($v['nom_tiplic']));?> </option>
+										<option value="<?php echo trim($v['cod_tiplic']); ?>"><?php echo trim(utf8_decode($v['nom_tiplic']));?> </option>
 									<?php  endforeach; ?>
 								</select>
 							</td>	
