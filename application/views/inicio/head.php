@@ -207,29 +207,36 @@
 	<ul class="menu" style='color: #ffffff; font-family: "Lucida Sans Unicode","Trebuchet Unicode MS",
 		"Lucida Grande",sans-serif; font-size: 13px; font-weight: bold; line-height: 34px;'>			
 		<?php 
-			$num_nivant=0;				
+			$num_nivant=0;
 			$niv_1=0;
 			$niv_2=0;
-			$niv_3=0;				
-			foreach ( $Listar_UsuarioAccesos as $v):				
+			$niv_3=0;
+			foreach ( $Listar_UsuarioAccesos as $v):	
 				if($v['cod_nivmen']==1)
 				{	
 					if ($num_nivant==0)
 					{
-						?>
-						<li class="top" class="ui-menu-item"><a class="top_link" href="<?php if ($v['url_pag']==''){echo "#";}else{echo base_url().trim($v['url_pag']);} ?>"><span class="down"><?php echo trim(utf8_decode($v['nom_men'])); ?></span></a>
-				<?php }	
-					
-					else if ($num_nivant==1)
-					{
-						?>
-							</li>
-						<li class="top"><a class="top_link" href="<?php if ($v['url_pag']==''){echo "#";}else{echo base_url().trim($v['url_pag']);} ?>"><span class="down"><?php echo trim(utf8_decode($v['nom_men'])); ?></span></a>
-				<?php }	
-				
-					else if ($num_nivant==2)
-					{
-						?>
+		?>
+						<li class="top" class="ui-menu-item">
+							<a class="top_link" href="<?php if ($v['url_pag']==''){echo "#";}else{echo base_url().trim($v['url_pag']);} ?>">
+								<span class="down"><?php echo trim(utf8_decode($v['nom_men'])); ?></span>
+							</a>
+					<?php 
+					}
+					else 
+						if ($num_nivant==1)
+						  {
+					?>
+						</li>
+							<li class="top">
+								<a class="top_link" href="<?php if ($v['url_pag']==''){echo "#";}else{echo base_url().trim($v['url_pag']);} ?>">
+									<span class="down"><?php echo trim(utf8_decode($v['nom_men'])); ?></span>
+								</a>
+					<?php }	
+						else 
+							if ($num_nivant==2)
+							{
+					?>
 								</ul>
 							</li>
 						<li class="top"><a class="top_link" href="<?php if ($v['url_pag']==''){echo "#";}else{echo base_url().trim($v['url_pag']);} ?>"><span class="down"><?php echo trim(utf8_decode($v['nom_men'])); ?></span></a>
@@ -358,7 +365,7 @@
 				</td>
 			
 				<td style="width:5%;text-align:right;font-weight:bold; font-size: 12px; " >Usuario:</td>
-				<td style="width:22%;text-align:left; font-size: 12px; "><?php if(!empty($_SESSION['SES_InicioSystem'])) { echo $_SESSION['SES_InicioSystem'][0]['nom_usu'].' '.$_SESSION['SES_InicioSystem'][0]['apell_usu'].'  ['.$_SESSION['SES_InicioSystem'][0]['login_usu'].']'; } else {echo "...";} ?></td>
+				<td style="width:22%;text-align:left; font-size: 12px; "><?php if(!empty($_SESSION['SES_InicioSystem'])) { echo utf8_decode($_SESSION['SES_InicioSystem'][0]['nom_usu']).' '.utf8_decode($_SESSION['SES_InicioSystem'][0]['apell_usu']).'  ['.utf8_decode($_SESSION['SES_InicioSystem'][0]['login_usu']).']'; } else {echo "...";} ?></td>
 				
 				<td style="width:5%;text-align:right;font-weight:bold; font-size: 12px; " >Empresa:</td>
 				<td style="width:23%;text-align:left; font-size: 12px; ">

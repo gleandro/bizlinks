@@ -123,11 +123,8 @@ class Catalogos_model extends CI_Model
 		return $tipoafectacion;
 	}
 	
-	
-	
 	function Datos_Ubigeo($prm_cod_depa,$prm_cod_prov,$prm_cod_dist)
 	{
-	
 		$this->load->database('ncserver',TRUE);
 		$query="select 
 			de_departamento,
@@ -137,8 +134,6 @@ class Catalogos_model extends CI_Model
 		where co_departamento=".$prm_cod_depa." and co_provincia=".$prm_cod_prov." and co_distrito=".$prm_cod_dist.";";
 		$consulta=$this->db->query($query);
 		return $consulta->result_array();	
-
-		
 	}
 	
 	
@@ -171,7 +166,7 @@ class Catalogos_model extends CI_Model
 		$lista=array ( 
 						"0"  => array ( "codigo"=> "01","nombre"=> "Intereses por mora"),
 						"1"  => array ( "codigo"=>  "02","nombre" => "Aumento en el valor"),
-						"2"  => array ( "codigo"=>  "03","nombre" => "Penalidades/ Otros Conceptos")					
+						"2"  => array ( "codigo"=>  "03","nombre" => "Penalidades/Otros Conceptos")					
                 	);
 
 		return $lista;	
@@ -353,11 +348,10 @@ class Catalogos_model extends CI_Model
 		return $consulta->result_array();	
 	}
 	
-	
 	function Listar_EstadoSunatResumen()
 	{
 		$this->load->database('ncserver',TRUE);
-		$query="select co_item_tabla,no_corto from tm_tabla_multiple 
+		$query="select co_item_tabla,no_corto,no_largo from tm_tabla_multiple 
 				where no_tabla='ESTADO_RESUMENDOCUMENTO_PORTAL' and in_habilitado=1 and co_item_tabla<>'PE_02';";
 		$consulta=$this->db->query($query);
 		return $consulta->result_array();	
@@ -365,12 +359,28 @@ class Catalogos_model extends CI_Model
 	function Listar_EstadoSunatResumen_NoIn()
 	{
 		$this->load->database('ncserver',TRUE);
-		$query="select co_item_tabla,no_corto from tm_tabla_multiple 
-				where no_tabla='ESTADO_RESUMENDOCUMENTO_PORTAL' and in_habilitado=1;";
+		$query="select co_item_tabla,no_corto,no_largo from tm_tabla_multiple 
+					where no_tabla='ESTADO_RESUMENDOCUMENTO_PORTAL' and in_habilitado=1;";
 		$consulta=$this->db->query($query);
 		return $consulta->result_array();	
 	}
 	
+	function Listar_EstadoSunatRetencion()
+	{
+		$this->load->database('ncserver',TRUE);
+		$query="select co_item_tabla, no_corto, no_largo from tm_tabla_multiple 
+					where no_tabla='ESTADO_DOCUMENTOSUNATFACTURA_PORTAL' and in_habilitado=1 and co_item_tabla<>'PE_02';";
+		$consulta=$this->db->query($query);
+		return $consulta->result_array();	
+	}
+	function Listar_EstadoSunatRetencion_NoIn()
+	{
+		$this->load->database('ncserver',TRUE);
+		$query="select co_item_tabla, no_corto, no_largo from tm_tabla_multiple 
+					where no_tabla='ESTADO_DOCUMENTOSUNATFACTURA_PORTAL' and in_habilitado=1;";
+		$consulta=$this->db->query($query);
+		return $consulta->result_array();	
+	}
 	
 	function Listar_Roles()
 	{

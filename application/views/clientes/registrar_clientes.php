@@ -1005,7 +1005,7 @@
 								<select id="cmb_paiscliente" style="width:100%;height:22px" onChange="javascrip:Listar_Departamento(this.value,0)">
 									<option value="">[SELECCIONAR]</option>
 									<?php foreach ( $Listar_Paises as $v):	?>
-										<option value="<?php echo trim($v['id']); ?>"><?php echo trim(strtoupper(utf8_encode($v['nombre'])));?> </option>
+										<option value="<?php echo trim($v['id']); ?>"><?php echo trim(strtoupper(utf8_decode($v['nombre'])));?> </option>
 									<?php  endforeach; ?>
 								</select>
 							</td>

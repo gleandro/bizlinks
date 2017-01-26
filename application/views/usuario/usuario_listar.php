@@ -922,7 +922,9 @@
 			
 			function validarEmail(valor) 
 			{
-				if (/(\w+)(\.?)(\w*)(\@{1})(\w+)(\.?)(\w*)(\.{1})(\w{2,3})/.test(valor))
+				filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+				//if (/(\w+)(\.?)(\w*)(\@{1})(\w+)(\.?)(\w*)(\.{1})(\w{2,3})/.test(valor))
+				if (filter.test(valor))
 				{
 					return true;
 				} 
@@ -1317,7 +1319,8 @@
 								<select id="Cmb_Roles" style="width:100%;height:25px" onChange="javascrip:Buscar_TipoEmpresa(this.value)">
 									<option value="0">[SELECCIONAR]</option>
 									<?php foreach ( $Listar_Roles as $v):	?>
-										<option value="<?php echo trim($v['cod_rol']); ?>"><?php echo trim(utf8_decode($v['desc_rol']));?> </option>
+										<option value="<?php echo trim($v['cod_rol']); ?>">
+										<?php echo trim(utf8_decode($v['desc_rol']));?> </option>
 									<?php  endforeach; ?>
 								</select>
 							</td>
@@ -1341,7 +1344,7 @@
 												{	
 											?>
 											<option value="<?php echo trim($v['cod_usu']); ?>">
-											<?php echo trim(strtoupper(utf8_encode($v['apell_usu']))).' '.trim(strtoupper(utf8_encode($v['nom_usu']))).'  [ '.trim(utf8_encode($v['email_usu'])).' ]';?> </option>
+											<?php echo trim(utf8_decode($v['apell_usu'])).' '.trim(utf8_decode($v['nom_usu'])).'  [ '.utf8_decode($v['email_usu']).' ]';?> </option>
 										<?php }  endforeach; ?>
 									</select>
 								</div>

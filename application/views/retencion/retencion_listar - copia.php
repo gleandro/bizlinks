@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-		<title>SFE Bizlinks - Comprobantes</title>
+		<title>SFE Bizlinks - Retención</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 		
 		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/jquery-ui.css"/>
@@ -32,9 +32,9 @@
 			{
 				$.datepicker.setDefaults($.datepicker.regional["es"]);
 				$("#tabs").tabs();
-				ncsistema.Listar_ComprobantesTabla('',0);	
-				
-				$('#txt_FechaGenInicio,#txt_FechaEmisionInicio').datepicker({
+				ncsistema.Listar_RetencionesTabla('',0);	
+				$('#txt_FechaEmisionInicio').datepicker({
+					//defaultDate: new Date().getDay-5,
 					showOn: 'button',					
 					buttonImage: "<?php echo base_url()?>application/helpers/image/ico/calendar_icon.gif",
 					buttonImageOnly: true,
@@ -42,11 +42,11 @@
 					buttonText: "Desde (##/##/####)",
 					maxDate: 'today',
 					changeMonth: true ,
-					changeYear: true
+					changeYear: true 
+					
 				});
-				$('#txt_FechaEmisionInicio').datepicker('setDate', 'today -1');
 				
-				$('#txt_FechaGenFinal,#txt_FechaEmisionFinal').datepicker({
+				$('#txt_FechaEmisionFinal').datepicker({
 					showOn: 'button',					
 					buttonImage: "<?php echo base_url()?>application/helpers/image/ico/calendar_icon.gif",
 					buttonImageOnly: true,
@@ -57,9 +57,11 @@
 					changeYear: true
 				});
 				$('#txt_FechaEmisionFinal').datepicker('setDate', new Date());
+				$('#txt_FechaEmisionInicio').datepicker('setDate', 'today -1');
 				ncsistema.Buscar_Clientes();
 			})
 			
+			//INICIO NCSISTEMA
 			ncsistema=
 			{
 				Buscar_Clientes:function ()
@@ -87,48 +89,56 @@
 						},
 						focus: function( event, ui ) 
 						{
-							//$('#t_nombsol').val( ui.item.value );
 							return false;
 						},
 						select: function( event, ui ) 
 						{
 							$('#txt_RazonSocialCliente').val(ui.item.value );
 							$('#txt_DocumentoCliente').val(ui.item.nro_docum);
-
 							return false;
 						}
 					});
 				},
 
-			Listar_Comprobantes:function()
+				Listar_Retenciones:function()
 				{
 					var txt_RucEmpresa=$.trim($('#txt_RucEmpresa').val());
-					var txt_DocumentoCliente=$.trim($('#txt_DocumentoCliente').val());					
-					var txt_RazonSocialCliente=$.trim($('#txt_RazonSocialCliente').val());					
+					var txt_RazonSocialCliente=$.trim($('#txt_RazonSocialCliente').val());
+					var txt_DocumentoCliente=$.trim($('#txt_DocumentoCliente').val());
 					var txt_serienumeroinicio=$.trim($('#txt_serienumeroinicio').val());
-					var txt_serienumerofinal=$.trim($('#txt_serienumerofinal').val());					
-					var Cmb_EstadoDocumento='0';					
+					var txt_serienumerofinal=$.trim($('#txt_serienumerofinal').val());				
+					var Cmb_EstadoDocumento=$.trim($('#Cmb_EstadoDocumento').val());					
 					var txt_FechaEmisionInicio=$.trim($('#txt_FechaEmisionInicio').val());
 					var txt_FechaEmisionFinal=$.trim($('#txt_FechaEmisionFinal').val());					
-					var Cmb_TipoDocumentoSunat=$.trim($('#Cmb_TipoDocumentoSunat').val());
 					var Cmb_EstadoDocumentoSunat=$.trim($('#Cmb_EstadoDocumentoSunat').val());
-					var Cmb_TipoMoneda=$.trim($('#Cmb_TipoMoneda').val());
-
-					$('#txt_filtrobusqueda').val(txt_RucEmpresa+','+txt_DocumentoCliente+','+txt_RazonSocialCliente+','+txt_serienumeroinicio+','+txt_serienumerofinal+','+Cmb_EstadoDocumento+','+txt_FechaEmisionInicio+','+txt_FechaEmisionFinal+','+Cmb_TipoDocumentoSunat+','+Cmb_EstadoDocumentoSunat+','+Cmb_TipoMoneda);					
+					
+					$('#txt_filtrobusqueda').val(txt_RucEmpresa+','+txt_DocumentoCliente+','+txt_RazonSocialCliente+','+txt_serienumeroinicio+','+txt_serienumerofinal+','+Cmb_EstadoDocumento+','+txt_FechaEmisionInicio+','+txt_FechaEmisionFinal+','+Cmb_EstadoDocumentoSunat);					
 					$('#txt_botonbusqueda').val('1');
 
+					ncsistema.Listar_RetencionesTabla("");
+					
+					if (txt_RazonSocialCliente=='')
+					{
+						txt_DocumentoCliente='';
+						$('#txt_DocumentoCliente').val('');
+					}else
+					{
+						if (txt_DocumentoCliente=='')
+						{
+							alert('El cliente ingresado no tiene documento o no esta registrado');
+							return;
+						}
+					}
 					$('#txt_datosseleccionados').val('');
 					$('#txt_cantidadseleccionados').val('0');
+
+					/*
 					$('#txt_cantidaddocumborrador').val('0');
-					
 					$('#txt_datosseleccionados_estado').val('');
 					$('#txt_cantidaddocum_estado').val('0');
-					
-					$('#txt_documentoemisor').val('');
-					$('#txt_documentoemisordocumentos').val('');
-					//alert(txt_RazonSocialCliente);
+					*/
 					$.ajax({
-						url:'<?php echo base_url()?>comprobante/Listar_Comprobantes',
+						url:'<?php echo base_url()?>retencion/Listar_Retenciones',
 						type: 'post',
 						dataType: 'json',
 						data:
@@ -140,9 +150,8 @@
 							Cmb_EstadoDocumento:Cmb_EstadoDocumento,						
 							txt_FechaEmisionInicio:txt_FechaEmisionInicio,
 							txt_FechaEmisionFinal:txt_FechaEmisionFinal,
-							Cmb_TipoDocumentoSunat:Cmb_TipoDocumentoSunat,
 							Cmb_EstadoDocumentoSunat:Cmb_EstadoDocumentoSunat,
-							Cmb_TipoMoneda:Cmb_TipoMoneda
+							txt_RazonSocialCliente:txt_RazonSocialCliente
 						},
 						beforeSend:function()
 						{
@@ -153,7 +162,7 @@
 							$('#div_procesarbuscar').empty().append('');
 							if(result.status==1)
 							{
-								ncsistema.Listar_ComprobantesTabla(result.data);								
+								ncsistema.Listar_RetencionesTabla(result.data);								
 							}
 							else if (result.status==1000)
 							{
@@ -162,68 +171,85 @@
 							}
 							else
 							{
-								ncsistema.Listar_ComprobantesTabla("");
+								ncsistema.Listar_RetencionesTabla("");
 							}
 						}
 					});					
 				},				
 				
-				Listar_ComprobantesTabla:function(data,tipodocumento)
+				
+				Listar_RetencionesTabla:function(data)
 				{	
-					$('#div_ListadoEmpresa').empty().append('');
+					$('#div_ListadoRetenciones').empty().append('');
 					
 					newHtml='';
-					newHtml+='<table width="100%"  cellpadding="0" cellspacing="0" class="display" id="Tab_ListaEmpresa">';
+					newHtml+='<table width="100%"  cellpadding="0" cellspacing="0" class="display" id="Tab_ListaRetenciones">';
 					newHtml+='<thead>';
 					newHtml+='<tr>';						
 						newHtml+='<th width:3%>Opci&oacute;n</td>';						
-						newHtml+='<th width:5%>Emisor</td>';						
-						newHtml+='<th width:10%>Tipo Doc.</td>';
-						newHtml+='<th width:10%>Serie-Num.</td>';
-						newHtml+='<th width:20%>Moneda</td>';
-						newHtml+='<th width:50%>Imp.Total</td>';
-						newHtml+='<th width:50%>Fec.Emisi&oacute;n</td>';
-						newHtml+='<th width:50%>Est.Doc.</td>';
-						newHtml+='<th width:50%>Est.Sunat</td>';
-						newHtml+='<th width:50%>Descripci&oacute;n</td>';
-						//newHtml+='<th width:50%>Intentos</td>';
-						newHtml+='<th width:50%>Visto</td>';
+						newHtml+='<th width:10%>Proveedor</td>';						
+						newHtml+='<th width:20%>SerieNúmero</td>';
+						newHtml+='<th width:5%>Imp.Total a Pagar</td>';
+						newHtml+='<th width:5%>Moneda a Pagar</td>';
+						newHtml+='<th width:5%>Imp.Total Retenido</td>';
+						newHtml+='<th width:5%>Moneda Retenido</td>';
+						newHtml+='<th width:7%>Fec.Emisi&oacute;n</td>';
+						newHtml+='<th width:7%>Est.Doc.</td>';
+						newHtml+='<th width:8%>Est.SUNAT</td>';
+						newHtml+='<th width:25%>Descripci&oacute;n</td>';
+						newHtml+='<th width:5%>Visto</td>';
 					newHtml+='</tr>';
 					newHtml+='</thead>';
         			newHtml+='<tbody>';
-					//<input style="height:20px;width:95%" id="txt_login" type="text" value="'+rs.cantidadproducto+'"/>
 					contador=0;
 					$.each(data,function(key,rs)
-					{						
-						newHtml+='<tr>';															
-
-							newHtml+='<td style="text-align:center;color:#990000;font-weight:bold"><input id="cbox_seleccion_'+key+'" type="checkbox" value="" name="cbox_seleccion_'+key+'" onChange="javascrip:Seleccionar_DatosBusqueda('+key+',\''+rs.tipodocumento+'\',\''+rs.serienumero+'\',\''+rs.bl_estadoregistro+'\',\''+rs.estadosunat+'\',\''+rs.numerodocumentoemisor+'\')" ></td>';
-							newHtml+='<td style="text-align:left">'+rs.razonsocialadquiriente+'</td>';		
-							newHtml+='<td style="text-align:left">'+rs.nomb_tipodocumento+'</td>';
-							newHtml+='<td style="text-align:left">'+rs.serienumero+'</td>';
-							newHtml+='<td style="text-align:left">'+rs.tipomoneda+'</td>';	
-							newHtml+='<td style="text-align:right">'+rs.totalventa+'</td>';			
+					{
+						newHtml+='<tr>';										
+							newHtml+='<td style="text-align:center;color:#990000;font-weight:bold"><input id="cbox_seleccion_'+key+'" type="checkbox" value="" name="cbox_seleccion_'+key+'" onChange="javascrip:Seleccionar_DatosBusqueda('+key+',\''+rs.tipodocumento+'\',\''+rs.serienumeroretencion+'\',\''+rs.bl_estadoregistro+'\',\''+rs.estadosunat+'\')" ></td>';
+							newHtml+='<td style="text-align:left">'+rs.razonsocialproveedor+'</td>';		
+							newHtml+='<td style="text-align:center">'+rs.serienumeroretencion+'</td>';
+							newHtml+='<td style="text-align:right">'+rs.importetotalpagado+'</td>';
+							newHtml+='<td style="text-align:center">'+rs.tipomonedapagado+'</td>';	
+							newHtml+='<td style="text-align:right">'+rs.importetotalretenido+'</td>';			
+							newHtml+='<td style="text-align:center">'+rs.tipomonedaretenido+'</td>';
 							newHtml+='<td style="text-align:center">'+rs.fechaemision+'</td>';
 							newHtml+='<td style="text-align:left">'+rs.estado_documento+'</td>';
 							newHtml+='<td style="text-align:left">'+rs.nombreestadosunat+'</td>';
 							newHtml+='<td style="text-align:left">'+rs.obssunat+'</td>';
-							//newHtml+='<td style="text-align:center">'+rs.cant_reintento+'</td>';
 							if (rs.visualizado==0)//NO VISTO
 							{
-								newHtml+='<td style="text-align:left"> <div id="div_imgrecep_'+rs.tipodocumento+'-'+rs.serienumero+'">  <img align="left" src="<?php echo base_url();?>application/helpers/image/ico/ncinactivo.png" title="Enviado, recepcionado, no visualizado" ></div></td>';								
+								newHtml+='<td style="text-align:left"><img align="left" src="<?php echo base_url();?>application/helpers/image/ico/ncinactivo.png" title="Enviado, recepcionado, no visualizado" ></td>';								
 							}
 							else
 							{
-								newHtml+='<td style="text-align:left"><img align="left" src="<?php echo base_url();?>application/helpers/image/ico/ncactivo.png" title="Enviado, recepcionado, visualizado" ></td>';
+								newHtml+='<td style="text-align:center"><img align="left" src="<?php echo base_url();?>application/helpers/image/ico/ncactivo.png" title="Enviado, recepcionado, visualizado" ></td>';
 							}
+							/*
+							$arr[$key]['nro_secuencia'] = $Contador;
+							$arr[$key]['razonsocialproveedor'] =strtoupper(trim($v['razonsocialproveedor'])); 
+							$arr[$key]['tipodocumento'] =trim($v['tipodocumento']); 
+							$arr[$key]['serieNumeroRetencion'] =trim($v['serieNumeroRetencion']); 
+							$arr[$key]['importetotalpagado'] =  trim($v['importetotalpagado']);
+							$arr[$key]['tipomonedapagado'] =  trim(strtoupper($v['tipomonedapagado']));
+							$arr[$key]['importetotalretenido'] =  trim($v['importetotalretenido']);
+							$arr[$key]['tipomonedaretenido'] =  trim(strtoupper($v['tipomonedaretenido']));
+							$arr[$key]['fechaemision'] = trim($v['fechaemision']);				
+							$arr[$key]['bl_estadoregistro'] =  trim($v['bl_estadoregistro']);
+							$arr[$key]['estado_documento'] =  trim(strtoupper($v['estadoregistro']));
+							$arr[$key]['estadosunat'] =  trim($v['estadosunat']);
+							$arr[$key]['nombreestadosunat']=strtoupper($this->Comprobante_model->Listar_EstadoDocumento($v['tipodocumento'],strtoupper($v['estadosunat'])));
+							$arr[$key]['numerodocumentoemisor'] =  trim($v['numerodocumentoemisor']);						
+							$arr[$key]['visualizado'] =  trim($v['visualizado']);
+							$arr[$key]['obssunat'] ='Pendiente de envio - Programado';
+							$arr[$key]['cant_reintento'] =  trim($v['reintento']);*/
 						newHtml+='</tr>';						
 					});	
 					newHtml+='</tbody>';
 					newHtml+='</table>';
 					
-					$('#div_ListadoEmpresa').empty().append(newHtml);	
+					$('#div_ListadoRetenciones').empty().append(newHtml);	
 
-					oTable=$('#Tab_ListaEmpresa').dataTable({
+					oTable=$('#Tab_ListaRetenciones').dataTable({
 						"bPaginate": true,
 						"sScrollX": "100%",
 						"sScrollXInner": "100%",
@@ -231,7 +257,7 @@
 						"bJQueryUI": true
 					});
 				 
-					$("#Tab_ListaEmpresa tbody").click(function(event) 
+					$("#Tab_ListaRetenciones tbody").click(function(event) 
 					{
 						$(oTable.fnSettings().aoData).each(function (){
 							$(this.nTr).removeClass('row_selected');
@@ -239,32 +265,16 @@
 						$(event.target.parentNode).addClass('row_selected');
 					});
 				},
-				ExportarExcel_General:function()
-				{
-					Descargar_ExcelGeneral();
-				},
 				
-
-				Detalle_Comprobante:function()
+				Detalle_Retenciones:function()
 				{
 					var txt_datosseleccionados=$.trim($('#txt_datosseleccionados').val());	
 					var txt_cantidadseleccionados=$.trim($('#txt_cantidadseleccionados').val());					
-									
+					var txt_RucEmpresa=$.trim($('#txt_RucEmpresa').val());					
 					if (txt_cantidadseleccionados==1)
 					{
-					
-						if(Validar_EmisoresDocumentos()==true)
-						{
-							var txt_RucEmpresa=$.trim($('#txt_documentoemisordocumentos').val());	
-						}
-						else
-						{
-							alert("Los documentos seleccionados no tiene el mismo emisor");
-						}
-					
-					
 						$.ajax({
-							url:'<?php echo base_url()?>comprobante/Listar_DetalleDocumento',
+							url:'<?php echo base_url()?>retencion/Listar_DetalleDocumento',
 							type: 'post',
 							dataType: 'json',
 							data:
@@ -277,12 +287,10 @@
 							},
 							success:function(result)
 							{
-														
 								if(result.status==1)
 								{
-									$('#div_imgrecep_'+txt_datosseleccionados).empty().append('<img align="left" src="<?php echo base_url();?>application/helpers/image/ico/ncactivo.png" title="Enviado, recepcionado, visualizado" >');	
-									ncsistema.Detalle_ComprobanteTabla(result.data);
-									//alert(txt_datosseleccionados);									
+									ncsistema.Detalle_RetencionesTabla(result.data);
+									
 								}
 								else if (result.status==1000)
 								{
@@ -291,8 +299,7 @@
 								}
 								else
 								{
-									ncsistema.Detalle_ComprobanteTabla("");
-									//alert(txt_datosseleccionados);
+									ncsistema.Detalle_RetencionesTabla("");
 								}
 							}
 						});						
@@ -307,8 +314,7 @@
 					}		
 				},				
 				
-				
-				Detalle_ComprobanteTabla:function(data)
+				Detalle_RetencionesTabla:function(data)
 				{	
 					dialogdetallecomprobante.dialog("open");
 					$('#div_documentodetalle').empty().append('');
@@ -347,7 +353,7 @@
 							$('#div_param9').empty().append(rs.razonsocialadquiriente);	
 							$('#div_param10').empty().append(rs.numerodocumentoadquiriente);	
 							$('#div_param11').empty().append(rs.fechaemision);	
-							$('#div_param12').empty().append('');	
+							$('#div_param12').empty().append(rs.direccioncliente);	
 							$('#div_param13').empty().append(rs.tipomonedacabecera);	
 							$('#div_param14').empty().append('');							
 							$('#div_param15').empty().append(rs.textoleyenda_1);							
@@ -407,7 +413,6 @@
 								$('#div_param33').empty().append(rs.totalventa);
 							}
 						}
-						
 						newHtml+='<tr>';															
 
 							newHtml+='<td style="text-align:left">'+rs.numeroordenitem+'</td>';		
@@ -444,130 +449,23 @@
 						$(event.target.parentNode).addClass('row_selected');
 					});
 				},
-			}
+				
+				ExportarExcel_General:function()
+				{
+					Descargar_ExcelGeneral();
+				},
+				
+			}//FIN NCSISTEMA
 			
+			//INICIO FUNCIONES
 			$(function() 
 			{
 				function Imprimir_DocumentoSeleccionadoDetalle() 
 				{
-					var txt_datosseleccionados=$.trim($('#txt_datosseleccionados').val());	
-					var txt_cantidadseleccionados=$.trim($('#txt_cantidadseleccionados').val());	
-					//var txt_rucemisor=$.trim($('#txt_RucEmpresa').val());
-
-					if (txt_cantidadseleccionados>0)
-					{
-						if(Validar_EmisoresDocumentos()==true)
-						{
-							var txt_rucemisor=$.trim($('#txt_documentoemisordocumentos').val());	
-						}
-						else
-						{
-							alert("Los documentos seleccionados no tiene el mismo emisor");
-							return;
-						}
-						//document.location.href=urlexportardatos+'comprobante/Imprimir_DocumentoSeleccionado?param1='+txt_datosseleccionados+'&param2='+txt_rucemisor;
-						
-						$.ajax({
-							url:'<?php echo base_url()?>comprobante/Comprobar_DocumentoImprimir',
-							type: 'post',
-							dataType: 'json',
-							data:
-							{
-								param1:txt_datosseleccionados,
-								param2:txt_rucemisor
-							},
-							beforeSend:function()
-							{								
-							},
-							success:function(result)
-							{
-								if(result.status==1)
-								{
-									document.location.href=urlexportardatos+'comprobante/Imprimir_DocumentoSeleccionado?param1='+txt_datosseleccionados+'&param2='+txt_rucemisor;
-								}
-								else if(result.status==2)
-								{
-									alert("No existen los archivos seleccionados");
-								}
-								else if (result.status==1000)
-								{
-									document.location.href= '<?php echo base_url()?>usuario';
-									return;
-								}
-								else
-								{
-									alert("Error al crear los archivos seleccionados");
-								}
-							}
-						});	
-						
-						
-					}
-					else
-					{
-						alert("Debe seleccionar al menos un registro");
-					}
+					
 				}
 				function Descargar_DocumentoSeleccionadoDetalle() 
 				{
-					var txt_datosseleccionados=$.trim($('#txt_datosseleccionados').val());	
-					var txt_cantidadseleccionados=$.trim($('#txt_cantidadseleccionados').val());	
-
-					if (txt_cantidadseleccionados>0)
-					{
-						if(Validar_EmisoresDocumentos()==true)
-						{
-							var txt_rucemisor=$.trim($('#txt_documentoemisordocumentos').val());	
-						}
-						else
-						{
-							alert("Los documentos seleccionados no tiene el mismo emisor");
-							return;
-						}
-						
-						$.ajax({
-								url:'<?php echo base_url()?>comprobante/Crear_ArchivosDocumentoSeleccionado',
-								type: 'post',
-								dataType: 'json',
-								data:
-								{
-									param1:txt_datosseleccionados,
-									param2:txt_rucemisor
-								},
-								beforeSend:function()
-								{
-									
-								},
-								success:function(result)
-								{
-									if(result.status==1)
-									{
-										Descargar_DocumentoSeleccionadoArchivos();
-									}
-									else if(result.status==2)
-									{
-										alert("No se encontraron archivos para los documentos seleccionados");
-									}
-									else if (result.status==1000)
-									{
-										document.location.href= '<?php echo base_url()?>usuario';
-										return;
-									}
-									else
-									{
-										alert("Error al crear los archivos seleccionados");
-									}
-								}
-							});	
-						
-						 //setTimeout('Descargar_DocumentoSeleccionadoArchivos()',4000)
-	
-					}
-					else
-					{
-						alert("Debe seleccionar al menos un registro");
-					}
-					
 					
 				}
 			
@@ -578,7 +476,6 @@
 					modal: true,
 					buttons: 
 					{
-						
 						"Imprimir": Imprimir_DocumentoSeleccionadoDetalle,
 						"Descargar": Descargar_DocumentoSeleccionadoDetalle,
 						"Salir": function() 
@@ -588,8 +485,6 @@
 					},						
 					close: function() 
 					{
-						//form[ 0 ].reset();
-						//allFields.removeClass( "ui-state-error" );
 					}
 				});
 			
@@ -601,96 +496,26 @@
 				$('#txt_RazonSocialCliente').val('');
 				$('#txt_serienumeroinicio').val('');
 				$('#txt_serienumerofinal').val('');				
-				//$('#Cmb_EstadoDocumento').val('0');
-				$('#txt_FechaEmisionInicio').val('');
-				$('#txt_FechaEmisionFinal').val('');				
-				$('#Cmb_TipoDocumentoSunat').val('0');	
-				$('#Cmb_EstadoDocumentoSunat').val('0');	
-				$('#Cmb_TipoMoneda').val('0');
-				
+				$('#Cmb_EstadoDocumento').val('0');
+				$('#Cmb_EstadoDocumentoSunat').val('0');
 				$('#txt_filtrobusqueda').val('');					
 				$('#txt_botonbusqueda').val('0');
 				
+				$('#txt_FechaEmisionInicio').datepicker('setDate', 'today -1');
+				$('#txt_FechaEmisionFinal').datepicker('setDate', new Date());
 				
-				ncsistema.Listar_ComprobantesTabla('',0);	
-			}
-			
-			
-			function Descargar_ExcelGeneral()
-			{
-				
-				var Cmb_OpcionesExportarExcel=$.trim($('#Cmb_OpcionesExportarExcel').val());	
-				
-				/*
-				var txt_RucEmpresa=$.trim($('#txt_RucEmpresa').val());
-				var txt_DocumentoCliente=$.trim($('#txt_DocumentoCliente').val());					
-				var txt_RazonSocialCliente=$.trim($('#txt_RazonSocialCliente').val());				
-				var txt_serienumeroinicio=$.trim($('#txt_serienumeroinicio').val());
-				var txt_serienumerofinal=$.trim($('#txt_serienumerofinal').val());				
-				var Cmb_EstadoDocumento='0';				
-				var txt_FechaEmisionInicio=$.trim($('#txt_FechaEmisionInicio').val());
-				var txt_FechaEmisionFinal=$.trim($('#txt_FechaEmisionFinal').val());				
-				var Cmb_TipoDocumentoSunat=$.trim($('#Cmb_TipoDocumentoSunat').val());
-				var Cmb_EstadoDocumentoSunat=$.trim($('#Cmb_EstadoDocumentoSunat').val());
-				var txt_datosseleccionados=$.trim($('#txt_datosseleccionados').val());
-				var Cmb_TipoMoneda=$.trim($('#Cmb_TipoMoneda').val());
-				*/
-				
-				var txt_botonbusqueda=$.trim($('#txt_botonbusqueda').val());
-				if (txt_botonbusqueda==0)
-				{
-					alert('No ha realizado ninguna busqueda');
-					return;
-				}				
-				var str = $('#txt_filtrobusqueda').val();
-				var resultado = str.split(','); 
-				
-				//alert(resultado[11]);
-				
-				var txt_RucEmpresa=resultado[0];
-				var txt_DocumentoCliente=resultado[1];			
-				var txt_RazonSocialCliente=resultado[2];				
-				var txt_serienumeroinicio=resultado[3];
-				var txt_serienumerofinal=resultado[4];			
-				var Cmb_EstadoDocumento=resultado[5];		
-				var txt_FechaEmisionInicio=resultado[6];
-				var txt_FechaEmisionFinal=resultado[7];				
-				var Cmb_TipoDocumentoSunat=resultado[8];
-				var Cmb_EstadoDocumentoSunat=resultado[9];
-				var Cmb_TipoMoneda=resultado[10];
-				var txt_datosseleccionados=$.trim($('#txt_datosseleccionados').val());
-				
-			if (Cmb_OpcionesExportarExcel==1)
-				{
-					txt_datosseleccionados='';
-					document.location.href=urlexportardatos+'comprobante/Exportar_ExcelGeneral?param1='+txt_RucEmpresa+'&param2='+txt_DocumentoCliente+'&param3='+txt_serienumeroinicio+'&param4='+txt_serienumerofinal+'&param5='+Cmb_EstadoDocumento+'&param6='+txt_FechaEmisionInicio+'&param7='+txt_FechaEmisionFinal+'&param8='+Cmb_TipoDocumentoSunat+'&param9='+Cmb_EstadoDocumentoSunat+'&param10='+txt_datosseleccionados+'&param11='+txt_RazonSocialCliente+'&param12='+Cmb_TipoMoneda;
-				}
-				else
-				{
-					if (txt_datosseleccionados=='')
-					{
-						alert('No existe datos seleccionados');
-					}
-					else
-					{
-						document.location.href=urlexportardatos+'comprobante/Exportar_ExcelGeneral?param1='+txt_RucEmpresa+'&param2='+txt_DocumentoCliente+'&param3='+txt_serienumeroinicio+'&param4='+txt_serienumerofinal+'&param5='+Cmb_EstadoDocumento+'&param6='+txt_FechaEmisionInicio+'&param7='+txt_FechaEmisionFinal+'&param8='+Cmb_TipoDocumentoSunat+'&param9='+Cmb_EstadoDocumentoSunat+'&param10='+txt_datosseleccionados+'&param11='+txt_RazonSocialCliente+'&param12='+Cmb_TipoMoneda;
-					}
-				}
+				ncsistema.Listar_RetencionesTabla('',0);	
 			}
 
-
-			function Seleccionar_DatosBusqueda(key,tipodocumento,serienumero,estado_doc,estado_sunat,numerodocumentoemisor)
+			function Seleccionar_DatosBusqueda(key,tipodocumento,serienumero,estado_doc,estado_sunat)
 			{
 				var txt_datosseleccionados=$.trim($('#txt_datosseleccionados').val());	
 				var txt_cantidadseleccionados=$.trim($('#txt_cantidadseleccionados').val());	
-				var txt_cantidaddocumborrador=$.trim($('#txt_cantidaddocumborrador').val());
+				//var txt_cantidaddocumborrador=$.trim($('#txt_cantidaddocumborrador').val());
 				
 				//YA ESTA CREADO PARA EL CONTROL DE LOS REINICIOS
-				var txt_datosseleccionados_estado=$.trim($('#txt_datosseleccionados_estado').val());	
-				var txt_cantidaddocum_estado=$.trim($('#txt_cantidaddocum_estado').val());	
-				
-				
-				var txt_documentoemisor=$.trim($('#txt_documentoemisor').val());	
+				//var txt_datosseleccionados_estado=$.trim($('#txt_datosseleccionados_estado').val());	
+				//var txt_cantidaddocum_estado=$.trim($('#txt_cantidaddocum_estado').val());	
 
 				
 				if ($("#cbox_seleccion_"+key).is(":checked"))
@@ -698,18 +523,15 @@
 					if (txt_datosseleccionados=='')
 					{
 						txt_datosseleccionados=tipodocumento+'-'+serienumero;
-						txt_documentoemisor=numerodocumentoemisor;
 					}
 					else
 					{
 						txt_datosseleccionados=txt_datosseleccionados+','+tipodocumento+'-'+serienumero;
-						txt_documentoemisor=txt_documentoemisor+','+numerodocumentoemisor;
 					}
 					txt_cantidadseleccionados++;
 					
 					var temporal=0;
 					var resumenid='';
-					
 
 					if (estado_doc!='L')// || estado_sunat=='SIGNED'
 					{
@@ -745,17 +567,6 @@
 					txt_datosseleccionados=txt_datosseleccionados.replace(","+tipodocumento+'-'+serienumero, ""); 
 					txt_datosseleccionados=txt_datosseleccionados.replace(tipodocumento+'-'+serienumero, ""); 
 					txt_cantidadseleccionados--;
-
-					if (txt_cantidadseleccionados==0)
-					{
-						txt_documentoemisor=txt_documentoemisor.replace(","+numerodocumentoemisor, ""); 
-						txt_documentoemisor=txt_documentoemisor.replace(numerodocumentoemisor, ""); 
-					}
-					else
-					{
-						txt_documentoemisor=txt_documentoemisor.replace(","+numerodocumentoemisor, "");
-					}
-					
 					var temporal=0;
 					var resumenid='';
 					if (estado_doc!='L')// || estado_sunat=='SIGNED'
@@ -783,32 +594,21 @@
 				}
 				$('#txt_datosseleccionados').val($.trim(txt_datosseleccionados));
 				$('#txt_cantidadseleccionados').val($.trim(txt_cantidadseleccionados));
-				$('#txt_cantidaddocumborrador').val($.trim(txt_cantidaddocumborrador));
 				
-				$('#txt_datosseleccionados_estado').val($.trim(txt_datosseleccionados_estado));
-				$('#txt_cantidaddocum_estado').val(txt_cantidaddocum_estado);
-				$('#txt_documentoemisor').val(txt_documentoemisor);
-				
+				//$('#txt_cantidaddocumborrador').val($.trim(txt_cantidaddocumborrador));
+				//$('#txt_datosseleccionados_estado').val($.trim(txt_datosseleccionados_estado));
+				//$('#txt_cantidaddocum_estado').val(txt_cantidaddocum_estado);
 			}
 			
 			function Imprimir_DocumentoSeleccionado()
 			{
 				var txt_datosseleccionados=$.trim($('#txt_datosseleccionados').val());	
 				var txt_cantidadseleccionados=$.trim($('#txt_cantidadseleccionados').val());
-				//var txt_rucemisor=$.trim($('#txt_RucEmpresa').val());
+				var txt_rucemisor=$.trim($('#txt_RucEmpresa').val());
 				if (txt_cantidadseleccionados>0)
 				{
-					if(Validar_EmisoresDocumentos()==true)
-					{
-						var txt_rucemisor=$.trim($('#txt_documentoemisordocumentos').val());	
-					}
-					else
-					{
-						alert("Los documentos seleccionados no tiene el mismo emisor");
-						return;
-					}
 					$.ajax({
-							url:'<?php echo base_url()?>comprobante/Comprobar_DocumentoImprimir',
+							url:'<?php echo base_url()?>retencion/Comprobar_DocumentoImprimir',
 							type: 'post',
 							dataType: 'json',
 							data:
@@ -823,16 +623,11 @@
 							{
 								if(result.status==1)
 								{
-									var listadocumentos = txt_datosseleccionados.split(',');
-									for (var i=0; i < listadocumentos.length; i++) 
-									{
-									  $('#div_imgrecep_'+listadocumentos[i]).empty().append('<img align="left" src="<?php echo base_url();?>application/helpers/image/ico/ncactivo.png" title="Enviado, recepcionado, visualizado" >');
-								    }										
-									document.location.href=urlexportardatos+'comprobante/Imprimir_DocumentoSeleccionado?param1='+txt_datosseleccionados+'&param2='+txt_rucemisor;
+									document.location.href=urlexportardatos+'retencion/Imprimir_DocumentoSeleccionado?param1='+txt_datosseleccionados+'&param2='+txt_rucemisor;
 								}
 								else if(result.status==2)
 								{
-									alert("No se encontraron archivos para los documentos seleccionados");
+									alert("No existen los archivos seleccionados");
 								}
 								else if (result.status==1000)
 								{
@@ -844,7 +639,7 @@
 									alert("Error al crear los archivos seleccionados");
 								}
 							}
-						});						
+						});	
 				}
 				else
 				{
@@ -852,211 +647,56 @@
 				}
 			}
 			
+			function Descargar_ExcelGeneral()
+			{
+				
+			}
+
 			function Descargar_DocumentoSeleccionado()
 			{
-				var txt_datosseleccionados=$.trim($('#txt_datosseleccionados').val());	
-				var txt_cantidadseleccionados=$.trim($('#txt_cantidadseleccionados').val());	
-				//var txt_rucemisor=$.trim($('#txt_RucEmpresa').val());
 				
-				if (txt_cantidadseleccionados>0)
-				{
-					if(Validar_EmisoresDocumentos()==true)
-					{
-						var txt_rucemisor=$.trim($('#txt_documentoemisordocumentos').val());	
-					}
-					else
-					{
-						alert("Los documentos seleccionados no tiene el mismo emisor");
-						return;
-					}
-					
-					$.ajax({
-							url:'<?php echo base_url()?>comprobante/Crear_ArchivosDocumentoSeleccionado',
-							type: 'post',
-							dataType: 'json',
-							data:
-							{
-								param1:txt_datosseleccionados,
-								param2:txt_rucemisor
-							},
-							beforeSend:function()
-							{
-								
-							},
-							success:function(result)
-							{
-								if(result.status==1)
-									{
-										Descargar_DocumentoSeleccionadoArchivos();
-									}
-									else if(result.status==2)
-									{
-										alert("No se encontraron archivos para los documentos seleccionados");
-									}
-									else if (result.status==1000)
-									{
-										document.location.href= '<?php echo base_url()?>usuario';
-										return;
-									}
-									else
-									{
-										alert("Error al crear los archivos seleccionados");
-									}
-							}
-						});						
-					 //setTimeout('Descargar_DocumentoSeleccionadoArchivos()',4000)
-				}
-				else
-				{
-					alert("Debe seleccionar al menos un registro");
-				}
 			}
 			
 			function Descargar_DocumentoSeleccionadoArchivos()
 			{
-				var txt_datosseleccionados=$.trim($('#txt_datosseleccionados').val());	
-				//var txt_rucemisor=$.trim($('#txt_RucEmpresa').val());
-				if(Validar_EmisoresDocumentos()==true)
-				{
-					var txt_rucemisor=$.trim($('#txt_documentoemisordocumentos').val());	
-				}
-				else
-				{
-					alert("Los documentos seleccionados no tiene el mismo emisor");
-					return;
-				}
-				var listadocumentos = txt_datosseleccionados.split(',');
-				for (var i=0; i < listadocumentos.length; i++) 
-				{
-				  $('#div_imgrecep_'+listadocumentos[i]).empty().append('<img align="left" src="<?php echo base_url();?>application/helpers/image/ico/ncactivo.png" title="Enviado, recepcionado, visualizado" >');
-				}	
-				document.location.href=urlexportardatos+'comprobante/Descargar_DocumentoSeleccionado?param1='+txt_datosseleccionados+'&param2='+txt_rucemisor;	
-
-			}
-
-			function OcultarFilaPassword(id,opcion) 
-			{
-				if (!document.getElementById) return false;
-				fila = document.getElementById(id);
 				
-				if (opcion==0)//OCULTA LA FILA
-				{
-					if (fila.style.display != "none") 
-					{
-						fila.style.display = "none"; //ocultar fila
-					}
-				}
-				else
-				{
-					if (fila.style.display == "none") 
-					{
-						fila.style.display = ""; //mostrar fila
-					}
-				}
 			}
 			
+			function Modificar_DocumentoSeleccionado()
+			{
+				
+			}
+			
+			function DeclararEnviar_DocumentoSeleccionado()
+			{
+				
+			}
+			
+			function ReiniciarCorrelativo_DocumentoSeleccionado()
+			{
+				
+			}
+			
+			function OcultarFilaPassword(id,opcion) 
+			{
+				
+			}
 			
 			function Listar_DocumentoSunat(cod_tipodocumento)
 			{
-				$('#div_Estadodocumentosunat').empty().append('');
-				if (cod_tipodocumento=='0')
-				{
-					newHtml='';
-					newHtml+='<select id="Cmb_EstadoDocumentoSunat" style="width:98%;height:25px" >';
-					newHtml+='<option value="0">TODOS</option>';
-					newHtml+='</select>';		
-					$('#div_Estadodocumentosunat').empty().append(newHtml);	
-				}
-				else
-				{
-					$.ajax({
-						url:'<?php echo base_url()?>catalogos/Listar_EstadoDocumentoSunat',
-						type: 'post',
-						dataType: 'json',
-						data:
-						{
-							cod_tipodocumento:cod_tipodocumento
-						},
-						beforeSend:function()
-						{
-	
-						},
-						success:function(result)
-						{
-								
-							if(result.status==1)
-							{
-								newHtml='';
-								newHtml+='<select id="Cmb_EstadoDocumentoSunat" style="width:98%;height:25px" >';
-								newHtml+='<option value="0">TODOS</option>';								
-								$.each(result.data,function(key,rs)
-								{
-									if (rs.co_item_tabla!='SIGNE')
-									{
-										newHtml+='<option value="'+rs.co_item_tabla+'">'+rs.no_largo+'</option>';
-									}
-								});	
-								newHtml+='</select>';		
-								$('#div_Estadodocumentosunat').empty().append(newHtml);	
-	
-							}
-							else if (result.status==1000)
-							{
-								document.location.href= '<?php echo base_url()?>usuario';
-								return;
-							}
-							else
-							{
-								newHtml='';
-								newHtml+='<select id="Cmb_EstadoDocumentoSunat" style="width:98%;height:25px" >';
-								newHtml+='<option value="0">[SELECCIONAR]</option>';
-								newHtml+='</select>';		
-								$('#div_Estadodocumentosunat').empty().append(newHtml);	
-							}
-						}
-					});
-				}
-			}
-			
-			function Validar_EmisoresDocumentos() 
-			{
-				var txt_documentoemisor=$.trim($('#txt_documentoemisor').val());
-				var ListaPermisosAsignarAll = txt_documentoemisor.split(",");
 				
-				var doc_emisor='';
-				$('#txt_documentoemisordocumentos').val('');
-				
-				$.each(ListaPermisosAsignarAll,function(key,rs)
-				{
-					//alert(rs);
-					if (key==0)
-					{
-						doc_emisor=rs;
-					}
-					else
-					{
-						if (doc_emisor!=rs)
-						{
-							return false;
-						}
-					}
-				});	
-				
-				$('#txt_documentoemisordocumentos').val(doc_emisor);
-							
-				return true
 			}
 
 		</script>
 		
- </head>   
- <body>
+    </head>   
+    <body>
 		<?php header('Content-Type: text/html; charset=ISO-8859-1');?>
 		<div id="Div_HeadSistema"><?php $this->load->view('inicio/head',$Listar_UsuarioAccesos,$Listar_Empresas,$pagina_ver); ?></div>
 		
 		<div id="tabs" style="width:99.7%;float:left;text-align:center;margin-top:5px">
 			<ul>
-				<li><a href="#tabs-1">LISTADO DE COMPROBANTES</a></li>
+				<li><a href="#tabs-1">LISTADO DE RETENCIONES</a></li>
 			</ul>
 			<div id="tabs-1" style="width:95%;float:left">			
 				<div id="div_datosempresa" style="width:100%; float:left; margin-top:10px; border: 1px solid #a6c9e2; border-radius:5px;">
@@ -1065,54 +705,46 @@
 						<tr>
 							<td style="text-align:right;width:15%" ><label class="columna">RUC :</label></td>
 							<td style="text-align:left;width:20%">
+								<!--<input type="hidden" id="txt_tipo_confserie"  value="<?php echo $Tipo_confserie;?>" />-->
 								<input style="width:95%" type="text" id="txt_RucEmpresa" value="<?php echo trim(utf8_decode($Ruc_Empresa));?>"  disabled="disabled" />
 							</td>
-							<td style="text-align:right;width:15%"><label class="columna">Razón Social :</label></td>
+							<td style="text-align:right;width:15%"><label class="columna">Raz&oacute;n Social :</label></td>
 							<td style="text-align:left;width:48%" colspan="3">
 								<input style="width:95%" type="text" id="txt_RazonSocialEmpresa" value="<?php echo trim(utf8_decode($Razon_Social));?>" disabled="disabled" /></td>
-							<!--
-							<td style="text-align:left;width:2%:" valign="bottom" rowspan="4">
-								<a href="javascript:ncsistema.Listar_Comprobantes()" >
-									<img src="<?php echo base_url();?>application/helpers/image/ico/buscar32.png" style="width:20px;height:20px" />
-								</a>							
-							</td>
-							
-							<td rowspan="4" style="text-align:left;width:20%" align="center">
-								<div style="width:40px;height:10px" id="div_procesarbuscar">  </div>
-							</td>-->
 						</tr>
 						<tr>
-							<td style="text-align:right"><label class="columna">Emisor :</label></td>
+							<td style="text-align:right"><label class="columna">Proveedor :</label></td>
 							<td style="text-align:left">
-								<input style="width:95%" id="txt_RazonSocialCliente" type="text" value="" placeholder="Buscar Emisor por Raz. Social" />
+								<input style="width:95%" id="txt_RazonSocialCliente" type="text" value="" placeholder="Buscar Cliente por Raz. Social" />
 								<input style="width:95%" id="txt_DocumentoCliente" type="hidden" value="" />
 							</td>							
 							<td style="text-align:right"><label class="columna">Serie-Num. :</label></td>
 							<td style="text-align:left">
-								<input style="width:70%" id="txt_serienumeroinicio" type="text" value="" maxlength="13" />
+								<input style="width:70%" id="txt_serienumeroinicio" type="text" value="" maxlength="13"/>
 							</td>
-							<td style="text-align:right;width:10%"><label class="columna">al :</label></td>
+							<td style="text-align:right"><label class="columna">al :</label></td>							
 							<td style="text-align:left">
-								<input style="width:70%" id="txt_serienumerofinal" type="text" value="" maxlength="13"/>
+								<input style="width:70%" id="txt_serienumerofinal" type="text" value="" maxlength="13" />
 							</td>
 						</tr>
 						<tr>
-							<td style="text-align:right"><label class="columna">Tipo Documento :</label></td>
+							<td style="text-align:right"><label class="columna">Estado Doc. :</label></td>
 							<td style="text-align:left">
-								<select id="Cmb_TipoDocumentoSunat" style="width:98%;height:25px" onChange="javascript:Listar_DocumentoSunat(this.value)" >
+								<select id="Cmb_EstadoDocumento" style="width:98%;height:25px" >
 									<option value="0">TODOS</option>
-									<?php foreach ( $Listar_TipodeDocumento as $v):	?>
-										<option value="<?php echo trim($v['co_item_tabla']); ?>"><?php echo trim(utf8_decode($v['no_corto']));?> </option>
+									<?php foreach ( $Listar_EstadoDocumento as $v):	?>
+										<option value="<?php echo trim($v['co_item_tabla']); ?>"><?php echo trim(utf8_decode(strtoupper($v['no_corto'])));?> </option>
 									<?php  endforeach; ?>
 								</select>
 							</td>
-							<td style="text-align:right"><label class="columna">Fec.Emisión :</label></td>
+
+							<td style="text-align:right"><label class="columna">Fec. Emisi&oacute;n :</label></td>
 							<td style="text-align:left">
-								<input style="width:70%; text-align:center" id="txt_FechaEmisionInicio" type="text" value="" disabled="disabled" title="Desde"/>
+								<input style="width:70%; text-align:center" id="txt_FechaEmisionInicio" type="text" value="" disabled="disabled" title="Desde (##/##/####)" />
 							</td>
-							<td style="text-align:right;width:10%"><label class="columna">al :</label></td>
+							<td style="text-align:right"><label class="columna">al :</label></td>	
 							<td style="text-align:left">
-								<input style="width:70%; text-align:center" id="txt_FechaEmisionFinal" type="text" value="" disabled="disabled"  title="Hasta"/>
+								<input style="width:70%; text-align:center" id="txt_FechaEmisionFinal" type="text" value="" disabled="disabled" title="Hasta (##/##/####)" />
 							</td>
 						</tr>
 						<tr>
@@ -1120,22 +752,15 @@
 							<td style="text-align:left">
 								<div id="div_Estadodocumentosunat">
 									<select id="Cmb_EstadoDocumentoSunat" style="width:98%;height:25px" >
-										<option value="0">TODOS</option>																		
+										<option value="0">TODOS</option>	
+											<?php foreach ( $Listar_EstadoSunatRetencion as $v):	?>
+										<option value="<?php echo trim($v['co_item_tabla']); ?>"><?php echo trim(strtoupper(utf8_decode($v['no_largo'])));?> </option>
+											<?php  endforeach; ?>																	
 									</select>
 								</div>
 							</td>
-							<td style="text-align:right;width:10%"><label class="columna">Moneda :</label></td>
-							<td style="text-align:left">
-								<select id="Cmb_TipoMoneda" style="width:98%;height:25px">
-									<option value="0">TODOS</option>
-									<?php foreach ( $Listar_Monedas as $v):	?>
-										<option value="<?php echo trim($v['codigo']); ?>"><?php echo strtoupper(utf8_decode($v['nombre']));?> </option>
-									<?php  endforeach; ?>
-								</select>
-							</td>
-							<td style="text-align:right"><label class="columna"></label></td>
-							<td style="text-align:left">
-							</td>
+							<td style="text-align:right" colspan="4"><label class="columna"></label></td>
+							
 						</tr>
 						<tr>
 							<td></td>
@@ -1143,7 +768,7 @@
 								<table width="100%" border="0">
 								  <tr>
 									<td  width="10%">
-										<a href="javascript:ncsistema.Listar_Comprobantes()" >
+										<a href="javascript:ncsistema.Listar_Retenciones()" >
 											<button id="" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" style="width:105px; height:32px" type="submit">
 												<span class="ui-button-icon-left ui-icon ui-icon-search"></span>
 												<span class="ui-button-text">Buscar</span></button>
@@ -1162,58 +787,55 @@
 								  </tr>
 								</table>
 							</td>
-						</tr>	
-					</table>	
-				</div>
-				<div style="width:100%;border:solid 1px;float:left;margin-top:10px; border: 1px solid #a6c9e2;border-radius:5px;">	
-					<table width="100%" class="ui-widget-header">
-						<input id="txt_datosseleccionados_estado" type="hidden" value="" />
-						<input id="txt_datosseleccionados" type="hidden" value="" />
-						<input id="txt_cantidadseleccionados" type="hidden" value="0" />
-						<input id="txt_cantidaddocumborrador" type="hidden" value="0" />
-						<input id="txt_cantidaddocum_estado" type="hidden" value="0" />
-						
-						<input id="txt_documentoemisor" type="hidden" value="" />
-						<input id="txt_documentoemisordocumentos" type="hidden" value="" />
-						
-						<input id="txt_filtrobusqueda" type="hidden" value="" />
-						<input id="txt_botonbusqueda" type="hidden" value="0" />
-						
-						<tr  valign="middle">
-							<td style="text-align:center; vertical-align:middle ;width:5%">
-								<a href="javascript:ncsistema.ExportarExcel_General()" >
-									<img src="<?php echo base_url();?>application/helpers/image/iconos/exportarexcel.jpg" width="30" height="30" />
-								</a>
-							</td>
-							<td style="text-align:left; width:35%; vertical-align:middle">
-								<select id="Cmb_OpcionesExportarExcel" style="height:25px" >
-									<option value="1">LISTADO COMPLETO</option>
-									<option value="2">LISTADO SELECCIONADO</option>
-								</select>
-							</td>
-							<td align="right" style="text-align:rigth ; vertical-align:middle;width:60%" >
-								<button style="width:125px" id="btn_Verdetalle" title="Ver detalle del documento" 
-									class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
-									onClick="javascrip:ncsistema.Detalle_Comprobante()">
-									<span class="ui-button-icon-left ui-icon ui-icon-search"></span>
-									<span class="ui-button-text">Ver Detalle</span></button>
-							
-								<button style="width:120px" id="btn_ImprimirPrincipal" title="Iniciar Sesión" 
-									class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"
-									onClick="javascrip:Imprimir_DocumentoSeleccionado()">
-									<span class="ui-button-icon-left ui-icon ui-icon-print"></span>
-									<span class="ui-button-text">Imprimir</span></button>
-							
-								<button style="width:120px" id="btn_DescargarPrincipal" title="Iniciar Sesión" 
-									class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"
-									onClick="javascrip:Descargar_DocumentoSeleccionado()">
-									<span class="ui-button-icon-left ui-icon ui-icon-disk"></span>
-									<span class="ui-button-text">Descargar</span></button>
-							</td>
 						</tr>
 					</table>
+				</div>	
+			<div style="width:100%;border:solid 1px;float:left;margin-top:10px; border: 1px solid #a6c9e2;border-radius:5px;">	
+				<table width="100%"  border="0px" class="ui-widget-header">
+					<!--
+					<input id="txt_datosseleccionados_estado" type="hidden" value="" />
+					
+					
+					<input id="txt_cantidaddocumborrador" type="hidden" value="0" />
+					<input id="txt_cantidaddocum_estado" type="hidden" value="0" />
+					-->
+					<input id="txt_datosseleccionados" type="hidden" value="" />
+					<input id="txt_cantidadseleccionados" type="hidden" value="0" />
+					<input id="txt_filtrobusqueda" type="hidden" value="" />
+					<input id="txt_botonbusqueda" type="hidden" value="0" />
+					<tr">
+						<td style="text-align:center; vertical-align:middle ;width:5%">
+							<a href="javascript:ncsistema.ExportarExcel_General()" >
+								<img src="<?php echo base_url();?>application/helpers/image/iconos/exportarexcel.jpg" width="30" height="30" />
+							</a>
+						</td>
+						<td style="text-align:left; width:35%; vertical-align:middle">
+							<select id="Cmb_OpcionesExportarExcel" style="height:25px" >
+								<option value="1">LISTADO COMPLETO</option>
+								<option value="2">LISTADO SELECCIONADO</option>
+							</select>
+						</td>
+						<td align="right" style="width:60%; vertical-align:middle">
+							<button style="width:125px; height:32px" id="btn_Verdetalle" title="Ver detalle del documento" 
+								class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
+								onClick="javascrip:ncsistema.Detalle_Retenciones()">
+								<span class="ui-button-icon-left ui-icon ui-icon-newwin"></span>
+								<span class="ui-button-text">Ver Detalle</span></button>
+							<button style="width:120px; height:32px" id="btn_ImprimirPrincipal" title="Imprimir" 
+								class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"
+								onClick="javascrip:Imprimir_DocumentoSeleccionado()">
+								<span class="ui-button-icon-left ui-icon ui-icon-print"></span>
+								<span class="ui-button-text">Imprimir</span></button>
+							<button style="width:120px; height:32px"  id="btn_DescargarPrincipal" title="Descargar" 
+								class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"
+								onClick="javascrip:Descargar_DocumentoSeleccionado()">
+								<span class="ui-button-icon-left ui-icon ui-icon-disk"></span>
+								<span class="ui-button-text">Descargar</span></button>
+						</td>	
+					</tr>
+				</table>
 				</div>
-				<div id="div_ListadoEmpresa" style="width:100%;border:solid 0px;float:left;text-align:center;margin-top:5px">
+				<div id="div_ListadoRetenciones" style="width:100%;border:solid 0px;float:left;text-align:center;margin-top:5px">
 				</div>
 			</div>
 		</div>
@@ -1355,20 +977,14 @@
 						
 						<tr>
 							<td colspan="2">
-								<!--Representación Impresa de la Factura Electrónica, consulte en https://sfe.bizlinks.com.pe-->
+								<!-- Representación Impresa de la Factura Electrónica, consulte en https://sfe.bizlinks.com.pe -->
 							</td>
 						</tr>
 					</table>
 				</div>
 			</div>
-
-		
-
 		  </form>
-		</div>
-		
-		
-		
+		</div>		
 		
     </body>	
 </html>

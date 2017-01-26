@@ -240,7 +240,7 @@ class Catalogos extends CI_Controller {
 		{
 			foreach($consulta as $key=>$v):
 				$arr[$key]['codigo'] =trim($v['codigo']); 
-				$arr[$key]['nombre'] =  utf8_encode(strtoupper(trim($v['nombre'])));
+				$arr[$key]['nombre'] =  utf8_encode(trim($v['nombre']));
 			endforeach;
 		}
 		if(sizeof($arr)>0)
@@ -272,7 +272,7 @@ class Catalogos extends CI_Controller {
 		{
 			foreach($consulta as $key=>$v):
 				$arr[$key]['codigo'] =trim($v['codigo']); 
-				$arr[$key]['nombre'] =  utf8_encode(strtoupper(trim($v['nombre'])));
+				$arr[$key]['nombre'] =  utf8_encode(trim($v['nombre']));
 			endforeach;
 		}
 		if(sizeof($arr)>0)

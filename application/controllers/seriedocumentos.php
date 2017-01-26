@@ -101,7 +101,7 @@ class Seriedocumentos extends CI_Controller {
 				$arr[$key]['cod_empr'] = trim($v['cod_empr']);
 				$arr[$key]['cod_usu'] =trim($v['cod_usu']);				
 				$arr[$key]['tip_doc'] =trim($v['tip_doc']);
-				$arr[$key]['nomb_tipdoc'] = trim($v['nomb_tipdoc']); 
+				$arr[$key]['nomb_tipdoc'] = trim(utf8_decode($v['nomb_tipdoc'])); 
 				$arr[$key]['ser_doc'] =  trim($v['ser_doc']);					
 				$arr[$key]['num_doc'] =  trim($v['num_doc']);
 			endforeach;
@@ -300,8 +300,8 @@ class Seriedocumentos extends CI_Controller {
 				$arr[$key]['cod_usu'] =trim($v['cod_usu']);
 				$arr[$key]['nomb_tipdoc'] = trim($v['nomb_tipdoc']); 
 				$arr[$key]['ser_doc'] =  trim($v['ser_doc']);					
-				$arr[$key]['nom_usu'] =strtoupper($v['nom_usu']);
-				$arr[$key]['apell_usu'] =strtoupper($v['apell_usu']);
+				$arr[$key]['nom_usu'] =trim($v['nom_usu']);
+				$arr[$key]['apell_usu'] =trim($v['apell_usu']);
 			endforeach;
 		}
 		

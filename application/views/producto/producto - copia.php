@@ -417,7 +417,7 @@
 				$('#cmb_categoria').val('0');
 				$('#cmb_medida').val('0');
 				$('#txt_precio').val('');
-				$("#txt_codigo").prop('disabled', false);
+
 				$('#div_Guardar').removeClass('disablediv');
 				$("#div_Guardar").addClass("enablediv").on("onclick");	
 			}
@@ -453,7 +453,6 @@
 									//cod_unidmedsunat 
 									$('#txt_id').val(rs.id);
 									$('#txt_codigo').val(rs.cod_producto);
-									$("#txt_codigo").prop('disabled', true);
 									$('#txt_nombrecorto').val(rs.nom_corto);
 									$('#txt_nombrelargo').val(rs.nom_largo);
 									$('#cmb_categoria').val(rs.id_categoria);
@@ -569,16 +568,17 @@
 			
 			function VerDatos_Validar()
 			{
-				//var txt_id=$('#txt_id').val();
-				var txt_codigo=$('#txt_codigo').val();
+				var txt_rucempresa=$('#txt_RucEmpresa').val();
+				var txt_codigo=$('#txt_Codigo').val();
 				if ($.trim(txt_codigo)==''){
 					return;
 					}
 				$.ajax
 				({
-					url:'<?php echo base_url()?>producto/Valida_Producto',type:'post',dataType:'json',
+					url:'<?php echo base_url()?>producto/valida_producto',type:'post',dataType:'json',
 					data:
 					{
+						txt_rucempresa:txt_rucempresa,
 						txt_codigo:txt_codigo
 					},
 					beforeSend:function()
@@ -590,19 +590,10 @@
 						{
 							$.each(result.data,function(key,rs)
 							{
-								$('#txt_id').val(rs.id);
-								$('#txt_codigo').val(rs.cod_producto);
-								$('#txt_nombrecorto').val(rs.nom_corto);
-								$('#txt_nombrelargo').val(rs.nom_largo);
-								$('#cmb_categoria').val(rs.id_categoria);
-								$('#cmb_medida').val(rs.med);
-								if (txt_config_valorprecio==0){
-									$('#txt_valorentero').val(rs.valor_venta);
-									Calcular_Montos_VV();
-								}else{
-									$('#txt_precio').val(rs.precio_venta);
-									Calcular_Montos_P();
-								}
+								$.trim($('#txt_Codigo').val(rs.codigo));
+								$.trim($('#txt_Orden').val(rs.orden));
+								$.trim($('#txt_Observacion').val(rs.observacion));
+								$.trim($('#txt_id').val(1));
 							});
 						}
 						else if (result.status==1000)

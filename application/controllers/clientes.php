@@ -385,9 +385,13 @@ class Clientes extends CI_Controller {
 				$text2 = strtolower(trim($term));
 				if (strpos($text1, $text2) !== false) 
 				{
+					if (trim($val['raz_social'])=='-')
+						$text2= 'GENERICO';
+					else
+						$text2= $val['raz_social'];
 					$output[] = array
 					(
-						'value' => utf8_encode($val['raz_social']),
+						'value' => utf8_decode($text2),
 						'cod_client' => $val['cod_client'],
 						'nro_docum' => $val['nro_docum']
 					);
@@ -423,15 +427,17 @@ class Clientes extends CI_Controller {
 				{
 					$numero=$val['nro_docum'];
 				}
-				//print_r($numero);
-			
 				$text1 = strtolower(trim($val['raz_social']));
 				$text2 = strtolower(trim($term));
 				if (strpos($text1, $text2) !== false) 
 				{
+					if (trim($val['raz_social'])=='-')
+						$text2= 'GENERICO';
+					else
+						$text2= $val['raz_social'];
 					$output[] = array
 					(
-						'value' => utf8_encode($val['raz_social']),
+						'value' => utf8_decode($text2),
 						'cod_client' => $val['cod_empr'],
 						'nro_docum' => $numero
 					);

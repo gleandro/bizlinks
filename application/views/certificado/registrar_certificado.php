@@ -600,7 +600,7 @@
 						<td style="text-align:right;width:30%"><label class="columna">Emisor:</label></td>
 						<td style="text-align:left;;width:70%" >
 							<input style="width:98%" type="text" id="txt_RazonSocialEmpresa" 
-								value="<?php echo trim(utf8_encode($Razon_Social));?>" disabled="disabled" />
+								value="<?php echo trim(utf8_decode($Razon_Social));?>" disabled="disabled" />
 						</td>
 					</tr>	
 					<tr>

@@ -539,11 +539,11 @@
 						<tr>
 							<td style="text-align:right;width:15%" ><label class="columna">RUC :</label></td>
 							<td style="text-align:left;width:20%">
-								<input style="width:95%" type="text" id="txt_RucEmpresa" value="<?php echo trim(utf8_encode($Ruc_Empresa));?>"  disabled="disabled" />
+								<input style="width:95%" type="text" id="txt_RucEmpresa" value="<?php echo trim(utf8_decode($Ruc_Empresa));?>"  disabled="disabled" />
 							</td>
 							<td style="text-align:right;width:15%"><label class="columna">Raz&oacute;n Social :</label></td>
 							<td style="text-align:left;width:48%" colspan="2">
-								<input style="width:100%" type="text" id="txt_RazonSocialEmpresa" value="<?php echo trim(utf8_encode($Razon_Social));?>" disabled="disabled" /></td>
+								<input style="width:100%" type="text" id="txt_RazonSocialEmpresa" value="<?php echo trim(utf8_decode($Razon_Social));?>" disabled="disabled" /></td>
 							<!--
 							<td style="text-align:left;width:2%:" valign="bottom">
 								<a href="javascript:ncsistema.Listar_Comprobantes()" >
@@ -579,7 +579,7 @@
 								<select id="Cmb_EstadoDocumento" style="width:98%;height:25px" >
 									<option value="0">TODOS</option>
 									<?php foreach ( $Listar_EstadoDocumento as $v):	?>
-										<option value="<?php echo trim($v['co_item_tabla']); ?>"><?php echo trim(utf8_encode(strtoupper($v['no_corto'])));?> </option>
+										<option value="<?php echo trim($v['co_item_tabla']); ?>"><?php echo trim(utf8_decode(strtoupper($v['no_corto'])));?> </option>
 									<?php  endforeach; ?>
 									
 									
@@ -599,7 +599,7 @@
 								<select id="Cmb_TipoDocumentoSunat" style="width:98%;height:25px" onChange="javascript:Listar_DocumentoSunat(this.value)" >
 									<option value="0">TODOS</option>
 									<?php foreach ( $Listar_TipodeDocumento as $v):	?>
-										<option value="<?php echo trim($v['co_item_tabla']); ?>"><?php echo trim(utf8_encode($v['no_corto']));?> </option>
+										<option value="<?php echo trim($v['co_item_tabla']); ?>"><?php echo trim(utf8_decode($v['no_corto']));?> </option>
 									<?php  endforeach; ?>
 								</select>
 							</td>

@@ -796,7 +796,7 @@
 							<select id="cmb_departamento" style="width:100%;height:22px" onChange="javascrip:Listar_Provincias(this.value,0)">
 								<option value="0">[SELECCIONAR]</option>
 								<?php foreach ( $Listar_Departamentos as $v):	?>
-									<option value="<?php echo trim($v['co_departamento']); ?>"><?php echo trim(utf8_encode($v['de_departamento']));?> </option>
+									<option value="<?php echo trim($v['co_departamento']); ?>"><?php echo trim(utf8_decode($v['de_departamento']));?> </option>
 								<?php  endforeach; ?>
 							</select>
 						</td>
