@@ -47,7 +47,7 @@ class Retencion_model extends CI_Model
 			}
 			if ($prm_serie_numeroinicio!='' && $prm_serie_numerofinal!='')	
 			{
-				$query=$query." and a.serienumero>='".$prm_serie_numeroinicio."' and a.serienumero<='".$prm_serie_numerofinal."' ";
+				$query=$query." and a.serieNumeroRetencion>='".$prm_serie_numeroinicio."' and a.serieNumeroRetencion<='".$prm_serie_numerofinal."' ";
 			}
 			if ($prm_cod_estdoc!='0')	
 			{
@@ -114,7 +114,7 @@ class Retencion_model extends CI_Model
 					a.nombrecomercialemisor, a.razonsocialemisor,
 					a.direccionemisor, a.urbanizacionemisor, a.distritoemisor,
 					a.provinciaemisor,a.departamentoemisor,
-					a.tipodocumento, 'COMPROBANTE DE RETENCION' nombre_tipodocumento
+					a.tipodocumento, 'COMPROBANTE DE RETENCION' nombre_tipodocumento,
 					a.serienumeroretencion,	a.numerodocumentoproveedor, a.razonsocialproveedor, 
 					a.direccionproveedor, a.fechaemision, a.tasaretencion, 
 					a.importetotalpagado, a.tipomonedatotalpagado, 
@@ -126,7 +126,9 @@ class Retencion_model extends CI_Model
 					a.fechaemision, a.bl_estadoregistro, 
 					(select b.no_corto from tm_tabla_multiple b where b.no_tabla='ESTADO_DOCUMENTO_PORTAL' 
 						and b.in_habilitado=1 and b.co_item_tabla=a.bl_estadoregistro) estadoregistro,
-					a.bl_reintento, b.tipodocumentorelacionado , b.numerodocumentorelacionado, 
+					a.bl_reintento, 
+					(select c.no_corto from tm_tabla_multiple c where c.no_tabla='TIPO_DOCUMENTO' and c.in_habilitado =1 and c.co_item_tabla=b.tipoDocumentoRelacionado) tipo_doc ,
+					b.tipodocumentorelacionado , b.numerodocumentorelacionado, 
 					b.fechaemisiondocumentorelaciona, b.fechapago, b.numeropago, b.tipomonedadocumentorelacionado,
 					b.importetotaldocumentorelaciona, b.importepagosinretencion, b.importeretenido, b.importetotalpagarneto
 				from spe_retention a

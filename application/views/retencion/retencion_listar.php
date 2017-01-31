@@ -321,16 +321,18 @@
 					newHtml='';
 					newHtml+='<table width="100%"  cellpadding="0" cellspacing="0" class="display" id="Tab_DetalleComprobanteTabla">';
 					newHtml+='<thead>';
-					newHtml+='<tr>';						
-						newHtml+='<th width:3%>Item</td>';						
-						newHtml+='<th width:5%>Codigo</td>';						
-						newHtml+='<th width:10%>Descripcion</td>';
-						newHtml+='<th width:10%>Und.</td>';
-						newHtml+='<th width:20%>Cantidad</td>';
-						newHtml+='<th width:50%>V.Unitario</td>';
-						newHtml+='<th width:50%>P.Unitario</td>';
-						newHtml+='<th width:50%>Descuento</td>';
-						newHtml+='<th width:50%>Valor Total</td>';
+					newHtml+='<tr>';	
+						newHtml+='<th width:3%>Item</td>';					
+						newHtml+='<th width:3%>Tipo</td>';						
+						newHtml+='<th width:5%>Documento</td>';						
+						newHtml+='<th width:10%>Fecha de Emisión</td>';
+						newHtml+='<th width:10%>Fecha de Pago</td>';
+						newHtml+='<th width:20%>Nro de Pago</td>';
+						newHtml+='<th width:50%>Moneda Origen</td>';
+						newHtml+='<th width:50%>Importe Operación Origen</td>';
+						newHtml+='<th width:50%>Importe de Pago sin Retención</td>';
+						newHtml+='<th width:50%>Importe Retenido S/.</td>';
+						newHtml+='<th width:50%>Importe Total a Pagar S/.</td>';
 					newHtml+='</tr>';
 					newHtml+='</thead>';
         			newHtml+='<tbody>';
@@ -354,7 +356,7 @@
 							$('#div_param11').empty().append(rs.fechaemision);	
 							$('#div_param12').empty().append(rs.direccioncliente);	
 							$('#div_param13').empty().append(rs.tipomonedacabecera);	
-							$('#div_param14').empty().append('');							
+							$('#div_param14').empty().append(rs.tasaretencion);							
 							$('#div_param15').empty().append(rs.textoleyenda_1);							
 							
 							OcultarFilaPassword('row1',0);
@@ -367,18 +369,19 @@
 							OcultarFilaPassword('row8',0);
 							OcultarFilaPassword('row9',0);/**/
 							
-							if (rs.totalvalorventanetoopgravadas>0)
+							if (rs.importetotalpagado>0)
 							{
 								OcultarFilaPassword('row1',1);
 								$('#div_param16').empty().append(rs.tipomoneda);
-								$('#div_param17').empty().append(rs.totalvalorventanetoopgravadas);
+								$('#div_param17').empty().append(rs.importetotalpagado);
 							}
-							if (rs.totalvalorventanetoopnogravada>0)
+							if (rs.importetotalretenido>0)
 							{
 								OcultarFilaPassword('row2',1);
 								$('#div_param18').empty().append(rs.tipomoneda);
-								$('#div_param19').empty().append(rs.totalvalorventanetoopnogravada);
+								$('#div_param19').empty().append(rs.importetotalretenido);
 							}
+							/*
 							if (rs.totalvalorventanetoopexonerada>0)
 							{
 								OcultarFilaPassword('row3',1);
@@ -411,18 +414,21 @@
 								$('#div_param32').empty().append(rs.tipomoneda);
 								$('#div_param33').empty().append(rs.totalventa);
 							}
+							*/
 						}
 						newHtml+='<tr>';															
 
 							newHtml+='<td style="text-align:left">'+rs.numeroordenitem+'</td>';		
-							newHtml+='<td style="text-align:left">'+rs.codigoproducto+'</td>';
-							newHtml+='<td style="text-align:left">'+rs.descripcion+'</td>';
-							newHtml+='<td style="text-align:left">'+rs.unidadmedida+'</td>';	
-							newHtml+='<td style="text-align:right">'+rs.cantidad+'</td>';			
-							newHtml+='<td style="text-align:center">'+rs.importeunitariosinimpuesto+'</td>';
-							newHtml+='<td style="text-align:left">'+rs.importeunitarioconimpuesto+'</td>';
-							newHtml+='<td style="text-align:left">'+rs.importedescuento+'</td>';
-							newHtml+='<td style="text-align:left">'+rs.importetotalsinimpuesto+'</td>';
+							newHtml+='<td style="text-align:left">'+rs.tipo_doc+'</td>';
+							newHtml+='<td style="text-align:left">'+rs.numerodocumentorelacionado+'</td>';
+							newHtml+='<td style="text-align:left">'+rs.fechaemisiondocumentorelaciona+'</td>';	
+							newHtml+='<td style="text-align:right">'+rs.fechapago+'</td>';			
+							newHtml+='<td style="text-align:center">'+rs.numeropago+'</td>';
+							newHtml+='<td style="text-align:left">'+rs.tipomoneda+'</td>';
+							newHtml+='<td style="text-align:left">'+rs.importetotaldocumentorelaciona+'</td>';
+							newHtml+='<td style="text-align:left">'+rs.importepagosinretencion+'</td>';
+							newHtml+='<td style="text-align:left">'+rs.importeretenido+'</td>';
+							newHtml+='<td style="text-align:left">'+rs.importetotalpagarneto+'</td>';
 
 						newHtml+='</tr>';						
 					});	
@@ -886,7 +892,7 @@
 										<td><div id="div_param12"></div></td>
 										<td>Moneda:</td>
 										<td><div id="div_param13"></div></td>
-										<td>Orden de Compra:</td>
+										<td>Tasa:</td>
 										<td><div id="div_param14"></div></td>
 									</tr>
 								</table>
@@ -909,16 +915,17 @@
 										<td style="width:40%">										
 											<table width="100%" border="1">
 												<tr id="row1">
-													<td style="width:40%;text-align:right">Operacion Gravadas :</td>
+													<td style="width:40%;text-align:right">Importe Total Retenido :</td>
 													<td style="width:20%;text-align:center"><div id="div_param16"></div></td>
 													<td style="width:40%;text-align:right"><div id="div_param17"></div></td>
 												</tr>
 
 												<tr id="row2">
-													<td style="width:40%;text-align:right">Operacion Inafectos :</td>
+													<td style="width:40%;text-align:right">Importe Total Pagado :</td>
 													<td style="width:20%;text-align:center"><div id="div_param18"></div></td>
 													<td style="width:40%;text-align:right"><div id="div_param19"></div></td>
 												</tr>
+												<!--
 												<tr id="row3">
 													<td style="width:40%;text-align:right">Operacion Exoneradas : </td>
 													<td style="width:20%;text-align:center"><div id="div_param20"></div></td>
@@ -956,6 +963,7 @@
 													<td style="width:20%;text-align:center"><div id="div_param32"></div></td>
 													<td style="width:40%;text-align:right"><div id="div_param33"></div></td>
 												</tr>
+												-->
 											</table>
 										
 										</td>

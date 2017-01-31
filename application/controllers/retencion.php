@@ -529,33 +529,52 @@ class Retencion extends CI_Controller {
 				$arr[$key]['razonsocialemisor'] =strtoupper(trim($v['razonsocialemisor'])); 
 				$arr[$key]['nombrecomercialemisor'] =trim($v['nombrecomercialemisor']); 
 				$arr[$key]['direccionemisor'] =trim($v['direccionemisor']);
-				$arr[$key]['urbanizacionEmisor'] =trim($v['urbanizacionEmisor']); 
+				$arr[$key]['urbanizacionEmisor'] =trim($v['urbanizacionemisor']); 
 				$arr[$key]['distritoemisor'] =trim($v['distritoemisor']); 
 				$arr[$key]['provinciaemisor'] =trim($v['provinciaemisor']); 
 				$arr[$key]['departamentoemisor'] =trim($v['departamentoemisor']); 
 				$arr[$key]['numerodocumentoemisor'] =trim($v['numerodocumentoemisor']); 
 				$arr[$key]['tipodocumentoemisor'] =trim($v['tipodocumentoemisor']); 
 				$arr[$key]['nombre_tipodocumentoemisor'] =trim($v['nombre_tipodocumentoemisor']); 
+				$arr[$key]['tasaretencion'] =trim($v['tasaretencion']);
 				
 				$arr[$key]['serienumero'] =trim($v['serienumeroretencion']); 
 				$arr[$key]['tipodocumento'] =trim($v['tipodocumento']); 
 				$arr[$key]['nombre_tipodocumento'] =trim($v['nombre_tipodocumento']);
 				$arr[$key]['fechaemision'] = trim($v['fechaemision']);		
 				//me quede en validar AQUI
-				$arr[$key]['numerodocumentoadquiriente'] =trim($v['numerodocumentoadquiriente']); 
-				$arr[$key]['razonsocialadquiriente'] =trim($v['razonsocialadquiriente']); 	
-				$arr[$key]['direccioncliente'] =$direccioncliente; //ojo aqui ya se considera directo
-						
-				$arr[$key]['textoleyenda_1'] =trim($v['textoleyenda_1']);				
-				if ($v['tipomoneda']=='PEN')
+				$arr[$key]['numerodocumentoadquiriente'] =trim($v['numerodocumentoproveedor']); 
+				$arr[$key]['razonsocialadquiriente'] =trim($v['razonsocialproveedor']); 	
+				//$arr[$key]['direccioncliente'] =$direccioncliente; //ojo aqui ya se considera directo
+				$arr[$key]['direccioncliente'] =trim($v['direccionproveedor']);						
+				//$arr[$key]['textoleyenda_1'] =trim($v['textoleyenda_1']);				
+				if ($v['tipomonedadocumentorelacionado']=='PEN')
 				{
-					$arr[$key]['tipomonedacabecera'] =trim($v['tipomoneda']).' - Sol'; 
+					$arr[$key]['tipomonedacabecera'] =trim($v['tipomonedadocumentorelacionado']).' - Sol'; 
 				}
 				else
 				{
-					$arr[$key]['tipomonedacabecera'] =trim($v['tipomoneda']).' - Dolar';
+					$arr[$key]['tipomonedacabecera'] =trim($v['tipomonedadocumentorelacionado']).' - Dolar';
 				}
-				$arr[$key]['tipomoneda'] =trim($v['tipomoneda']);
+				$arr[$key]['tipomoneda'] =trim($v['tipomonedadocumentorelacionado']);
+
+				$arr[$key]['numeroordenitem'] =$Contador; 
+				$arr[$key]['tipo_doc'] =trim($v['tipo_doc']); 
+				$arr[$key]['numerodocumentorelacionado'] =trim($v['numerodocumentorelacionado']); 
+				$arr[$key]['fechaemisiondocumentorelaciona'] =trim($v['fechaemisiondocumentorelaciona']); 
+				$arr[$key]['fechapago'] =trim($v['fechapago']); 
+				$arr[$key]['numeropago'] =trim($v['numeropago']); 
+				$arr[$key]['importetotaldocumentorelaciona'] =trim($v['importetotaldocumentorelaciona']); 
+				$arr[$key]['importepagosinretencion'] =trim($v['importepagosinretencion']); 
+				$arr[$key]['importeretenido'] =trim($v['importeretenido']); 
+				$arr[$key]['importetotalpagarneto'] =trim($v['importetotalpagarneto']); 
+				
+
+				//Pie del detalle
+				$arr[$key]['importetotalpagado'] =trim($v['importetotalpagado']); 
+				$arr[$key]['importetotalretenido'] =trim($v['importetotalretenido']); 
+
+/*
 				$arr[$key]['totalvalorventanetoopgravadas'] =trim($v['totalvalorventanetoopgravadas']); 
 				$arr[$key]['totalvalorventanetoopnogravada'] =trim($v['totalvalorventanetoopnogravada']);
 				$arr[$key]['totalvalorventanetoopexonerada'] =trim($v['totalvalorventanetoopexonerada']); 	
@@ -577,7 +596,7 @@ class Retencion extends CI_Controller {
 				$arr[$key]['importeunitarioconimpuesto'] =trim($v['importeunitarioconimpuesto']); 				
 				$arr[$key]['importedescuento'] =trim($v['importedescuento']); 
 				$arr[$key]['importetotalsinimpuesto'] =trim($v['importetotalsinimpuesto']); 
-		
+*/		
 			endforeach;
 			
 			if($_SESSION['SES_MarcoTrabajo'][0]['cod_rolseleccion']==2)//SOLO SI ES RECEPTOR SE ACTUALIZA LOS DATOS
