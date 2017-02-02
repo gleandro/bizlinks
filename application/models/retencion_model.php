@@ -66,6 +66,7 @@ class Retencion_model extends CI_Model
 				$query="";
 			}
 		}
+		//print_r($query);
 		$consulta =  $this->db_client->query($query);		
 		return $consulta->result_array();
 	}

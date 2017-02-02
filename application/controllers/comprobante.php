@@ -14,8 +14,8 @@ class Comprobante extends CI_Controller {
 		$this->load->model('Catalogos_model');
 	}
 	
-    public function index()
-    {
+	public function index()
+	{
 		if(!$this->Usuarioinicio_model->SessionExiste())
 		{
 			//echo 'SESSION EXPIRADA, VUELVA A INICIAR!'; 
@@ -45,7 +45,7 @@ class Comprobante extends CI_Controller {
 			$prm['Listar_Empresas']=$this->Empresa_model->Listar_EmpresaContacto($prm_cod_usuadm,$prm_tip_usu,$prm_cod_usu);
 			$prm['Listar_TipodeDocumento']=$this->Catalogos_model->Listar_TipodeDocumento();
 			$prm['Config_ValorPrecio']=$_SESSION['SES_MarcoTrabajo'][0]['conf_venta'];			
-								
+			
 			$Listar_EmpresaId=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);
 			
 			if(!empty($Listar_EmpresaId))//SI NO ES NULO O VACIO
@@ -84,10 +84,10 @@ class Comprobante extends CI_Controller {
 			$prm['documentomodificar']=$prm_documentomodificar;
 			$this->load->view('comprobante/registrocomprobante',$prm);
 		}		
-    }
+	}
 	
 	public function ListaComprobantes()
-    {
+	{
 		if(!$this->Usuarioinicio_model->SessionExiste())
 		{
 			//echo 'SESSION EXPIRADA, VUELVA A INICIAR!'; 
@@ -107,7 +107,7 @@ class Comprobante extends CI_Controller {
 			{
 				$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
 			}
-	
+			
 			$prm['Listar_UsuarioAccesos']=$this->Menu_model->Listar_UsuarioAccesosInvitado($prm_cod_usuadm,$prm_cod_empr,$prm_cod_usu,$prm_tip_usu);
 			
 			$Listar_Empresa=$this->Empresa_model->Listar_Empresa($this->Usuarioinicio_model->Get_Cod_UsuAdm());
@@ -140,10 +140,10 @@ class Comprobante extends CI_Controller {
 			
 			$this->load->view('comprobante/listacomprobantes',$prm);
 		}		
-    }
+	}
 	
 	public function ListaComprobantesReceptor()
-    {
+	{
 		if(!$this->Usuarioinicio_model->SessionExiste())
 		{
 			$this->load->view('usuario/login'); 
@@ -161,7 +161,7 @@ class Comprobante extends CI_Controller {
 			{
 				$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
 			}
-	
+			
 			$prm['Listar_UsuarioAccesos']=$this->Menu_model->Listar_UsuarioAccesosInvitado($prm_cod_usuadm,$prm_cod_empr,$prm_cod_usu,$prm_tip_usu);
 			
 			$Listar_Empresa=$this->Empresa_model->Listar_Empresa($this->Usuarioinicio_model->Get_Cod_UsuAdm());
@@ -189,33 +189,33 @@ class Comprobante extends CI_Controller {
 			$prm['pagina_ver']='comprobante/listacomprobantesreceptor';
 			$this->load->view('comprobante/listacomprobantesreceptor',$prm);
 		}		
-    }
+	}
 	
 	public function Modificar_Comprobante()
-    {
-			$prm_datosseleccionados=trim($this->input->post('txt_datosseleccionados'));
-			$prm_cod_usuadm=$this->Usuarioinicio_model->Get_Cod_UsuAdm();
-			$prm_cod_usu=$this->Usuarioinicio_model->Get_Cod_Usu();
-			$prm_tip_usu=$this->Usuarioinicio_model->Get_Tip_Usu();		
-			if(!$this->Usuarioinicio_model->MarcoTrabajoExiste())
-			{
-				$prm_cod_empr=0;
-			}
-			else
-			{
-				$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
-			}
-			$prm['valor_igv']=$this->Usuarioinicio_model->Get_Valor_IGV();	
-			
-			$prm['Listar_UsuarioAccesos']=$this->Menu_model->Listar_UsuarioAccesosInvitado($prm_cod_usuadm,$prm_cod_empr,$prm_cod_usu,$prm_tip_usu);
-			
-			$Listar_Empresa=$this->Empresa_model->Listar_Empresa($this->Usuarioinicio_model->Get_Cod_UsuAdm());
-			$prm['Listar_Empresa']=$Listar_Empresa;			
-			$prm['Listar_Empresas']=$this->Empresa_model->Listar_EmpresaContacto($prm_cod_usuadm,$prm_tip_usu,$prm_cod_usu);	
-			$prm['Listar_TipodeDocumento']=$this->Catalogos_model->Listar_TipodeDocumento();				
-					
-			$Listar_EmpresaId=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);
-			
+	{
+		$prm_datosseleccionados=trim($this->input->post('txt_datosseleccionados'));
+		$prm_cod_usuadm=$this->Usuarioinicio_model->Get_Cod_UsuAdm();
+		$prm_cod_usu=$this->Usuarioinicio_model->Get_Cod_Usu();
+		$prm_tip_usu=$this->Usuarioinicio_model->Get_Tip_Usu();		
+		if(!$this->Usuarioinicio_model->MarcoTrabajoExiste())
+		{
+			$prm_cod_empr=0;
+		}
+		else
+		{
+			$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
+		}
+		$prm['valor_igv']=$this->Usuarioinicio_model->Get_Valor_IGV();	
+		
+		$prm['Listar_UsuarioAccesos']=$this->Menu_model->Listar_UsuarioAccesosInvitado($prm_cod_usuadm,$prm_cod_empr,$prm_cod_usu,$prm_tip_usu);
+		
+		$Listar_Empresa=$this->Empresa_model->Listar_Empresa($this->Usuarioinicio_model->Get_Cod_UsuAdm());
+		$prm['Listar_Empresa']=$Listar_Empresa;			
+		$prm['Listar_Empresas']=$this->Empresa_model->Listar_EmpresaContacto($prm_cod_usuadm,$prm_tip_usu,$prm_cod_usu);	
+		$prm['Listar_TipodeDocumento']=$this->Catalogos_model->Listar_TipodeDocumento();				
+		
+		$Listar_EmpresaId=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);
+		
 			if(!empty($Listar_EmpresaId))//SI NO ES NULO O VACIO
 			{
 				$prm['Ruc_Empresa']=$Listar_EmpresaId[0]['ruc_empr'];	
@@ -242,45 +242,45 @@ class Comprobante extends CI_Controller {
 
 			
 			$this->load->view('comprobante/registrocomprobante',$prm);
-	
-    }
-	
-	public function Guardar_Registroproductos()
-	{
+			
+		}
+		
+		public function Guardar_Registroproductos()
+		{
 
-		$arr=NULL;
-		$Contador=0;
-		$result['status']=0;
-		if(!$this->Usuarioinicio_model->SessionExiste())
-		{
-			$result['status']=1000;
-			echo json_encode($result);
-			exit;
-		}
-		
-		$prm_cod_usu=$this->Usuarioinicio_model->Get_Cod_Usu();
-		$prm_cod_prod=trim($this->input->post('txt_codigoprod'));
-		$prm_cant_prod=trim($this->input->post('txt_cantidad'));
-		$prm_uni_med=trim($this->input->post('cmb_unidadmedida'));
-		$prm_desc_prod=strtoupper(trim($this->input->post('txt_descripcion')));
-		$prm_val_unitario=trim($this->input->post('txt_valorunitario'));
-		$prm_val_descuento=trim($this->input->post('txt_descuento'));
-		$prm_val_isc=trim($this->input->post('txt_isc'));
-		$prm_tip_afectacion=trim($this->input->post('cmb_tipoafectacion'));
-		$prm_val_igv=trim($this->input->post('txt_igv'));
-		$prm_val_total=trim($this->input->post('txt_valortotal'));	
+			$arr=NULL;
+			$Contador=0;
+			$result['status']=0;
+			if(!$this->Usuarioinicio_model->SessionExiste())
+			{
+				$result['status']=1000;
+				echo json_encode($result);
+				exit;
+			}
+			
+			$prm_cod_usu=$this->Usuarioinicio_model->Get_Cod_Usu();
+			$prm_cod_prod=trim($this->input->post('txt_codigoprod'));
+			$prm_cant_prod=trim($this->input->post('txt_cantidad'));
+			$prm_uni_med=trim($this->input->post('cmb_unidadmedida'));
+			$prm_desc_prod=strtoupper(trim($this->input->post('txt_descripcion')));
+			$prm_val_unitario=trim($this->input->post('txt_valorunitario'));
+			$prm_val_descuento=trim($this->input->post('txt_descuento'));
+			$prm_val_isc=trim($this->input->post('txt_isc'));
+			$prm_tip_afectacion=trim($this->input->post('cmb_tipoafectacion'));
+			$prm_val_igv=trim($this->input->post('txt_igv'));
+			$prm_val_total=trim($this->input->post('txt_valortotal'));	
 		//print_r($prm_val_descuento);
-		if(!$this->Usuarioinicio_model->MarcoTrabajoExiste())
-		{
-			$prm_cod_empr=0;
-		}
-		else
-		{
-			$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();		
-		}
-		$prm_ruc_empr=trim($this->input->post('txt_RucEmpresa'));
-		$prm_cod_tipregist=trim($this->input->post('cod_tipregist'));	
-		
+			if(!$this->Usuarioinicio_model->MarcoTrabajoExiste())
+			{
+				$prm_cod_empr=0;
+			}
+			else
+			{
+				$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();		
+			}
+			$prm_ruc_empr=trim($this->input->post('txt_RucEmpresa'));
+			$prm_cod_tipregist=trim($this->input->post('cod_tipregist'));	
+			
 		if ($prm_cod_tipregist==3)//EXPORTACION GRATUITAS
 		{
 			$prm_val_igv=0;
@@ -295,9 +295,9 @@ class Comprobante extends CI_Controller {
 		}
 		
 		$consulta =$this->Comprobante_model->Guardar_Registroproductos($prm_cod_usu,$prm_cod_prod,$prm_cant_prod,$prm_uni_med,
-					$prm_desc_prod,$prm_val_unitario,$prm_val_descuento,$prm_val_isc,$prm_tip_afectacion,$prm_val_igv,
-					$prm_val_total,$prm_cod_empr,$prm_ruc_empr,$prm_cod_tipregist);
-					
+			$prm_desc_prod,$prm_val_unitario,$prm_val_descuento,$prm_val_isc,$prm_tip_afectacion,$prm_val_igv,
+			$prm_val_total,$prm_cod_empr,$prm_ruc_empr,$prm_cod_tipregist);
+		
 		if ($consulta['result']==1)
 		{
 			$result['status']=1;
@@ -309,7 +309,7 @@ class Comprobante extends CI_Controller {
 			//$result['codigo_baja']='';
 		}		
 		echo json_encode($result);
-    }
+	}
 	
 	public function Listar_ProductosDocumento()
 	{
@@ -345,23 +345,23 @@ class Comprobante extends CI_Controller {
 		{
 			foreach($consulta as $key=>$v):
 				$Contador=$Contador+1;
-				$arr[$key]['nro_secuencia'] = $Contador;
-				$arr[$key]['tmp_prod'] = trim($v['tmp_prod']); 
-				$arr[$key]['cod_usu'] =trim($v['cod_usu']); 
-				$arr[$key]['cod_prod'] =  trim($v['cod_prod']);
-				$arr[$key]['cant_prod'] =  number_format(trim($v['cant_prod']),2,'.',','); 
-				$arr[$key]['uni_med'] =  trim($v['uni_med']);
-				$arr[$key]['desc_prod'] =  trim($v['desc_prod']);
-				$arr[$key]['val_unitario'] =  number_format(trim($v['val_unitario']),2,'.',','); 		
-				$arr[$key]['val_descuento'] =  number_format(trim($v['val_descuento']),2,'.',',');
-				$arr[$key]['val_isc'] =  number_format(trim($v['val_isc']),2,'.',','); 
-				$arr[$key]['tip_afectacion'] =  trim($v['tip_afectacion']);
-				$arr[$key]['val_igv'] = number_format(trim($v['val_igv']),2,'.',','); 
-				$arr[$key]['val_total'] =  number_format(trim($v['val_total']),2,'.',',');
-				$arr[$key]['cod_empr'] =  trim($v['cod_empr']);
-				$arr[$key]['ruc_empr'] =  trim($v['ruc_empr']);
-				
-				
+			$arr[$key]['nro_secuencia'] = $Contador;
+			$arr[$key]['tmp_prod'] = trim($v['tmp_prod']); 
+			$arr[$key]['cod_usu'] =trim($v['cod_usu']); 
+			$arr[$key]['cod_prod'] =  trim($v['cod_prod']);
+			$arr[$key]['cant_prod'] =  number_format(trim($v['cant_prod']),2,'.',','); 
+			$arr[$key]['uni_med'] =  trim($v['uni_med']);
+			$arr[$key]['desc_prod'] =  trim($v['desc_prod']);
+			$arr[$key]['val_unitario'] =  number_format(trim($v['val_unitario']),2,'.',','); 		
+			$arr[$key]['val_descuento'] =  number_format(trim($v['val_descuento']),2,'.',',');
+			$arr[$key]['val_isc'] =  number_format(trim($v['val_isc']),2,'.',','); 
+			$arr[$key]['tip_afectacion'] =  trim($v['tip_afectacion']);
+			$arr[$key]['val_igv'] = number_format(trim($v['val_igv']),2,'.',','); 
+			$arr[$key]['val_total'] =  number_format(trim($v['val_total']),2,'.',',');
+			$arr[$key]['cod_empr'] =  trim($v['cod_empr']);
+			$arr[$key]['ruc_empr'] =  trim($v['ruc_empr']);
+			
+			
 				if($v['cod_tipregist']==1) //NORMAL
 				{
 					if ($v['tip_afectacion']==10)
@@ -394,96 +394,96 @@ class Comprobante extends CI_Controller {
 				$igvtotal=$igvtotal+$v['val_igv'];
 				
 
-			endforeach;
-		}
-		
-		$variable['operaciongravadas']=number_format($operaciongravadas,2,'.',',');
-		$variable['operacioninafectos']=number_format($operacioninafectos,2,'.',',');
-		$variable['operacionexportacion']=number_format($operacionexportacion,2,'.',',');
-		$variable['operacionexoneradas']=number_format($operacionexoneradas,2,'.',',');
-		$variable['operaciongratuitas']=number_format($operaciongratuitas,2,'.',','); 
-		$variable['descuentototal']=number_format($descuentototal,2,'.',','); 
-		$variable['isctotal']=number_format( $isctotal,2,'.',',');
-		$variable['igvtotal']=number_format( $igvtotal,2,'.',',');
+				endforeach;
+			}
+			
+			$variable['operaciongravadas']=number_format($operaciongravadas,2,'.',',');
+			$variable['operacioninafectos']=number_format($operacioninafectos,2,'.',',');
+			$variable['operacionexportacion']=number_format($operacionexportacion,2,'.',',');
+			$variable['operacionexoneradas']=number_format($operacionexoneradas,2,'.',',');
+			$variable['operaciongratuitas']=number_format($operaciongratuitas,2,'.',','); 
+			$variable['descuentototal']=number_format($descuentototal,2,'.',','); 
+			$variable['isctotal']=number_format( $isctotal,2,'.',',');
+			$variable['igvtotal']=number_format( $igvtotal,2,'.',',');
 		//Validar el tipo de configuracion valor venta o precio
-		if ($Config_ValorPrecio==0)
-		{
-			$otroscargos=0;
-		}else
-		{
-			$valor_otroscargos=$this->Usuarioinicio_model->Get_Valor_OtrosCargos();
-			$otroscargos=$operaciongravadas*($valor_otroscargos/100);
-		}
-		
-		$variable['otroscargos']=number_format($otroscargos,2,'.',',');
-		$importetotal=$importetotal+$operaciongravadas+$operacionexoneradas+$operacionexportacion+$operacioninafectos+$igvtotal+$otroscargos;
+			if ($Config_ValorPrecio==0)
+			{
+				$otroscargos=0;
+			}else
+			{
+				$valor_otroscargos=$this->Usuarioinicio_model->Get_Valor_OtrosCargos();
+				$otroscargos=$operaciongravadas*($valor_otroscargos/100);
+			}
+			
+			$variable['otroscargos']=number_format($otroscargos,2,'.',',');
+			$importetotal=$importetotal+$operaciongravadas+$operacionexoneradas+$operacionexportacion+$operacioninafectos+$igvtotal+$otroscargos;
 		//$importetotal=$importetotal+(number_format($operaciongravadas,2,'.',',')+number_format($operacionexoneradas,2,'.',',')+
 		//	number_format($operacionexportacion,2,'.',',')+number_format($operacioninafectos,2,'.',',')+number_format( $igvtotal,2,'.',','));
-		$variable['importetotal']=number_format($importetotal,2,'.',',');
-		
-		
-		if(sizeof($arr)>0)
-		{
-			$result['status']=1;
-			$result['data']=$arr;
-			$result['variable']=$variable;
-		}
-		else
-		{
-			$result['status']=0;
-			$result['data']="";
-			$result['variable']="";
-		}
-		echo json_encode($result);
-    }
-	
-	
-	public function Eliminar_Productotemporal()
-	{
-		$arr=NULL;
-		$Contador=0;
-		$result['status']=0;
-		if(!$this->Usuarioinicio_model->SessionExiste())
-		{
-			$result['status']=1000;
+			$variable['importetotal']=number_format($importetotal,2,'.',',');
+			
+			
+			if(sizeof($arr)>0)
+			{
+				$result['status']=1;
+				$result['data']=$arr;
+				$result['variable']=$variable;
+			}
+			else
+			{
+				$result['status']=0;
+				$result['data']="";
+				$result['variable']="";
+			}
 			echo json_encode($result);
-			exit;
 		}
-		$prm_tmp_prod=trim($this->input->post('tmp_prod'));
-		$consulta =$this->Comprobante_model->Eliminar_Productotemporal($prm_tmp_prod);
-		if ($consulta['result']==1)
-		{
-			$result['status']=1;	
-		}
-		else
-		{
-			$result['status']=0;
-		}		
-		echo json_encode($result);
-    }
-	
-
-	public function Datos_Emisor()
-	{
-		$arr=NULL;
-
-		$result['status']=0;
-		if(!$this->Usuarioinicio_model->SessionExiste())
-		{
-			$result['status']=1000;
-			echo json_encode($result);
-			exit;
-		}
-		if(!$this->Usuarioinicio_model->MarcoTrabajoExiste())
-		{
-			$prm_cod_empr=0;
-		}
-		else
-		{
-			$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
-		}
-		$Listar_EmpresaId=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);
 		
+		
+		public function Eliminar_Productotemporal()
+		{
+			$arr=NULL;
+			$Contador=0;
+			$result['status']=0;
+			if(!$this->Usuarioinicio_model->SessionExiste())
+			{
+				$result['status']=1000;
+				echo json_encode($result);
+				exit;
+			}
+			$prm_tmp_prod=trim($this->input->post('tmp_prod'));
+			$consulta =$this->Comprobante_model->Eliminar_Productotemporal($prm_tmp_prod);
+			if ($consulta['result']==1)
+			{
+				$result['status']=1;	
+			}
+			else
+			{
+				$result['status']=0;
+			}		
+			echo json_encode($result);
+		}
+		
+
+		public function Datos_Emisor()
+		{
+			$arr=NULL;
+
+			$result['status']=0;
+			if(!$this->Usuarioinicio_model->SessionExiste())
+			{
+				$result['status']=1000;
+				echo json_encode($result);
+				exit;
+			}
+			if(!$this->Usuarioinicio_model->MarcoTrabajoExiste())
+			{
+				$prm_cod_empr=0;
+			}
+			else
+			{
+				$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
+			}
+			$Listar_EmpresaId=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);
+			
 		if(!empty($Listar_EmpresaId))//SI NO ES NULO O VACIO
 		{
 			$prm['Ruc_Empresa']=$Listar_EmpresaId[0]['ruc_empr'];	
@@ -499,19 +499,19 @@ class Comprobante extends CI_Controller {
 		{
 			foreach($consulta as $key=>$v):
 				$arr[$key]['cod_client'] =trim($v['cod_client']); 
-				$arr[$key]['nro_docum'] =  trim($v['nro_docum']);
-				$arr[$key]['raz_social'] =  trim($v['raz_social']);
-				$arr[$key]['direc_cliente'] =  trim($v['direc_cliente']);
-				$arr[$key]['email_cliente'] =  trim($v['email_cliente']);
-				
-				$arr[$key]['cod_ubigeo'] =  trim($v['cod_ubigeo']);
-				
-				$cod_depa=number_format(substr($v['cod_ubigeo'],0,2),0);
-				$cod_prov=number_format(substr($v['cod_ubigeo'],2,2),0);
-				$cod_dist=number_format(substr($v['cod_ubigeo'],4,2),0);
-				
-				$ubigeo =$this->Comprobante_model->Datos_Ubigeo($cod_depa,$cod_prov,$cod_dist);
-				
+			$arr[$key]['nro_docum'] =  trim($v['nro_docum']);
+			$arr[$key]['raz_social'] =  trim($v['raz_social']);
+			$arr[$key]['direc_cliente'] =  trim($v['direc_cliente']);
+			$arr[$key]['email_cliente'] =  trim($v['email_cliente']);
+			
+			$arr[$key]['cod_ubigeo'] =  trim($v['cod_ubigeo']);
+			
+			$cod_depa=number_format(substr($v['cod_ubigeo'],0,2),0);
+			$cod_prov=number_format(substr($v['cod_ubigeo'],2,2),0);
+			$cod_dist=number_format(substr($v['cod_ubigeo'],4,2),0);
+			
+			$ubigeo =$this->Comprobante_model->Datos_Ubigeo($cod_depa,$cod_prov,$cod_dist);
+			
 				if(!empty($ubigeo))//SI NO ES NULO O VACIO
 				{
 					$arr[$key]['nomb_depa'] =  $ubigeo[0]['de_departamento'];
@@ -534,45 +534,45 @@ class Comprobante extends CI_Controller {
 				$arr[$key]['cod_tipdoc'] =  trim($v['cod_tipdoc']);
 				
 
-			endforeach;
-		}
+				endforeach;
+			}
 
-		if(sizeof($arr)>0)
-		{
-			$result['status']=1;
-			$result['data']=$arr;
-		}
-		else
-		{
-			$result['status']=0;
-			$result['data']="";
-		}
-		echo json_encode($result);
-    }
-	
-	public function Guardar_Einvoiceheader()
-	{
-
-		$arr=NULL;
-		$Contador=0;
-		$result['status']=0;
-		if(!$this->Usuarioinicio_model->SessionExiste())
-		{
-			$result['status']=1000;
+			if(sizeof($arr)>0)
+			{
+				$result['status']=1;
+				$result['data']=$arr;
+			}
+			else
+			{
+				$result['status']=0;
+				$result['data']="";
+			}
 			echo json_encode($result);
-			exit;
 		}
-		$prm_cod_usu=$this->Usuarioinicio_model->Get_Cod_Usu();
-		if(!$this->Usuarioinicio_model->MarcoTrabajoExiste())
-		{
-			$prm_cod_empr=0;
-		}
-		else
-		{
-			$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();		
-		}		
 		
-		$prm_documentomodificar=trim($this->input->post('txt_documentomodificar'));				
+		public function Guardar_Einvoiceheader()
+		{
+
+			$arr=NULL;
+			$Contador=0;
+			$result['status']=0;
+			if(!$this->Usuarioinicio_model->SessionExiste())
+			{
+				$result['status']=1000;
+				echo json_encode($result);
+				exit;
+			}
+			$prm_cod_usu=$this->Usuarioinicio_model->Get_Cod_Usu();
+			if(!$this->Usuarioinicio_model->MarcoTrabajoExiste())
+			{
+				$prm_cod_empr=0;
+			}
+			else
+			{
+				$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();		
+			}		
+			
+			$prm_documentomodificar=trim($this->input->post('txt_documentomodificar'));				
 		$prm_correoemisor=trim($this->input->post('txt_emisorcorreo'));//='yessica.prad@bizlinks.la';
 		$prm_correoadquiriente=trim($this->input->post('txt_correocliente'));
 		$prm_numerodocumentoemisor=trim($this->input->post('txt_RucEmpresa'));
@@ -734,27 +734,27 @@ class Comprobante extends CI_Controller {
 				else
 				{
 					$datosadquiriente=array(
-									'ubigeoAdquiriente'=>$prm_ubigeoadquiriente,
-									'direccionAdquiriente'=>$prm_direccionadquiriente,
-									'urbanizacionAdquiriente'=>$prm_urbanizacionadquiriente,
-									'provinciaAdquiriente'=>$prm_provinciaadquiriente,
-									'departamentoAdquiriente'=>$prm_departamentoadquiriente,
-									'distritoAdquiriente'=>$prm_distritoadquiriente,
-									'paisAdquiriente'=>$prm_paisadquiriente
-									);
+						'ubigeoAdquiriente'=>$prm_ubigeoadquiriente,
+						'direccionAdquiriente'=>$prm_direccionadquiriente,
+						'urbanizacionAdquiriente'=>$prm_urbanizacionadquiriente,
+						'provinciaAdquiriente'=>$prm_provinciaadquiriente,
+						'departamentoAdquiriente'=>$prm_departamentoadquiriente,
+						'distritoAdquiriente'=>$prm_distritoadquiriente,
+						'paisAdquiriente'=>$prm_paisadquiriente
+						);
 				}
 			}
 			else
 			{
 				$datosadquiriente=array(
-									'ubigeoAdquiriente'=>$prm_ubigeoadquiriente,
-									'direccionAdquiriente'=>$prm_direccionadquiriente,
-									'urbanizacionAdquiriente'=>$prm_urbanizacionadquiriente,
-									'provinciaAdquiriente'=>$prm_provinciaadquiriente,
-									'departamentoAdquiriente'=>$prm_departamentoadquiriente,
-									'distritoAdquiriente'=>$prm_distritoadquiriente,
-									'paisAdquiriente'=>$prm_paisadquiriente
-									);
+					'ubigeoAdquiriente'=>$prm_ubigeoadquiriente,
+					'direccionAdquiriente'=>$prm_direccionadquiriente,
+					'urbanizacionAdquiriente'=>$prm_urbanizacionadquiriente,
+					'provinciaAdquiriente'=>$prm_provinciaadquiriente,
+					'departamentoAdquiriente'=>$prm_departamentoadquiriente,
+					'distritoAdquiriente'=>$prm_distritoadquiriente,
+					'paisAdquiriente'=>$prm_paisadquiriente
+					);
 			}
 		}
 
@@ -762,7 +762,7 @@ class Comprobante extends CI_Controller {
 		$prm_tipodocumentoadquiriente=trim($this->input->post('cmb_tipodocumentocliente'));
 		$prm_razonsocialadquiriente=trim($this->input->post('txt_razonsocialcliente'));
 		$prm_tipomoneda=trim($this->input->post('cmb_monedadocumento'));	
-			
+		
 		$prm_totalvalorventanetoopgravadas=trim($this->input->post('txt_operaciongravadas'));	
 		$prm_totalvalorventanetoopgravadas=number_format(trim($prm_totalvalorventanetoopgravadas), 2, '.', '');
 		
@@ -899,7 +899,7 @@ class Comprobante extends CI_Controller {
 			$prm_tipodocumentoreferenciaprincip=trim($this->input->post('cmb_tipodocumentoreferencia'));
 			$prm_tipodocumentoreferenciacorregi='';//PREGUNTAR
 			$prm_numerodocumentoreferenciacorre='';//PREGUNTAR
-		
+			
 			
 		}
 		else
@@ -920,78 +920,78 @@ class Comprobante extends CI_Controller {
 		$prm_adicionalCodigo=($this->input->post('arr_adicional_Codigo'));
 		$prm_adicionalValor=($this->input->post('arr_adicional_Valor'));
 		$prm_adicionalCampos = array("100_3","100_4","100_5","100_6","100_7","100_8","100_9","100_10","40_3","40_4","40_5","40_6",
-						"40_7","40_8","40_9","40_10","40_11","40_12","40_13","40_14","40_15","40_16","40_17","40_18",
-						"40_19","40_20","500_1","500_2","500_3","500_4","500_5","250_1","250_2","250_3","250_4","250_5",
-						"250_6","250_7","250_8","250_9","250_10","250_11","250_12","250_13","250_14","250_15","250_16",
-						"250_17","250_18","250_19","250_20","250_21","250_22","250_23","250_24","250_25");
+			"40_7","40_8","40_9","40_10","40_11","40_12","40_13","40_14","40_15","40_16","40_17","40_18",
+			"40_19","40_20","500_1","500_2","500_3","500_4","500_5","250_1","250_2","250_3","250_4","250_5",
+			"250_6","250_7","250_8","250_9","250_10","250_11","250_12","250_13","250_14","250_15","250_16",
+			"250_17","250_18","250_19","250_20","250_21","250_22","250_23","250_24","250_25");
 		
 		//print_r($temp);
 		//return;
 		$consulta =$this->Comprobante_model->Guardar_Einvoiceheader(
-											$prm_cod_empr,
-											$prm_cod_usu,
-											$prm_correoemisor,
-											$prm_correoadquiriente,
-											$prm_numerodocumentoemisor,
-											$prm_tipodocumentoemisor,
-											$prm_tipodocumento,
-											$prm_razonsocialemisor,
-											$prm_nombrecomercialemisor,
-											$prm_seriedocumento,
-											$prm_numerodocumento,
-											$prm_fechaemision,
-											$prm_ubigeoemisor,
-											$prm_direccionemisor,
-											$prm_urbanizacion,
-											$prm_provinciaemisor,
-											$prm_departamentoemisor,
-											$prm_distritoemisor,
-											$prm_paisemisor,
-											$prm_numerodocumentoadquiriente,
-											$prm_tipodocumentoadquiriente,
-											$prm_razonsocialadquiriente,
-											$prm_tipomoneda,
-											$prm_totalvalorventanetoopgravadas,
-											$prm_totalvalorventanetoopnogravada,
-											$prm_totalvalorventanetoopexonerada,
-											$prm_totaligv,
-											$prm_totaldescuentos,
-											$prm_totalventa,
-											$prm_textoleyenda_1,
-											$prm_codigoleyenda_1,
-											$prm_totaldetraccion,
-											$prm_valorreferencialdetraccion,
-											$prm_porcentajedetraccion,
-											$prm_descripciondetraccion,
-											$prm_textoleyenda_2,
-											$prm_codigoleyenda_2,
-											$prm_descuentosglobales,
-											$prm_textoleyenda_3,
-											$prm_codigoleyenda_3,
-											
-											$prm_porcentajepercepcion,
-											$prm_baseimponiblepercepcion,
-											$prm_totalpercepcion,
-											$prm_totalventaconpercepcion,
-											$datosadquiriente,
-											$prm_totalvalorventanetoopgratuitas,
-											
-											$prm_codigoserienumeroafectado,
-											$prm_serienumeroafectado,
-											$prm_motivodocumento,
-											$prm_tipodocumentoreferenciaprincip,
-											$prm_numerodocumentoreferenciaprinc,
-											$prm_tipodocumentoreferenciacorregi,
-											$prm_numerodocumentoreferenciacorre,											
-											$prm_tipo_registro,
-											$prm_documentomodificar,
-											$prm_totalotroscargos,
-											$prm_porcentajeotroscargos,
-											$prm_adicionalCantidad,
-											$prm_adicionalCodigo,
-											$prm_adicionalValor,
-											$prm_adicionalCampos
-											);
+			$prm_cod_empr,
+			$prm_cod_usu,
+			$prm_correoemisor,
+			$prm_correoadquiriente,
+			$prm_numerodocumentoemisor,
+			$prm_tipodocumentoemisor,
+			$prm_tipodocumento,
+			$prm_razonsocialemisor,
+			$prm_nombrecomercialemisor,
+			$prm_seriedocumento,
+			$prm_numerodocumento,
+			$prm_fechaemision,
+			$prm_ubigeoemisor,
+			$prm_direccionemisor,
+			$prm_urbanizacion,
+			$prm_provinciaemisor,
+			$prm_departamentoemisor,
+			$prm_distritoemisor,
+			$prm_paisemisor,
+			$prm_numerodocumentoadquiriente,
+			$prm_tipodocumentoadquiriente,
+			$prm_razonsocialadquiriente,
+			$prm_tipomoneda,
+			$prm_totalvalorventanetoopgravadas,
+			$prm_totalvalorventanetoopnogravada,
+			$prm_totalvalorventanetoopexonerada,
+			$prm_totaligv,
+			$prm_totaldescuentos,
+			$prm_totalventa,
+			$prm_textoleyenda_1,
+			$prm_codigoleyenda_1,
+			$prm_totaldetraccion,
+			$prm_valorreferencialdetraccion,
+			$prm_porcentajedetraccion,
+			$prm_descripciondetraccion,
+			$prm_textoleyenda_2,
+			$prm_codigoleyenda_2,
+			$prm_descuentosglobales,
+			$prm_textoleyenda_3,
+			$prm_codigoleyenda_3,
+			
+			$prm_porcentajepercepcion,
+			$prm_baseimponiblepercepcion,
+			$prm_totalpercepcion,
+			$prm_totalventaconpercepcion,
+			$datosadquiriente,
+			$prm_totalvalorventanetoopgratuitas,
+			
+			$prm_codigoserienumeroafectado,
+			$prm_serienumeroafectado,
+			$prm_motivodocumento,
+			$prm_tipodocumentoreferenciaprincip,
+			$prm_numerodocumentoreferenciaprinc,
+			$prm_tipodocumentoreferenciacorregi,
+			$prm_numerodocumentoreferenciacorre,											
+			$prm_tipo_registro,
+			$prm_documentomodificar,
+			$prm_totalotroscargos,
+			$prm_porcentajeotroscargos,
+			$prm_adicionalCantidad,
+			$prm_adicionalCodigo,
+			$prm_adicionalValor,
+			$prm_adicionalCampos
+			);
 		
 		//print_r($consulta);
 		if ($consulta['result']==1)
@@ -1018,7 +1018,7 @@ class Comprobante extends CI_Controller {
 			$result['numero']=$consulta['numero'];
 		}		
 		echo json_encode($result);
-    }	
+	}	
 	
 	public function Listar_Comprobantes()
 	{
@@ -1071,8 +1071,8 @@ class Comprobante extends CI_Controller {
 		$prm_estado_documentosunat=trim($this->input->post('Cmb_EstadoDocumentoSunat'));
 		
 		$consulta =$this->Comprobante_model->Listar_Comprobantes($prm_ruc_empr,$prm_documento_cliente,$prm_serie_numeroinicio,
-					$prm_serie_numerofinal,$prm_cod_estdoc,$prm_fec_emisinicio,$prm_fec_emisfinal,
-					$prm_tipo_documentosunat,$prm_estado_documentosunat,$prm_tipomoneda, $prm_razonsocialcliente);
+			$prm_serie_numerofinal,$prm_cod_estdoc,$prm_fec_emisinicio,$prm_fec_emisfinal,
+			$prm_tipo_documentosunat,$prm_estado_documentosunat,$prm_tipomoneda, $prm_razonsocialcliente);
 
 		if(!empty($consulta))//SI NO ES NULO O VACIO
 		{
@@ -1221,7 +1221,7 @@ class Comprobante extends CI_Controller {
 				}
 				else //SIGNIFICA QUE SI SELECCIONO UN TIPO DE ESTADO SUNAT
 				{
-				
+					
 					if ($prm_documento_cliente=='-')
 					{
 						$posicion = strpos($prm_razonsocialcliente,$v['razonsocialadquiriente']);			 
@@ -1351,27 +1351,27 @@ class Comprobante extends CI_Controller {
 						}
 					}
 				}
-						
-			endforeach;
-		}
-		if(sizeof($arr)>0)
-		{
-			$result['status']=1;
-			$result['data']=$arr;
-		}
-		else
+				
+				endforeach;
+			}
+			if(sizeof($arr)>0)
+			{
+				$result['status']=1;
+				$result['data']=$arr;
+			}
+			else
+			{
+				$result['status']=0;
+				$result['data']="";
+			}
+		//print_r($result);
+			echo json_encode($result);
+		}	
+		
+		
+		public function Comprobar_DocumentoImprimirAnonimo()
 		{
 			$result['status']=0;
-			$result['data']="";
-		}
-		//print_r($result);
-		echo json_encode($result);
-    }	
-	
-	
-	public function Comprobar_DocumentoImprimirAnonimo()
-	{
-		$result['status']=0;
 		/*if(!$this->Usuarioinicio_model->SessionExiste())
 		{
 			$result['status']=1000;
@@ -1428,23 +1428,23 @@ class Comprobante extends CI_Controller {
 						
 					} 
 				}			
-			endforeach;
+				endforeach;
+				
+			}
+			if ($cantidad==0)
+			{
+				$result['status']=2;
+			}
+			else if ($cantidad>0)
+			{
+				$result['status']=1;
+			}
+			echo json_encode($result);
 			
-		}
-		if ($cantidad==0)
-		{
-			$result['status']=2;
-		}
-		else if ($cantidad>0)
-		{
-			$result['status']=1;
-		}
-		echo json_encode($result);
+		}	
 		
-	}	
-	
-	public function Imprimir_DocumentoSeleccionadoAnonimo()
-	{
+		public function Imprimir_DocumentoSeleccionadoAnonimo()
+		{
 		/*if(!$this->Usuarioinicio_model->SessionExiste())
 		{
 			$this->load->view('usuario/login');
@@ -1503,33 +1503,33 @@ class Comprobante extends CI_Controller {
 						$src='././download/'.$codigodocumento;//base_url().'download/el_archivo_no_existe.pdf';
 						$nombrearchivopdf=$nombrearchivopdf.'_NO_EXISTE';
 					}*/
-						
+					
 				}			
-			endforeach;
-			
+				endforeach;
+				
 			//print_r($listadearchivos);
 			//return;			
-			$this->load->library('my_pdfconcat'); 
-			$pdf = new PDFMerger;
-			foreach($listadearchivos as $key1=>$v1):
-				$pdf->addPDF($v1, 'all');
-			endforeach;
-			
+				$this->load->library('my_pdfconcat'); 
+				$pdf = new PDFMerger;
+				foreach($listadearchivos as $key1=>$v1):
+					$pdf->addPDF($v1, 'all');
+				endforeach;
+				
 			//$fecha_actual = explode('/',date("d/m/Y"));
-			$fecha_actual=((date("Y-m-d H-i-s")).'.'.substr(microtime(),0,5)*1000);
-			
-			if ($contador==1)
-			{
-				$pdf->merge('download', $prm_ruc_emisor.'-'.$fecha_actual.'.pdf');
-			}
-			else
-			{
+				$fecha_actual=((date("Y-m-d H-i-s")).'.'.substr(microtime(),0,5)*1000);
+				
+				if ($contador==1)
+				{
+					$pdf->merge('download', $prm_ruc_emisor.'-'.$fecha_actual.'.pdf');
+				}
+				else
+				{
 				//$pdf->merge('download', $prm_ruc_emisor.'-'.$fecha_actual[2].'-'.$fecha_actual[1].'-'.$fecha_actual[0].'.pdf');
-				$pdf->merge('download', $prm_ruc_emisor.'-'.$fecha_actual.'.pdf');
+					$pdf->merge('download', $prm_ruc_emisor.'-'.$fecha_actual.'.pdf');
+				}
 			}
-		}
-	}	
-	
+		}	
+		
 	public function Crear_ArchivosDocumentoSeleccionadoAnonimo()//Crear_ArchivosDocumentoSeleccionado  
 	{
 		//if (!isset($_GET['param1'])){	$prm_cod_documento='';} else{$prm_cod_documento=$_GET['param1'];}
@@ -1546,7 +1546,7 @@ class Comprobante extends CI_Controller {
 		}*/
 		$prm_cod_documento=trim($this->input->post('param1'));
 		$prm_ruc_emisor=trim($this->input->post('param2'));
-			
+		
 		
 		$carpetaemisor='6-'.$prm_ruc_emisor;		
 		$carpeta = ''; //keys/			
@@ -1588,8 +1588,8 @@ class Comprobante extends CI_Controller {
 			
 			foreach($lista_documento as $key=>$v):
 				$nombrearchivopdf='';
-				if (strlen($v)>4)
-				{
+			if (strlen($v)>4)
+			{
 					if ($tipofirma==1)//BIZLIN
 					{
 						$nombrearchivopdf=$prm_ruc_emisor.'-'.$v;
@@ -1611,7 +1611,7 @@ class Comprobante extends CI_Controller {
 						$codigodocumento='el_archivo_no_existe.pdf';	
 						$src='././download/'.$codigodocumento;//base_url().'download/el_archivo_no_existe.pdf';
 					}*/
-									
+					
 					//CASO CDR
 					$src=$carpeta.$carpetaemisor.'/'.$v.'/XML_CDR.xml';
 					if (file_exists($src))  //El fichero $nombre_fichero existe
@@ -1665,25 +1665,25 @@ class Comprobante extends CI_Controller {
 					}
 					$cantidadbucle=0;
 				}
-			endforeach;
+				endforeach;
 
-			if ($cantidad>0)
-			{
-				$result['status']=1;
+				if ($cantidad>0)
+				{
+					$result['status']=1;
+				}
+				else
+				{
+					$result['status']=2;
+				}
 			}
-			else
-			{
-				$result['status']=2;
-			}
+			
+		//echo json_encode('1');
+			echo json_encode($result);
 		}
 		
-		//echo json_encode('1');
-		echo json_encode($result);
-	}
-	
-	
-	public function Descargar_DocumentoSeleccionadoAnonimo()
-	{
+		
+		public function Descargar_DocumentoSeleccionadoAnonimo()
+		{
 		/*if(!$this->Usuarioinicio_model->SessionExiste())
 		{
 			$this->load->view('usuario/login');
@@ -1716,7 +1716,7 @@ class Comprobante extends CI_Controller {
 		$nombre_carpeta=$carpetaemisor.'/bloquedescargar';
 		$carpetadescarga = '././download/'.$nombre_carpeta;
 		$lista_documento=explode(',',$prm_cod_documento);
-			
+		
 		if(!empty($lista_documento))
 		{	
 			$this->load->library('zip'); 
@@ -1730,37 +1730,37 @@ class Comprobante extends CI_Controller {
 					$listadearchivos[$contador]=$carpetadescarga.'/'.$nombrecarpetadoc;
 					$contador++;
 				}
-			endforeach;
+				endforeach;
 
 			//$listadearchivos=NULL;
 			//$listadearchivos=array ( 	"0"=> "././download/6-20100037689/bloquedescargar/2010003768901-F001-00000001","1"=> "././download/6-20100037689/bloquedescargar/2010003768901-F001-00000004");
 
-			foreach($listadearchivos as $key1=>$v1):
-				$this->zip->read_file($v1.'.zip');				
-			endforeach;
-			
+				foreach($listadearchivos as $key1=>$v1):
+					$this->zip->read_file($v1.'.zip');				
+				endforeach;
+				
 			//$fecha_actual = explode('/',date("d/m/Y"));
-			$fecha_actual=((date("Y-m-d H-i-s")).'.'.substr(microtime(),0,5)*1000);
+				$fecha_actual=((date("Y-m-d H-i-s")).'.'.substr(microtime(),0,5)*1000);
 			//$this->zip->download($prm_ruc_emisor.'-'.$fecha_actual[2].'-'.$fecha_actual[1].'-'.$fecha_actual[0].'.zip'); 
-			$this->zip->download($prm_ruc_emisor.'-'.$fecha_actual.'.zip'); 
+				$this->zip->download($prm_ruc_emisor.'-'.$fecha_actual.'.zip'); 
+			}
 		}
-	}
-	
-
-	
-	public function Comprobar_DocumentoImprimir()
-	{
-		$result['status']=0;
-		if(!$this->Usuarioinicio_model->SessionExiste())
-		{
-			$result['status']=1000;
-			echo json_encode($result);
-			exit;
-		}
-		$prm_cod_documento=trim($this->input->post('param1'));
-		$prm_ruc_emisor=trim($this->input->post('param2'));
 		
-		$carpetaemisor='6-'.$prm_ruc_emisor;		
+
+		
+		public function Comprobar_DocumentoImprimir()
+		{
+			$result['status']=0;
+			if(!$this->Usuarioinicio_model->SessionExiste())
+			{
+				$result['status']=1000;
+				echo json_encode($result);
+				exit;
+			}
+			$prm_cod_documento=trim($this->input->post('param1'));
+			$prm_ruc_emisor=trim($this->input->post('param2'));
+			
+			$carpetaemisor='6-'.$prm_ruc_emisor;		
 		$carpeta = ''; //keys/			
 		$rutadescargar=$this->Catalogos_model->Listar_RutaDocumentoDescargar();
 		if(!empty($rutadescargar))//SI NO ES NULO O VACIO
@@ -1820,37 +1820,37 @@ class Comprobante extends CI_Controller {
 					$contador++;	
 					*/
 				}			
-			endforeach;
+				endforeach;
+				
+			}
+			if ($cantidad==0)
+			{
+				$result['status']=2;
+			}
+			else if ($cantidad>0)
+			{
+				$result['status']=1;
+			}
+			echo json_encode($result);
 			
-		}
-		if ($cantidad==0)
-		{
-			$result['status']=2;
-		}
-		else if ($cantidad>0)
-		{
-			$result['status']=1;
-		}
-		echo json_encode($result);
+		}	
 		
-	}	
-	
-	
-	
-	
-	public function Imprimir_DocumentoSeleccionado()
-	{
-		if(!$this->Usuarioinicio_model->SessionExiste())
+		
+		
+		
+		public function Imprimir_DocumentoSeleccionado()
 		{
-			$this->load->view('usuario/login');
-			exit;
-		}
-		if (!isset($_GET['param1'])){	$prm_cod_documento='';} else{$prm_cod_documento=$_GET['param1'];}
+			if(!$this->Usuarioinicio_model->SessionExiste())
+			{
+				$this->load->view('usuario/login');
+				exit;
+			}
+			if (!isset($_GET['param1'])){	$prm_cod_documento='';} else{$prm_cod_documento=$_GET['param1'];}
 
-		$prm_cod_documento = basename($_GET['param1']);	
-		$prm_ruc_emisor = basename($_GET['param2']);		
-		
-		$carpetaemisor='6-'.$prm_ruc_emisor;		
+			$prm_cod_documento = basename($_GET['param1']);	
+			$prm_ruc_emisor = basename($_GET['param2']);		
+			
+			$carpetaemisor='6-'.$prm_ruc_emisor;		
 		$carpeta = ''; //keys/			
 		$rutadescargar=$this->Catalogos_model->Listar_RutaDocumentoDescargar();
 		if(!empty($rutadescargar))//SI NO ES NULO O VACIO
@@ -1898,32 +1898,32 @@ class Comprobante extends CI_Controller {
 						$src='././download/'.$codigodocumento;//base_url().'download/el_archivo_no_existe.pdf';
 						$nombrearchivopdf=$nombrearchivopdf.'_NO_EXISTE';
 					}*/
-						
+					
 				}			
-			endforeach;
-			
+				endforeach;
+				
 			//print_r($listadearchivos);
 			//return;			
-			$this->load->library('my_pdfconcat'); 
-			$pdf = new PDFMerger;
-			foreach($listadearchivos as $key1=>$v1):
-				$pdf->addPDF($v1, 'all');
-			endforeach;
-			
+				$this->load->library('my_pdfconcat'); 
+				$pdf = new PDFMerger;
+				foreach($listadearchivos as $key1=>$v1):
+					$pdf->addPDF($v1, 'all');
+				endforeach;
+				
 			//$fecha_actual = explode('/',date("d/m/Y"));
-			$fecha_actual=((date("Y-m-d H-i-s")).'.'.substr(microtime(),0,5)*1000);
-			
-			if ($contador==1)
-			{
-				$pdf->merge('download', $prm_ruc_emisor.'-'.$fecha_actual.'.pdf');
-			}
-			else
-			{
+				$fecha_actual=((date("Y-m-d H-i-s")).'.'.substr(microtime(),0,5)*1000);
+				
+				if ($contador==1)
+				{
+					$pdf->merge('download', $prm_ruc_emisor.'-'.$fecha_actual.'.pdf');
+				}
+				else
+				{
 				//$pdf->merge('download', $prm_ruc_emisor.'-'.$fecha_actual[2].'-'.$fecha_actual[1].'-'.$fecha_actual[0].'.pdf');
-				$pdf->merge('download', $prm_ruc_emisor.'-'.$fecha_actual.'.pdf');
+					$pdf->merge('download', $prm_ruc_emisor.'-'.$fecha_actual.'.pdf');
+				}
 			}
-		}
-	}	
+		}	
 		
 	public function Crear_ArchivosDocumentoSeleccionado()//Crear_ArchivosDocumentoSeleccionado  
 	{
@@ -1941,7 +1941,7 @@ class Comprobante extends CI_Controller {
 		}
 		$prm_cod_documento=trim($this->input->post('param1'));
 		$prm_ruc_emisor=trim($this->input->post('param2'));
-			
+		
 		
 		$carpetaemisor='6-'.$prm_ruc_emisor;		
 		$carpeta = ''; //keys/			
@@ -1983,8 +1983,8 @@ class Comprobante extends CI_Controller {
 			
 			foreach($lista_documento as $key=>$v):
 				$nombrearchivopdf='';
-				if (strlen($v)>4)
-				{
+			if (strlen($v)>4)
+			{
 					if ($tipofirma==1)//BIZLIN
 					{
 						$nombrearchivopdf=$prm_ruc_emisor.'-'.$v;
@@ -2006,7 +2006,7 @@ class Comprobante extends CI_Controller {
 						$codigodocumento='el_archivo_no_existe.pdf';	
 						$src='././download/'.$codigodocumento;//base_url().'download/el_archivo_no_existe.pdf';
 					}*/
-									
+					
 					//CASO CDR
 					$src=$carpeta.$carpetaemisor.'/'.$v.'/XML_CDR.xml';
 					if (file_exists($src))  //El fichero $nombre_fichero existe
@@ -2060,40 +2060,40 @@ class Comprobante extends CI_Controller {
 					}
 					$cantidadbucle=0;
 				}
-			endforeach;
+				endforeach;
 
-			if ($cantidad>0)
-			{
-				$result['status']=1;
+				if ($cantidad>0)
+				{
+					$result['status']=1;
+				}
+				else
+				{
+					$result['status']=2;
+				}
 			}
-			else
-			{
-				$result['status']=2;
-			}
-		}
-		
+			
 		//echo json_encode('1');
-		echo json_encode($result);
-	}
-	
-	
-	public function Descargar_DocumentoSeleccionado()
-	{
-		if(!$this->Usuarioinicio_model->SessionExiste())
-		{
-			$this->load->view('usuario/login');
-			exit;
+			echo json_encode($result);
 		}
-		if (!isset($_GET['param1'])){	$prm_cod_documento='';} else{$prm_cod_documento=$_GET['param1'];}
 		
+		
+		public function Descargar_DocumentoSeleccionado()
+		{
+			if(!$this->Usuarioinicio_model->SessionExiste())
+			{
+				$this->load->view('usuario/login');
+				exit;
+			}
+			if (!isset($_GET['param1'])){	$prm_cod_documento='';} else{$prm_cod_documento=$_GET['param1'];}
+			
 
-		$prm_cod_documento = basename($_GET['param1']);		
-		$prm_ruc_emisor = basename($_GET['param2']);		
-		
-		
+			$prm_cod_documento = basename($_GET['param1']);		
+			$prm_ruc_emisor = basename($_GET['param2']);		
+			
+			
 		//$this->Crear_ArchivosDocumentoSeleccionado($prm_cod_documento,$prm_ruc_emisor);
-		
-		$carpetaemisor='6-'.$prm_ruc_emisor;		
+			
+			$carpetaemisor='6-'.$prm_ruc_emisor;		
 		$carpeta = ''; //keys/			
 		$rutadescargar=$this->Catalogos_model->Listar_RutaDocumentoDescargar();
 		if(!empty($rutadescargar))//SI NO ES NULO O VACIO
@@ -2111,7 +2111,7 @@ class Comprobante extends CI_Controller {
 		$nombre_carpeta=$carpetaemisor.'/bloquedescargar';
 		$carpetadescarga = '././download/'.$nombre_carpeta;
 		$lista_documento=explode(',',$prm_cod_documento);
-			
+		
 		if(!empty($lista_documento))
 		{	
 			$this->load->library('zip'); 
@@ -2125,49 +2125,49 @@ class Comprobante extends CI_Controller {
 					$listadearchivos[$contador]=$carpetadescarga.'/'.$nombrecarpetadoc;
 					$contador++;
 				}
-			endforeach;
+				endforeach;
 
 			//$listadearchivos=NULL;
 			//$listadearchivos=array ( 	"0"=> "././download/6-20100037689/bloquedescargar/2010003768901-F001-00000001","1"=> "././download/6-20100037689/bloquedescargar/2010003768901-F001-00000004");
 
-			foreach($listadearchivos as $key1=>$v1):
-				$this->zip->read_file($v1.'.zip');				
-			endforeach;
-			
+				foreach($listadearchivos as $key1=>$v1):
+					$this->zip->read_file($v1.'.zip');				
+				endforeach;
+				
 			//$fecha_actual = explode('/',date("d/m/Y"));
-			$fecha_actual=((date("Y-m-d H-i-s")).'.'.substr(microtime(),0,5)*1000);
+				$fecha_actual=((date("Y-m-d H-i-s")).'.'.substr(microtime(),0,5)*1000);
 			//$this->zip->download($prm_ruc_emisor.'-'.$fecha_actual[2].'-'.$fecha_actual[1].'-'.$fecha_actual[0].'.zip'); 
-			$this->zip->download($prm_ruc_emisor.'-'.$fecha_actual.'.zip'); 
+				$this->zip->download($prm_ruc_emisor.'-'.$fecha_actual.'.zip'); 
+			}
 		}
-	}
-	
-	
-	
-	
-	function EliminarDirecctorio($carpeta)
-	{
-		foreach(glob($carpeta . "/*") as $archivos_carpeta)
+		
+		
+		
+		
+		function EliminarDirecctorio($carpeta)
 		{
+			foreach(glob($carpeta . "/*") as $archivos_carpeta)
+			{
 			//echo $archivos_carpeta;
-	 
-			if (is_dir($archivos_carpeta))
-			{
-				EliminarDirecctorio($archivos_carpeta);
+				
+				if (is_dir($archivos_carpeta))
+				{
+					EliminarDirecctorio($archivos_carpeta);
+				}
+				else
+				{
+					unlink($archivos_carpeta);
+				}
 			}
-			else
-			{
-				unlink($archivos_carpeta);
-			}
+			rmdir($carpeta);
 		}
-		rmdir($carpeta);
-	}
-	
-	public function Listar_DetalleDocumento()
-	{
+		
+		public function Listar_DetalleDocumento()
+		{
 		//print_r('INICIA 1');
-		$arr=NULL;
-		$Contador=0;
-		$result['status']=0;
+			$arr=NULL;
+			$Contador=0;
+			$result['status']=0;
 		/*
 		if(!$this->Usuarioinicio_model->SessionExiste())
 		{
@@ -2216,83 +2216,83 @@ class Comprobante extends CI_Controller {
 						switch($v['clave'])
 						{
 							case 'direccionAdquiriente':
-								$direccionAdquiriente=trim($v['valor']);
-								break;
+							$direccionAdquiriente=trim($v['valor']);
+							break;
 							case 'urbanizacionAdquiriente':
-								$urbanizacionAdquiriente=trim($v['valor']);
-								break;
+							$urbanizacionAdquiriente=trim($v['valor']);
+							break;
 							case 'distritoAdquiriente':
-								$distritoAdquiriente=trim($v['valor']);
-								break;
+							$distritoAdquiriente=trim($v['valor']);
+							break;
 							case 'provinciaAdquiriente':
-								$provinciaAdquiriente=trim($v['valor']);
-								break;
+							$provinciaAdquiriente=trim($v['valor']);
+							break;
 							case 'departamentoAdquiriente':
-								$departamentoAdquiriente=trim($v['valor']);
-								break;
+							$departamentoAdquiriente=trim($v['valor']);
+							break;
 						}
 					}
-				endforeach;
-				if (trim($direccionAdquiriente)<>''){
-					$direccioncliente=$direccionAdquiriente;
-				}
-				if (trim($urbanizacionAdquiriente)<>''){
-					if (trim($direccioncliente)==''){
-						$direccioncliente=$urbanizacionAdquiriente;
-					}else{
-						$direccioncliente=$direccioncliente.' - '.$urbanizacionAdquiriente;}
-				}
-				if (trim($distritoAdquiriente)<>''){
-					if (trim($direccioncliente)==''){
-						$direccioncliente=$distritoAdquiriente;}
-					else{
-						$direccioncliente=$direccioncliente.' - '.$distritoAdquiriente;}
-				}
-				if (trim($provinciaAdquiriente)<>''){
-					if (trim($direccioncliente)==''){
-						$direccioncliente=$provinciaAdquiriente;}
-					else{
-						$direccioncliente=$direccioncliente.' - '.$provinciaAdquiriente;}
-				}
-				if (trim($departamentoAdquiriente)<>''){
-					if (trim($direccioncliente)==''){
-						$direccioncliente=$departamentoAdquiriente;}
-					else{
-						$direccioncliente=$direccioncliente.' - '.$departamentoAdquiriente;}
-				}
-			}
-		}
+					endforeach;
+					if (trim($direccionAdquiriente)<>''){
+						$direccioncliente=$direccionAdquiriente;
+					}
+					if (trim($urbanizacionAdquiriente)<>''){
+						if (trim($direccioncliente)==''){
+							$direccioncliente=$urbanizacionAdquiriente;
+						}else{
+							$direccioncliente=$direccioncliente.' - '.$urbanizacionAdquiriente;}
+						}
+						if (trim($distritoAdquiriente)<>''){
+							if (trim($direccioncliente)==''){
+								$direccioncliente=$distritoAdquiriente;}
+								else{
+									$direccioncliente=$direccioncliente.' - '.$distritoAdquiriente;}
+								}
+								if (trim($provinciaAdquiriente)<>''){
+									if (trim($direccioncliente)==''){
+										$direccioncliente=$provinciaAdquiriente;}
+										else{
+											$direccioncliente=$direccioncliente.' - '.$provinciaAdquiriente;}
+										}
+										if (trim($departamentoAdquiriente)<>''){
+											if (trim($direccioncliente)==''){
+												$direccioncliente=$departamentoAdquiriente;}
+												else{
+													$direccioncliente=$direccioncliente.' - '.$departamentoAdquiriente;}
+												}
+											}
+										}
 
 		if(!empty($consulta))//SI NO ES NULO O VACIO
 		{
 			foreach($consulta as $key=>$v):
 				$Contador=$Contador+1;
-				$arr[$key]['razonsocialemisor'] =strtoupper(trim($v['razonsocialemisor'])); 
-				$arr[$key]['nombrecomercialemisor'] =trim($v['nombrecomercialemisor']); 
-				$arr[$key]['direccionemisor'] =trim($v['direccionemisor']); 
-				$arr[$key]['distritoemisor'] =trim($v['distritoemisor']); 
-				$arr[$key]['departamentoemisor'] =trim($v['departamentoemisor']); 
-				$arr[$key]['provinciaemisor'] =trim($v['provinciaemisor']); 
-				$arr[$key]['numerodocumentoemisor'] =trim($v['numerodocumentoemisor']); 
-				$arr[$key]['tipodocumentoemisor'] =trim($v['tipodocumentoemisor']); 				
-				$arr[$key]['nombre_tipodocumentoemisor'] =trim($v['nombre_tipodocumentoemisor']); 
-				
-				$arr[$key]['serienumero'] =trim($v['serienumero']); 
-				$arr[$key]['tipodocumento'] =trim($v['tipodocumento']); 
-				$arr[$key]['nombre_tipodocumento'] =trim($v['nombre_tipodocumento']);
+			$arr[$key]['razonsocialemisor'] =strtoupper(trim($v['razonsocialemisor'])); 
+			$arr[$key]['nombrecomercialemisor'] =trim($v['nombrecomercialemisor']); 
+			$arr[$key]['direccionemisor'] =trim($v['direccionemisor']); 
+			$arr[$key]['distritoemisor'] =trim($v['distritoemisor']); 
+			$arr[$key]['departamentoemisor'] =trim($v['departamentoemisor']); 
+			$arr[$key]['provinciaemisor'] =trim($v['provinciaemisor']); 
+			$arr[$key]['numerodocumentoemisor'] =trim($v['numerodocumentoemisor']); 
+			$arr[$key]['tipodocumentoemisor'] =trim($v['tipodocumentoemisor']); 				
+			$arr[$key]['nombre_tipodocumentoemisor'] =trim($v['nombre_tipodocumentoemisor']); 
+			
+			$arr[$key]['serienumero'] =trim($v['serienumero']); 
+			$arr[$key]['tipodocumento'] =trim($v['tipodocumento']); 
+			$arr[$key]['nombre_tipodocumento'] =trim($v['nombre_tipodocumento']);
 
-				$arr[$key]['fechaemision'] = trim($v['fechaemision']);		
-				
-				$arr[$key]['numerodocumentoadquiriente'] =trim($v['numerodocumentoadquiriente']); 
-				$arr[$key]['razonsocialadquiriente'] =trim($v['razonsocialadquiriente']);
-				if ($opciondireccioncliente=='F')
-				{
-					$arr[$key]['direccioncliente'] =$direccioncliente; 
-				}else
-				{
-					if (!$v['lugardestino']){
-						if (trim($v['lugardestino'])<>'-'){
-							$arr[$key]['direccioncliente'] =trim($v['lugardestino']);}
+			$arr[$key]['fechaemision'] = trim($v['fechaemision']);		
+			
+			$arr[$key]['numerodocumentoadquiriente'] =trim($v['numerodocumentoadquiriente']); 
+			$arr[$key]['razonsocialadquiriente'] =trim($v['razonsocialadquiriente']);
+			if ($opciondireccioncliente=='F')
+			{
+				$arr[$key]['direccioncliente'] =$direccioncliente; 
+			}else
+			{
+				if (!$v['lugardestino']){
+					if (trim($v['lugardestino'])<>'-'){
+						$arr[$key]['direccioncliente'] =trim($v['lugardestino']);}
 					}else{
 						$arr[$key]['direccioncliente'] ='';
 					}
@@ -2312,7 +2312,7 @@ class Comprobante extends CI_Controller {
 				$arr[$key]['totalvalorventanetoopexonerada'] =trim($v['totalvalorventanetoopexonerada']); 	
 				$arr[$key]['totalvalorventanetoopgratuitas'] =trim($v['totalvalorventanetoopgratuitas']);							
 				$arr[$key]['totaldescuentos'] =trim($v['totaldescuentos']); 
-				 
+				
 				$arr[$key]['totaligv'] =trim($v['totaligv']); 
 				$arr[$key]['totalventa'] =trim($v['totalventa']); 
 
@@ -2328,9 +2328,9 @@ class Comprobante extends CI_Controller {
 				$arr[$key]['importeunitarioconimpuesto'] =trim($v['importeunitarioconimpuesto']); 				
 				$arr[$key]['importedescuento'] =trim($v['importedescuento']); 
 				$arr[$key]['importetotalsinimpuesto'] =trim($v['importetotalsinimpuesto']); 
-		
-			endforeach;
-			
+				
+				endforeach;
+				
 			if($_SESSION['SES_MarcoTrabajo'][0]['cod_rolseleccion']==2)//SOLO SI ES RECEPTOR SE ACTUALIZA LOS DATOS
 			{
 				$this->Comprobante_model->Actualizar_VistaDocumento($prm_ruc_empremisor,$prm_tipo_documento,$prm_serie_numero);
@@ -2348,7 +2348,7 @@ class Comprobante extends CI_Controller {
 			$result['data']="";
 		}
 		echo json_encode($result);
-    }	
+	}	
 	
 	public function Listar_DetalleDocumento_Anonimo()
 	{
@@ -2364,7 +2364,7 @@ class Comprobante extends CI_Controller {
 		$prm_serie_numero=$datos_seleccionados[1].'-'.$datos_seleccionados[2];
 		
 		$consulta =$this->Comprobante_model->Listar_DetalleDocumento($prm_ruc_empremisor,$prm_tipo_documento,$prm_serie_numero);
-	
+		
 		/*BUSCANDO LAS CARACTERISTICAS DE DIRECCION*/
 		$direccioncliente='';
 		$opciondireccioncliente=substr($prm_serie_numero,0,1);
@@ -2384,53 +2384,53 @@ class Comprobante extends CI_Controller {
 						switch($v['clave'])
 						{
 							case 'direccionAdquiriente':
-								$direccionAdquiriente=trim($v['valor']);
-								break;
+							$direccionAdquiriente=trim($v['valor']);
+							break;
 							case 'urbanizacionAdquiriente':
-								$urbanizacionAdquiriente=trim($v['valor']);
-								break;
+							$urbanizacionAdquiriente=trim($v['valor']);
+							break;
 							case 'distritoAdquiriente':
-								$distritoAdquiriente=trim($v['valor']);
-								break;
+							$distritoAdquiriente=trim($v['valor']);
+							break;
 							case 'provinciaAdquiriente':
-								$provinciaAdquiriente=trim($v['valor']);
-								break;
+							$provinciaAdquiriente=trim($v['valor']);
+							break;
 							case 'departamentoAdquiriente':
-								$departamentoAdquiriente=trim($v['valor']);
-								break;
+							$departamentoAdquiriente=trim($v['valor']);
+							break;
 						}
 					}
-				endforeach;
-				if (trim($direccionAdquiriente)<>''){
-					$direccioncliente=$direccionAdquiriente;
-				}
-				if (trim($urbanizacionAdquiriente)<>''){
-					if (trim($direccioncliente)==''){
-						$direccioncliente=$urbanizacionAdquiriente;
-					}else{
-						$direccioncliente=$direccioncliente.' - '.$urbanizacionAdquiriente;}
-				}
-				if (trim($distritoAdquiriente)<>''){
-					if (trim($direccioncliente)==''){
-						$direccioncliente=$distritoAdquiriente;}
-					else{
-						$direccioncliente=$direccioncliente.' - '.$distritoAdquiriente;}
-				}
-				if (trim($provinciaAdquiriente)<>''){
-					if (trim($direccioncliente)==''){
-						$direccioncliente=$provinciaAdquiriente;}
-					else{
-						$direccioncliente=$direccioncliente.' - '.$provinciaAdquiriente;}
-				}
-				if (trim($departamentoAdquiriente)<>''){
-					if (trim($direccioncliente)==''){
-						$direccioncliente=$departamentoAdquiriente;}
-					else{
-						$direccioncliente=$direccioncliente.' - '.$departamentoAdquiriente;}
-				}
-			}
-		}
-		
+					endforeach;
+					if (trim($direccionAdquiriente)<>''){
+						$direccioncliente=$direccionAdquiriente;
+					}
+					if (trim($urbanizacionAdquiriente)<>''){
+						if (trim($direccioncliente)==''){
+							$direccioncliente=$urbanizacionAdquiriente;
+						}else{
+							$direccioncliente=$direccioncliente.' - '.$urbanizacionAdquiriente;}
+						}
+						if (trim($distritoAdquiriente)<>''){
+							if (trim($direccioncliente)==''){
+								$direccioncliente=$distritoAdquiriente;}
+								else{
+									$direccioncliente=$direccioncliente.' - '.$distritoAdquiriente;}
+								}
+								if (trim($provinciaAdquiriente)<>''){
+									if (trim($direccioncliente)==''){
+										$direccioncliente=$provinciaAdquiriente;}
+										else{
+											$direccioncliente=$direccioncliente.' - '.$provinciaAdquiriente;}
+										}
+										if (trim($departamentoAdquiriente)<>''){
+											if (trim($direccioncliente)==''){
+												$direccioncliente=$departamentoAdquiriente;}
+												else{
+													$direccioncliente=$direccioncliente.' - '.$departamentoAdquiriente;}
+												}
+											}
+										}
+										
 		//$detallecaracteristica=$this->Comprobante_model->Buscar_DetalleCaracteristica('6',$prm_ruc_empremisor,$prm_tipo_documento,$prm_serie_numero,'direccionAdquiriente');
 		//if(!empty($detallecaracteristica))//SI NO ES NULO O VACIO
 		//{
@@ -2441,37 +2441,37 @@ class Comprobante extends CI_Controller {
 		{
 			foreach($consulta as $key=>$v):
 				$Contador=$Contador+1;
-				$arr[$key]['razonsocialemisor'] =strtoupper(trim($v['razonsocialemisor'])); 
-				$arr[$key]['nombrecomercialemisor'] =trim($v['nombrecomercialemisor']); 
-				$arr[$key]['direccionemisor'] =trim($v['direccionemisor']); 
-				$arr[$key]['distritoemisor'] =trim($v['distritoemisor']); 
-				$arr[$key]['departamentoemisor'] =trim($v['departamentoemisor']); 
-				$arr[$key]['provinciaemisor'] =trim($v['provinciaemisor']); 
-				$arr[$key]['numerodocumentoemisor'] =trim($v['numerodocumentoemisor']); 
-				$arr[$key]['tipodocumentoemisor'] =trim($v['tipodocumentoemisor']); 				
-				$arr[$key]['nombre_tipodocumentoemisor'] =trim($v['nombre_tipodocumentoemisor']); 
-				
-				$arr[$key]['serienumero'] =trim($v['serienumero']); 
-				$arr[$key]['tipodocumento'] =trim($v['tipodocumento']); 
-				$arr[$key]['nombre_tipodocumento'] =trim($v['nombre_tipodocumento']);
+			$arr[$key]['razonsocialemisor'] =strtoupper(trim($v['razonsocialemisor'])); 
+			$arr[$key]['nombrecomercialemisor'] =trim($v['nombrecomercialemisor']); 
+			$arr[$key]['direccionemisor'] =trim($v['direccionemisor']); 
+			$arr[$key]['distritoemisor'] =trim($v['distritoemisor']); 
+			$arr[$key]['departamentoemisor'] =trim($v['departamentoemisor']); 
+			$arr[$key]['provinciaemisor'] =trim($v['provinciaemisor']); 
+			$arr[$key]['numerodocumentoemisor'] =trim($v['numerodocumentoemisor']); 
+			$arr[$key]['tipodocumentoemisor'] =trim($v['tipodocumentoemisor']); 				
+			$arr[$key]['nombre_tipodocumentoemisor'] =trim($v['nombre_tipodocumentoemisor']); 
+			
+			$arr[$key]['serienumero'] =trim($v['serienumero']); 
+			$arr[$key]['tipodocumento'] =trim($v['tipodocumento']); 
+			$arr[$key]['nombre_tipodocumento'] =trim($v['nombre_tipodocumento']);
 
-				$arr[$key]['fechaemision'] = trim($v['fechaemision']);		
-				
-				$arr[$key]['numerodocumentoadquiriente'] =trim($v['numerodocumentoadquiriente']); 
-				$arr[$key]['razonsocialadquiriente'] =trim($v['razonsocialadquiriente']); 	
-				if ($opciondireccioncliente=='F')
-				{
-					$arr[$key]['direccioncliente'] =$direccioncliente; 
-				}else
-				{
-					if (!$v['lugardestino']){
-						if (trim($v['lugardestino'])<>'-'){
-							$arr[$key]['direccioncliente'] =trim($v['lugardestino']);}
+			$arr[$key]['fechaemision'] = trim($v['fechaemision']);		
+			
+			$arr[$key]['numerodocumentoadquiriente'] =trim($v['numerodocumentoadquiriente']); 
+			$arr[$key]['razonsocialadquiriente'] =trim($v['razonsocialadquiriente']); 	
+			if ($opciondireccioncliente=='F')
+			{
+				$arr[$key]['direccioncliente'] =$direccioncliente; 
+			}else
+			{
+				if (!$v['lugardestino']){
+					if (trim($v['lugardestino'])<>'-'){
+						$arr[$key]['direccioncliente'] =trim($v['lugardestino']);}
 					}else{
 						$arr[$key]['direccioncliente'] ='';
 					}						
 				}
-						
+				
 				$arr[$key]['textoleyenda_1'] =trim($v['textoleyenda_1']);				
 				if ($v['tipomoneda']=='PEN')
 				{
@@ -2487,7 +2487,7 @@ class Comprobante extends CI_Controller {
 				$arr[$key]['totalvalorventanetoopexonerada'] =trim($v['totalvalorventanetoopexonerada']); 	
 				$arr[$key]['totalvalorventanetoopgratuitas'] =trim($v['totalvalorventanetoopgratuitas']);							
 				$arr[$key]['totaldescuentos'] =trim($v['totaldescuentos']); 
-				 
+				
 				$arr[$key]['totaligv'] =trim($v['totaligv']); 
 				$arr[$key]['totalventa'] =trim($v['totalventa']); 
 
@@ -2503,27 +2503,27 @@ class Comprobante extends CI_Controller {
 				$arr[$key]['importeunitarioconimpuesto'] =trim($v['importeunitarioconimpuesto']); 				
 				$arr[$key]['importedescuento'] =trim($v['importedescuento']); 
 				$arr[$key]['importetotalsinimpuesto'] =trim($v['importetotalsinimpuesto']); 
-			endforeach;
-		}
-		if(sizeof($arr)>0)
+				endforeach;
+			}
+			if(sizeof($arr)>0)
+			{
+				$result['status']=1;
+				$result['data']=$arr;
+			}else{
+				$result['status']=0;
+				$result['data']="";
+			}
+			echo json_encode($result);
+		}	
+
+
+		public function existe_comprobante()
 		{
-			$result['status']=1;
-			$result['data']=$arr;
-		}else{
+			
+			
+			$arr=NULL;
+			$Contador=0;
 			$result['status']=0;
-			$result['data']="";
-		}
-		echo json_encode($result);
-    }	
-
-
-	public function existe_comprobante()
-	{
-		
-		
-		$arr=NULL;
-		$Contador=0;
-		$result['status']=0;
 		/*print_r('PRIMERO');
 		return;
 		if(!$this->Usuarioinicio_model->SessionExiste())
@@ -2580,7 +2580,7 @@ class Comprobante extends CI_Controller {
 		}
 
 		echo json_encode($result);
-    }
+	}
 
 
 	public function Exportar_ExcelGeneral()
@@ -2633,8 +2633,8 @@ class Comprobante extends CI_Controller {
 		$arr=NULL;
 
 		$consulta =$this->Comprobante_model->Listar_Comprobantes($prm_ruc_empr,$prm_documento_cliente,$prm_serie_numeroinicio,
-					$prm_serie_numerofinal,$prm_cod_estdoc,$prm_fec_emisinicio,$prm_fec_emisfinal,
-					$prm_tipo_documentosunat,$prm_estado_documentosunat,$prm_tipomoneda, $prm_razonsocialcliente);
+			$prm_serie_numerofinal,$prm_cod_estdoc,$prm_fec_emisinicio,$prm_fec_emisfinal,
+			$prm_tipo_documentosunat,$prm_estado_documentosunat,$prm_tipomoneda, $prm_razonsocialcliente);
 
 		$estado_documento='';
 		$tipo_documentosunat='';
@@ -2643,7 +2643,7 @@ class Comprobante extends CI_Controller {
 		if(!empty($consulta))//SI NO ES NULO O VACIO
 		{
 			foreach($consulta as $key=>$v):
-			
+				
 				if ($prm_estado_documentosunat=='0')
 				{
 					if ($prm_documento_cliente=='-')
@@ -2704,7 +2704,7 @@ class Comprobante extends CI_Controller {
 									}
 								}
 							}
-								
+							
 							$arr[$key]['inhabilitado'] =  trim($v['inhabilitado']);					
 							if ($v['bl_estadoregistro']=='L')
 							{
@@ -2736,11 +2736,11 @@ class Comprobante extends CI_Controller {
 						$arr[$key]['visualizado'] =  trim($v['visualizado']);	
 						
 						if ( $v['mensajeresponse']=='1')
-							{
-								$arr[$key]['obssunat'] ='Pendiente de envio - Programado';
-							}
-							else
-							{
+						{
+							$arr[$key]['obssunat'] ='Pendiente de envio - Programado';
+						}
+						else
+						{
 								if ($v['bl_estadoregistro']=='E') //ERROR LOCAL
 								{
 									//TRAER LOS DATOS DEL ERROR
@@ -2774,22 +2774,22 @@ class Comprobante extends CI_Controller {
 									}
 								}
 							}
-						
-						
-						$arr[$key]['inhabilitado'] =  trim($v['inhabilitado']);					
-						if ($v['bl_estadoregistro']=='L')
-						{
-							$arr[$key]['cant_reintento'] =  trim($v['reintento']);
+							
+							
+							$arr[$key]['inhabilitado'] =  trim($v['inhabilitado']);					
+							if ($v['bl_estadoregistro']=='L')
+							{
+								$arr[$key]['cant_reintento'] =  trim($v['reintento']);
+							}
+							else
+							{
+								$arr[$key]['cant_reintento'] =  trim($v['bl_reintento']);
+							}	
+							$estado_documento=trim(strtoupper($v['estado_documento']));
+							$tipo_documentosunat=trim(strtoupper($v['nomb_tipodocumento']));
+							$estado_documentosunat=$arr[$key]['nombreestadosunat'];
 						}
-						else
-						{
-							$arr[$key]['cant_reintento'] =  trim($v['bl_reintento']);
-						}	
-						$estado_documento=trim(strtoupper($v['estado_documento']));
-						$tipo_documentosunat=trim(strtoupper($v['nomb_tipodocumento']));
-						$estado_documentosunat=$arr[$key]['nombreestadosunat'];
 					}
-				}
 				else //SIGNIFICA QUE SI SELECCIONO UN TIPO DE ESTADO SUNAT
 				{
 					if ($prm_documento_cliente=='-')
@@ -2923,96 +2923,96 @@ class Comprobante extends CI_Controller {
 						}
 					}
 				}						
-			endforeach;
+				endforeach;
+			}
+
+			$prm['lista_datosdocumento']=$arr;
+			$prm['param1']=$prm_ruc_empr;
+			$prm['param2']=$prm_razonsocialcliente;
+			$prm['param3']=$prm_serie_numeroinicio;
+			$prm['param4']=$prm_serie_numerofinal;
+			if ($prm_cod_estdoc!='0'){ $prm['param5']=$estado_documento;}else{$prm['param5']='';}
+			if ($prm_tipo_documentosunat!='0'){$prm['param11']=$tipo_documentosunat;} else{$prm['param11']='';}		
+			if ($prm_estado_documentosunat!='0'){$prm['param12']=$estado_documentosunat;}else{$prm['param12']='';}
+			
+			$prm['param6']=$prm_fec_emisinicio;
+			$prm['param7']=$prm_fec_emisfinal;
+			$prm['param8']=date('d/m/Y h:i:s');
+			if ($prm_datosbuscar=='')
+			{
+				$prm['param9']='LISTADO GENERAL DE LOS COMPROBANTES';
+			}
+			else
+			{
+				$prm['param9']='LISTADO SELECCIONADO DE LOS COMPROBANTES';
+			}		
+			$prm['param10']=$prm_datosbuscar;
+			$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
+			$prm['datos_empresa']=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);	
+			
+			$this->load->view('reportes/comprobantes/comprobantes_listadogeneral',$prm);		
 		}
 
-		$prm['lista_datosdocumento']=$arr;
-		$prm['param1']=$prm_ruc_empr;
-		$prm['param2']=$prm_razonsocialcliente;
-		$prm['param3']=$prm_serie_numeroinicio;
-		$prm['param4']=$prm_serie_numerofinal;
-		if ($prm_cod_estdoc!='0'){ $prm['param5']=$estado_documento;}else{$prm['param5']='';}
-		if ($prm_tipo_documentosunat!='0'){$prm['param11']=$tipo_documentosunat;} else{$prm['param11']='';}		
-		if ($prm_estado_documentosunat!='0'){$prm['param12']=$estado_documentosunat;}else{$prm['param12']='';}
-		
-		$prm['param6']=$prm_fec_emisinicio;
-		$prm['param7']=$prm_fec_emisfinal;
-		$prm['param8']=date('d/m/Y h:i:s');
-		if ($prm_datosbuscar=='')
-		{
-			$prm['param9']='LISTADO GENERAL DE LOS COMPROBANTES';
-		}
-		else
-		{
-			$prm['param9']='LISTADO SELECCIONADO DE LOS COMPROBANTES';
-		}		
-		$prm['param10']=$prm_datosbuscar;
-		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
-		$prm['datos_empresa']=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);	
-		
-		$this->load->view('reportes/comprobantes/comprobantes_listadogeneral',$prm);		
-	}
 
-
-	public function Cambiar_EstadoBorradorAdeclarar()
-	{
-		$arr=NULL;
-		$Contador=0;
-		$result['status']=0;
-		if(!$this->Usuarioinicio_model->SessionExiste())
+		public function Cambiar_EstadoBorradorAdeclarar()
 		{
-			$result['status']=1000;
-			echo json_encode($result);
-			exit;
-		}
-		$prm_tipodocumentoemisor='6';
-		$prm_rucproveedor=trim($this->input->post('txt_RucEmpresa'));
-		$prm_datosseleccionados=trim($this->input->post('txt_datosseleccionados'));
-
-		$consulta =$this->Comprobante_model->Cambiar_EstadoBorradorAdeclarar($prm_tipodocumentoemisor,$prm_rucproveedor,$prm_datosseleccionados);
-
-		if ($consulta['result']==1)
-		{
-			$result['status']=1;
-		}
-		else
-		{
+			$arr=NULL;
+			$Contador=0;
 			$result['status']=0;
-		}	
+			if(!$this->Usuarioinicio_model->SessionExiste())
+			{
+				$result['status']=1000;
+				echo json_encode($result);
+				exit;
+			}
+			$prm_tipodocumentoemisor='6';
+			$prm_rucproveedor=trim($this->input->post('txt_RucEmpresa'));
+			$prm_datosseleccionados=trim($this->input->post('txt_datosseleccionados'));
 
-		echo json_encode($result);
-		
-	}
-	
+			$consulta =$this->Comprobante_model->Cambiar_EstadoBorradorAdeclarar($prm_tipodocumentoemisor,$prm_rucproveedor,$prm_datosseleccionados);
 
-	public function Listar_DatosDocumentoModificar()
-	{
+			if ($consulta['result']==1)
+			{
+				$result['status']=1;
+			}
+			else
+			{
+				$result['status']=0;
+			}	
 
-		$arr=NULL;
-		$Contador=0;
-		$result['status']=0;
-		if(!$this->Usuarioinicio_model->SessionExiste())
-		{
-			$result['status']=1000;
 			echo json_encode($result);
-			exit;
+			
 		}
-		$prm_tipodocumentoemisor=6;
-		$prm_numerodocumentoemisor=trim($this->input->post('txt_rucempresa'));		
 		
-		$txt_documentomodificar=trim($this->input->post('txt_documentomodificar'));
-		$txt_documentomodificar=(str_replace(",","",$txt_documentomodificar));
-		$datos_seleccionados=explode('-',$txt_documentomodificar);
-		$prm_tipodedocumento=$datos_seleccionados[0];
-		$prm_serienumero=$datos_seleccionados[1].'-'.$datos_seleccionados[2];
-		
-		
-		$consulta =$this->Comprobante_model->Listar_DatosDocumentoModificar($prm_tipodocumentoemisor,$prm_numerodocumentoemisor,$prm_tipodedocumento,$prm_serienumero);
+
+		public function Listar_DatosDocumentoModificar()
+		{
+
+			$arr=NULL;
+			$Contador=0;
+			$result['status']=0;
+			if(!$this->Usuarioinicio_model->SessionExiste())
+			{
+				$result['status']=1000;
+				echo json_encode($result);
+				exit;
+			}
+			$prm_tipodocumentoemisor=6;
+			$prm_numerodocumentoemisor=trim($this->input->post('txt_rucempresa'));		
+			
+			$txt_documentomodificar=trim($this->input->post('txt_documentomodificar'));
+			$txt_documentomodificar=(str_replace(",","",$txt_documentomodificar));
+			$datos_seleccionados=explode('-',$txt_documentomodificar);
+			$prm_tipodedocumento=$datos_seleccionados[0];
+			$prm_serienumero=$datos_seleccionados[1].'-'.$datos_seleccionados[2];
+			
+			
+			$consulta =$this->Comprobante_model->Listar_DatosDocumentoModificar($prm_tipodocumentoemisor,$prm_numerodocumentoemisor,$prm_tipodedocumento,$prm_serienumero);
 
 		//print_r($consulta);
 		//return;
-		$ultima_fecha='';
-		$primera_fecha='';
+			$ultima_fecha='';
+			$primera_fecha='';
 		if(!empty($consulta))//SI NO ES NULO O VACIO
 		{
 			
@@ -3026,7 +3026,7 @@ class Comprobante extends CI_Controller {
 			$arr['correoadquiriente'] =$consulta[0]['correoadquiriente'];
 			$arr['razonsocialemisor'] =$consulta[0]['razonsocialemisor'];
 			$arr['nombrecomercialemisor'] =$consulta[0]['nombrecomercialemisor'];
-			 
+			
 
 			$prm_fec_emisiniciotmp=explode('-',$consulta[0]['fechaemision']);
 			$arr['fechaemision'] =($prm_fec_emisiniciotmp[2].'/'.$prm_fec_emisiniciotmp[1].'/'.$prm_fec_emisiniciotmp[0]);
@@ -3081,7 +3081,7 @@ class Comprobante extends CI_Controller {
 			$arr['numerodocumentoreferenciacorre'] =$consulta[0]['numerodocumentoreferenciacorre'];
 			
 			$arr['bl_origen'] =$consulta[0]['bl_origen'];			
-		
+			
 			//se extrae el primer registro que existe despues del documento
 			$consulta_fecha =$this->Comprobante_model->Buscar_UltimaFechaDocumento($prm_tipodocumentoemisor,$prm_numerodocumentoemisor,$prm_tipodedocumento,$prm_serienumero);
 			
@@ -3125,26 +3125,26 @@ class Comprobante extends CI_Controller {
 			foreach($consulta as $key=>$v):
 				//REGISTRANDO LOS PRODUCTOS
 				$prm_cod_prod=trim($v['codigoproducto']);
-				$prm_cant_prod=trim($v['cantidad']);
-				$prm_uni_med=trim($v['unidadmedida']);
-				$prm_desc_prod=trim($v['descripcion']);
-				$prm_val_unitario=trim($v['importeunitariosinimpuesto']);
-				if ($v['importedescuento']=='')
-				{
-					$prm_val_descuento='0';
-				}
-				else
-				{
-					$prm_val_descuento=trim($v['importedescuento']);
-				}
-				$prm_val_isc='0.00';
-				$prm_tip_afectacion=trim($v['codigorazonexoneracion']); 
-				$prm_val_igv=trim($v['importeigv']);
-				$prm_val_total=trim($v['importetotalsinimpuesto']);	
-				
-				$prm_ruc_empr=trim($v['numerodocumentoemisor']);
-				
-		
+			$prm_cant_prod=trim($v['cantidad']);
+			$prm_uni_med=trim($v['unidadmedida']);
+			$prm_desc_prod=trim($v['descripcion']);
+			$prm_val_unitario=trim($v['importeunitariosinimpuesto']);
+			if ($v['importedescuento']=='')
+			{
+				$prm_val_descuento='0';
+			}
+			else
+			{
+				$prm_val_descuento=trim($v['importedescuento']);
+			}
+			$prm_val_isc='0.00';
+			$prm_tip_afectacion=trim($v['codigorazonexoneracion']); 
+			$prm_val_igv=trim($v['importeigv']);
+			$prm_val_total=trim($v['importetotalsinimpuesto']);	
+			
+			$prm_ruc_empr=trim($v['numerodocumentoemisor']);
+			
+			
 				if ($prm_cod_tipregist==3)//EXPORTACION GRATUITAS
 				{
 					$prm_val_igv=0;
@@ -3152,71 +3152,71 @@ class Comprobante extends CI_Controller {
 				}
 				
 				$this->Comprobante_model->Guardar_Registroproductos($prm_cod_usu,$prm_cod_prod,$prm_cant_prod,$prm_uni_med,
-							$prm_desc_prod,$prm_val_unitario,$prm_val_descuento,$prm_val_isc,$prm_tip_afectacion,$prm_val_igv,
-							$prm_val_total,$prm_cod_empr,$prm_ruc_empr,$prm_cod_tipregist);
-								
-		
-			endforeach;
-		}
-		if(sizeof($arr)>0)
-		{
-			$result['status']=1;
-			$result['data']=$arr;
-		}
-		else
-		{
-			$result['status']=0;
-			$result['data']="";
-		}
-		echo json_encode($result);
-    }	
-	
-	public function Reiniciar_Correlativos()
-	{
-		$arr=NULL;
-		$Contador=0;
-		$result['status']=0;
-		if(!$this->Usuarioinicio_model->SessionExiste())
-		{
-			$result['status']=1000;
+					$prm_desc_prod,$prm_val_unitario,$prm_val_descuento,$prm_val_isc,$prm_tip_afectacion,$prm_val_igv,
+					$prm_val_total,$prm_cod_empr,$prm_ruc_empr,$prm_cod_tipregist);
+				
+				
+				endforeach;
+			}
+			if(sizeof($arr)>0)
+			{
+				$result['status']=1;
+				$result['data']=$arr;
+			}
+			else
+			{
+				$result['status']=0;
+				$result['data']="";
+			}
 			echo json_encode($result);
-			exit;
-		}
-		$prm_ruc_empr=trim($this->input->post('txt_RucEmpresa'));		
-		$prm_datosseleccionados_estado=trim($this->input->post('txt_datosseleccionados_estado'));
-		$consulta =$this->Comprobante_model->Reiniciar_Correlativos($prm_ruc_empr,$prm_datosseleccionados_estado);
-		if ($consulta['result']==1)
-		{
-			$result['status']=1;	
-		}
-		else
-		{
-			$result['status']=0;
-		}		
-		echo json_encode($result);
-    }
-	
-	public function Listar_DatosAdicionales()
-    {
-		$arr=NULL;
-		$Contador=0;
-		$result['status']=0;
-		if(!$this->Usuarioinicio_model->SessionExiste())
-		{
-			$result['status']=1000;
-			echo json_encode($result);
-			exit;
-		}
-		$prm_ruc_empr=trim($this->input->post('txt_RucEmpresa'));		
-		$consulta =$this->Comprobante_model->Listar_DatosAdicionales($prm_ruc_empr);
+		}	
 		
+		public function Reiniciar_Correlativos()
+		{
+			$arr=NULL;
+			$Contador=0;
+			$result['status']=0;
+			if(!$this->Usuarioinicio_model->SessionExiste())
+			{
+				$result['status']=1000;
+				echo json_encode($result);
+				exit;
+			}
+			$prm_ruc_empr=trim($this->input->post('txt_RucEmpresa'));		
+			$prm_datosseleccionados_estado=trim($this->input->post('txt_datosseleccionados_estado'));
+			$consulta =$this->Comprobante_model->Reiniciar_Correlativos($prm_ruc_empr,$prm_datosseleccionados_estado);
+			if ($consulta['result']==1)
+			{
+				$result['status']=1;	
+			}
+			else
+			{
+				$result['status']=0;
+			}		
+			echo json_encode($result);
+		}
+		
+		public function Listar_DatosAdicionales()
+		{
+			$arr=NULL;
+			$Contador=0;
+			$result['status']=0;
+			if(!$this->Usuarioinicio_model->SessionExiste())
+			{
+				$result['status']=1000;
+				echo json_encode($result);
+				exit;
+			}
+			$prm_ruc_empr=trim($this->input->post('txt_RucEmpresa'));		
+			$consulta =$this->Comprobante_model->Listar_DatosAdicionales($prm_ruc_empr);
+			
 		if(!empty($consulta))//SI NO ES NULO O VACIO
 		{
 			foreach($consulta as $key=>$v):
 				$Contador=$Contador+1;
-				$arr[$key]['nro_secuencia'] = $Contador;
-				$arr[$key]['Codigo'] = trim($v['codigo']); 
-				$arr[$key]['Observacion'] = trim($v['observacion']);
+			$arr[$key]['nro_secuencia'] = $Contador;
+			$arr[$key]['Codigo'] = trim($v['codigo']); 
+			$arr[$key]['Observacion'] = trim($v['observacion']);
 			endforeach;
 		}
 		if(sizeof($arr)>0)
