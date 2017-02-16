@@ -43,7 +43,7 @@
 				</tr>
 				<tr height="5%">
 					<td width="100%" colspan="3" align="left" >
-						<div align="rigth" style="width:100%; float: left; font-size: 11px; color: #4ca20b;">&copy; Bizlinks - Todos los derechos reservados 2016. Versión 2.0
+						<div align="rigth" style="width:100%; float: left; font-size: 11px; color: #4ca20b;">&copy; Bizlinks - Todos los derechos reservados 2017. Versión 3.0
 						</div></td>
 				</tr>
 			  </tbody>

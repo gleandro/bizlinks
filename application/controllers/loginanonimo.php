@@ -15,7 +15,7 @@ class Loginanonimo extends CI_Controller {
 	
     public function index()
     {
-		$prm['Listar_TipodeDocumento']=$this->Catalogos_model->Listar_TipodeDocumento();	
+		$prm['Listar_TipodeDocumento']=$this->Catalogos_model->Listar_TipodeDocumento_Todos();	
 		$this->load->view('loginanonimo/loginanonimo',$prm);
     }
 	

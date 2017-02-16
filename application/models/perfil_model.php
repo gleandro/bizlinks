@@ -1,5 +1,5 @@
 <?php
-@session_start();
+//@session_start();
 class Perfil_model extends CI_Model
 {
 	function __construct()
@@ -177,7 +177,7 @@ class Perfil_model extends CI_Model
 				and bb.est_reg=1 and bb.cod_perfil=".$prm_cod_perfil."
 			where bb.cod_men is null order by aa.ord_ejec;";
 		
-		print_r($query);
+		//print_r();
 		$consulta = $this->db->query($query);
 			
 		return $consulta->result_array();

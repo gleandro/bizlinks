@@ -66,7 +66,6 @@
 			
 			ncsistema=
 			{
-
 				Buscar_Clientes:function ()
 				{
 					var lista_clientes = {};
@@ -138,6 +137,26 @@
 							alert('El cliente ingresado no tiene documento o no esta registrado');
 							return;
 						}
+					}
+					if (txt_FechaEmisionInicio!='' && txt_FechaEmisionFinal=='')
+					{
+						alert('Es necesaro indicar la fecha final de emisión');
+						return;
+					}
+					if (txt_FechaEmisionFinal!='' && txt_FechaEmisionInicio=='')
+					{
+						alert('Es necesaro indicar la fecha inicial de emisión');
+						return;
+					}
+					if (txt_serienumeroinicio!='' && txt_serienumerofinal=='')
+					{
+						alert('Es necesaro indicar la fecha final de emisión');
+						return;
+					}
+					if (txt_serienumerofinal!='' && txt_serienumeroinicio=='')
+					{
+						alert('Es necesaro indicar la fecha inicial de emisión');
+						return;
 					}
 					if (txt_RazonSocialCliente=='GENERICO')
 						txt_RazonSocialCliente='-';
@@ -377,45 +396,45 @@
 							if (rs.totalvalorventanetoopgravadas>0)
 							{
 								OcultarFilaPassword('row1',1);
-								$('#div_param16').empty().append(rs.tipomoneda);
+								$('#div_param16').empty().append(rs.tipomonedadescripcion);
 								$('#div_param17').empty().append(rs.totalvalorventanetoopgravadas);
 							}
 							if (rs.totalvalorventanetoopnogravada>0)
 							{
 								OcultarFilaPassword('row2',1);
-								$('#div_param18').empty().append(rs.tipomoneda);
+								$('#div_param18').empty().append(rs.tipomonedadescripcion);
 								$('#div_param19').empty().append(rs.totalvalorventanetoopnogravada);
 							}
 							if (rs.totalvalorventanetoopexonerada>0)
 							{
 								OcultarFilaPassword('row3',1);
-								$('#div_param20').empty().append(rs.tipomoneda);
+								$('#div_param20').empty().append(rs.tipomonedadescripcion);
 								$('#div_param21').empty().append(rs.totalvalorventanetoopexonerada);
 							}
 							if (rs.totalvalorventanetoopgratuitas>0)
 							{
 								OcultarFilaPassword('row4',1);
-								$('#div_param22').empty().append(rs.tipomoneda);
+								$('#div_param22').empty().append(rs.tipomonedadescripcion);
 								$('#div_param23').empty().append(rs.totalvalorventanetoopgratuitas);
 							}
 							if (rs.totaldescuentos>0)
 							{
 								OcultarFilaPassword('row5',1);
-								$('#div_param24').empty().append(rs.tipomoneda);
+								$('#div_param24').empty().append(rs.tipomonedadescripcion);
 								$('#div_param25').empty().append(rs.totaldescuentos);
 							}
 							//falta ics
 							if (rs.totaligv>0)
 							{
 								OcultarFilaPassword('row7',1);
-								$('#div_param28').empty().append(rs.tipomoneda);
+								$('#div_param28').empty().append(rs.tipomonedadescripcion);
 								$('#div_param29').empty().append(rs.totaligv);
 							}
 							//otros cargos no hay
 							if (rs.totalventa>0)
 							{
 								OcultarFilaPassword('row9',1);
-								$('#div_param32').empty().append(rs.tipomoneda);
+								$('#div_param32').empty().append(rs.tipomonedadescripcion);
 								$('#div_param33').empty().append(rs.totalventa);
 							}
 						}
@@ -427,10 +446,10 @@
 							newHtml+='<td style="text-align:left">'+rs.descripcion+'</td>';
 							newHtml+='<td style="text-align:left">'+rs.unidadmedida+'</td>';	
 							newHtml+='<td style="text-align:right">'+rs.cantidad+'</td>';			
-							newHtml+='<td style="text-align:center">'+rs.importeunitariosinimpuesto+'</td>';
-							newHtml+='<td style="text-align:left">'+rs.importeunitarioconimpuesto+'</td>';
-							newHtml+='<td style="text-align:left">'+rs.importedescuento+'</td>';
-							newHtml+='<td style="text-align:left">'+rs.importetotalsinimpuesto+'</td>';
+							newHtml+='<td style="text-align:right">'+rs.importeunitariosinimpuesto+'</td>';
+							newHtml+='<td style="text-align:right">'+rs.importeunitarioconimpuesto+'</td>';
+							newHtml+='<td style="text-align:right">'+rs.importedescuento+'</td>';
+							newHtml+='<td style="text-align:right">'+rs.importetotalsinimpuesto+'</td>';
 
 						newHtml+='</tr>';						
 					});	
@@ -616,9 +635,7 @@
 			
 			function Descargar_ExcelGeneral()
 			{
-				
 				var Cmb_OpcionesExportarExcel=$.trim($('#Cmb_OpcionesExportarExcel').val());	
-				
 				/*
 				var txt_RucEmpresa=$.trim($('#txt_RucEmpresa').val());
 				var txt_DocumentoCliente=$.trim($('#txt_DocumentoCliente').val());					
@@ -636,13 +653,11 @@
 				var txt_botonbusqueda=$.trim($('#txt_botonbusqueda').val());
 				if (txt_botonbusqueda==0)
 				{
-					alert('No ha realizado ninguna busqueda');
+					alert('No ha realizado ninguna búsqueda');
 					return;
-				}				
+				}	
 				var str = $('#txt_filtrobusqueda').val();
 				var resultado = str.split(','); 
-				
-				//alert(resultado[11]);
 				
 				var txt_RucEmpresa=resultado[0];
 				var txt_DocumentoCliente=resultado[1];			
@@ -656,8 +671,6 @@
 				var Cmb_EstadoDocumentoSunat=resultado[9];
 				var Cmb_TipoMoneda=resultado[10];
 				var txt_datosseleccionados=$.trim($('#txt_datosseleccionados').val());
-				
-				
 				
 				if (Cmb_OpcionesExportarExcel==1)
 				{
@@ -675,9 +688,7 @@
 						document.location.href=urlexportardatos+'comprobante/Exportar_ExcelGeneral?param1='+txt_RucEmpresa+'&param2='+txt_DocumentoCliente+'&param3='+txt_serienumeroinicio+'&param4='+txt_serienumerofinal+'&param5='+Cmb_EstadoDocumento+'&param6='+txt_FechaEmisionInicio+'&param7='+txt_FechaEmisionFinal+'&param8='+Cmb_TipoDocumentoSunat+'&param9='+Cmb_EstadoDocumentoSunat+'&param10='+txt_datosseleccionados+'&param11='+txt_RazonSocialCliente+'&param12='+Cmb_TipoMoneda;
 					}
 				}
-				
 			}
-
 
 			function Seleccionar_DatosBusqueda(key,tipodocumento,serienumero,estado_doc,estado_sunat)
 			{

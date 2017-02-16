@@ -1,13 +1,9 @@
-<?php
-session_start();  
+<?php 
+//session_start();
 
 if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-
-
 class Principal extends CI_Controller {
-
-
 
 	public function __construct()
 	{
@@ -24,11 +20,14 @@ class Principal extends CI_Controller {
 		print_r(md5('123456'));
 		return;
 		*/
+		
 		if(!$this->Usuarioinicio_model->SessionExiste())
 		{
+			
 			$this->load->view('usuario/login'); 
 			return;
 		}		
+		
 		$prm_cod_usuadm=$this->Usuarioinicio_model->Get_Cod_UsuAdm();
 		$prm_cod_usu=$this->Usuarioinicio_model->Get_Cod_Usu();
 		$prm_tip_usu=$this->Usuarioinicio_model->Get_Tip_Usu();		

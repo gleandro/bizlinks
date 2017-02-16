@@ -98,7 +98,7 @@
 					}
 					if (txt_codid==0)
 					{
-						if (cmb_variables==1 || cmb_variables==2 || cmb_variables==3 || cmb_variables==4 || cmb_variables==7 || cmb_variables==8)
+						if (cmb_variables==1 || cmb_variables==2 || cmb_variables==3 || cmb_variables==4 || cmb_variables==8)
 						{
 							$('#div_MensajeValidacionEmpresa').fadeIn(0);
 							$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">No se permite generar más registros de este tipo por ser globales.</div>');

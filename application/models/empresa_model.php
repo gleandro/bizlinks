@@ -1,5 +1,5 @@
-<?php
-@session_start();
+<?php //@session_start();
+	
 class Empresa_model extends CI_Model
 {
 	function __construct()

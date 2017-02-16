@@ -2,8 +2,9 @@
 <html>
 <head>
 	<title>SFE Bizlinks Facturador Local</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-		
+	<!--<meta http-equiv="Content-Type" content="text/html; charset=windows-1252; ">-->
+	<meta name="viewport" content="width=device-width; initial-scale=1.0; charset=windows-1252">
+	
 	<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/external/jquery/jquery.js"></script>
 	<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/jquery-ui.js"></script>
@@ -20,7 +21,6 @@
         </style>
 	<script type="text/javascript"> 
 			
-			//FORMA MANUAL PARA ACTUALIZAR EL JS <script type="text/javascript" src="genrt_volante.js?o=5219">/
 			$(document).ready(function()
 			{
 				ncsistema.IniciarSesion();
@@ -85,7 +85,7 @@
 							{
 								$("#btn_IniciarSesion").prop('disabled', false);
 								$('#div_errorIniciarSesion').fadeIn(0);
-								$('#div_errorIniciarSesion').empty().append('<div style="width:100%;border:solid 1px; float:left;text-align:left;background:#F5F5F5;font-weight:bold;text-align:center;border-radius:3px;font-size:15px;font-family:"Times New Roman", Times, serif">Su Licencia a vencido,Comunicarse con Bizlinks S.A.</div>');
+								$('#div_errorIniciarSesion').empty().append('<div style="width:100%;border:solid 1px; float:left;text-align:left;background:#F5F5F5;font-weight:bold;text-align:center;border-radius:3px;font-size:15px;font-family:"Times New Roman", Times, serif">Su Licencia a vencido ,Comunicarse con Bizlinks S.A.</div>');
 								setTimeout(function(){ $("#div_errorIniciarSesion").fadeOut(1500);},1000);
 								return;
 							}
@@ -225,7 +225,7 @@
 					newHtml+='<tr> <td style="border: solid 0px; width:100%;" colspan=2>';
 						newHtml+='<div id="div_mensajes" style="width:100%;  float:left; text-align:left; margin-top:100px; margin-left:10px">';
 							newHtml+='<div style="border: solid 0px; float:left; font-size:12px; font:Arial, Helvetica, sans-serif; color: #006699; font-weight: bold;"> Crear una Cuenta</div></div>';
-							newHtml+='<div style="width:35%; border:solid 0px; float:left; text-align:right"> o <a href="#" onclick="javascript:ncsistema.IniciarSesion()" style="text-decoration:none;color:#0099CC" >Iniciar sesi&oacute;n</a></div>';
+							newHtml+='<div style="width:35%; border:solid 0px; float:left; text-align:right"> o <a href="#" onclick="javascript:ncsistema.IniciarSesion()" style="text-decoration:none;color:#0099CC" >Iniciar sesión</a></div>';
 					newHtml+='</td> </tr>';
 					newHtml+='<tr> <td style="width:30%; height:25px" colspan=2>'
 					newHtml+='</td> </tr>';
@@ -233,7 +233,6 @@
 						newHtml+='<label class="columna">Nombres :</label></div>';
 					newHtml+='</td>';
 					newHtml+='<td style="width:70%;">';
-						//newHtml+='<input class="negritaEstandar" style="width:100%" id="txt_correoSes" placeholder="Correo Electrónico" type="text" value="arevalo.ilmer@gmail.com" /></div>';
 						newHtml+='<input class="negritaEstandar" style="width:100%" id="txt_nombre" placeholder="Nombres" type="text" size="60" value="" /></div>';
 					newHtml+='</td> </tr>';
 					newHtml+='<tr> <td style="width:30%;">';
@@ -270,12 +269,6 @@
 					newHtml+='</td> </tr>';
 					newHtml+='</tbody></table>';
 					
-					
-					//newHtml+='<div style="width:60%;height:20px;border:solid 0px;float:left;text-align:left;margin-top:20px;margin-left:80px"><div id="div_errorCrearCuenta"></div></div>';
-					
-					//newHtml+='<div style="width:60%;float:left;margin-left:80px; padding-top:20px;border:solid 0px;text-align:left">';
-					//newHtml+='<button style="height:45px;width:130px" id="btn_CrearCuenta" title="Crear una Cuenta" onclick="ncsistema.Guardar_Usuario()">Crear una Cuenta</button></div>';
-
 					$('#div_datossesion').empty().append(newHtml);
 				},
 				
@@ -300,7 +293,7 @@
 						newHtml+='<input class="negritaEstandar" style="width:100%" id="txt_loginSes" placeholder="correo@micorreo.com" type="text" /></div>';
 					newHtml+='</td> </tr>';
 					newHtml+='<tr> <td style="width:30%;">';
-						newHtml+='<label class="columna">Contrase&#241;a :</label></div>';
+						newHtml+='<label class="columna">Contraseña :</label></div>';
 					newHtml+='</td>';
 					newHtml+='<td style="width:70%;">';
 						newHtml+='<input class="negritaEstandar" style="width:60%" id="txt_passwordSes" onKeyPress="ncsistema.Iniciar_SesionEnter(event)" placeholder="Clave" type="password"  /></div>';
@@ -322,23 +315,12 @@
 						newHtml+='&iquest;No tiene un usuario? Puedes consultar la opci&oacute;n <a href="<?php echo base_url()?>loginanonimo" >Acceso An&oacute;nimo</a> para ver tus comprobantes.';
 					newHtml+='</td> </tr>';
 					newHtml+='<tr> <td style="width:100%; border:solid 0px" colspan=2" align="left">';
-						newHtml+='<div class="copy" align="left" style="width:100%">&copy; 2016 Bizlinks todos los derechos reservados. </div>';
+						newHtml+='<div class="copy" align="left" style="width:100%">&copy; 2017 Bizlinks todos los derechos reservados. </div>';
 					newHtml+='</td> </tr>';
 					newHtml+='</tbody></table>';
 					
 					$('#div_datossesion').empty().append(newHtml);
 					
-					//newHtml+='<div style="width:35%;border:solid 0px;float:left;text-align:right"> 
-					//			<a href="#" onclick="javascript:ncsistema.CrearCuenta()" style="text-decoration:none;color:#0099CC" >Crear una Cuenta</a></div></div>';//Crear una Cuenta
-					//newHtml+='<button id="btn_IniciarSesion" title="Iniciar Sesi&oacute;n" onclick="ncsistema.Iniciar_Sesion()">Iniciar Sesi&oacute;n</button></div>';
-					//contenedor de email: newHtml+='<div id="" style="width:60%;border:solid 0px;float:left;text-align:left;margin-top:20px;margin-left:80px">';
-					//newHtml+='<div style="width:60%;height:20px;border:solid 0px;float:left;text-align:left;margin-top:3px;margin-left:80px"><div id="div_errorloginSes"></div></div>';
-					//contenedor de usuario: newHtml+='<div id="" style="width:60%;border:solid 0px;float:left;text-align:left;margin-top:20px;margin-left:80px">';
-					//newHtml+='<div style="width:60%;height:20px;border:solid 0px;float:left;text-align:left;margin-top:3px;margin-left:80px"><div id="div_errorpasswordSes"></div></div>';
-					//contenedor de clavenewHtml+='<div id="" style="width:60%;border:solid 0px;float:left;text-align:left;margin-top:20px;margin-left:80px">';
-					//contenedor error: newHtml+='<div style="width:60%;float:left;text-align:left;margin-top:3px;margin-left:80px"></div>';
-					//conetenedor boton: newHtml+='<div style="width:60%;float:left;margin-left:80px; padding-top:10px;border:solid 0px;text-align:left">';
-					//height:20px;
 				},
 			}
 			
@@ -363,21 +345,20 @@
 				{				
 					return false;				
 			  	}
-				
 			}
 			
-			
 		</script>
-
 		
     </head> 
 
 <body id="login" class="animated fadeInDown ui-layout-container" style="position: relative; height: 100%; overflow: hidden; margin: 0px; padding: 0px; border: medium none; font-size: 10px;">
 <?php header('Content-Type: text/html; charset=ISO-8859-1');?>
 	<div style="height: 100%; width: 100%; margin: 0px; left: 0px; right: 0px; top: 0px; bottom: 0px;  z-index: 1; display: block; visibility: visible;" id="j_id_1" class="ui-layout-unit ui-widget ui-corner-all ui-layout-center ui-layout-pane ui-layout-pane-center" >
+		
 		<div id="subcapa" style="height: 100%; width: 100%; position: relative; visibility: visible; 
 			background-image:url(<?php echo base_url() ?>application/helpers/image/logos/fondo-general.jpg)" 
 			class="ui-layout-unit-content " >
+			
 		<table style="height: 100%; width: 100%; margin: 0px; left: 0px; right: 0px; top: 0px; bottom: 0px;  z-index: 1; display: block; visibility: visible;" >
 		  <tbody>
 			<tr>

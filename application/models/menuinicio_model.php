@@ -1,5 +1,5 @@
 <?php
-@session_start();
+//@session_start();
 class Menuinicio_model extends CI_Model
 {
 	function __construct()
