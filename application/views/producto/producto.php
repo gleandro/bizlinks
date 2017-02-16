@@ -33,7 +33,7 @@
 				$("#tabs").tabs();
 				ncsistema.Listar_Productos();
 				$('#txt_valorentero').numeric({allow:'.'});
-				$('#txt_precio').numeric({allow:'.'});
+				//$('#txt_precio').numeric({allow:'.'});
 				ncsistema.get_Configuracion_ValorPrecio();
 			})
 			
@@ -313,7 +313,7 @@
 							newHtml+='<th style="width:5%">ValorVenta</td>';	
 						}else
 						{
-							newHtml+='<th style="width:5%">Precio</td>';
+							newHtml+='<th style="width:5%">PrecioCobro</td>';
 						}
 						newHtml+='<th style="width:10%">Categoría</td>';
 						newHtml+='<th style="width:5%">U.M.Com.</td>';
@@ -497,7 +497,7 @@
 					txt_valorigv=0;
 				}		
 				txt_precio=(parseFloat(txt_valorentero)*(1+parseFloat(txt_valorigv)+parseFloat(txt_valorotroscargos)));
-				$('#txt_precio').val(txt_precio.toFixed(10));
+				$('#txt_precio').val(txt_precio.toFixed(2));
 				
 			}
 			function Calcular_Montos_P()
@@ -519,7 +519,7 @@
 					txt_valorigv=0;
 				}
 				txt_valorentero=(parseFloat(txt_precio)/(1+parseFloat(txt_valorigv)+parseFloat(txt_valorotroscargos)));
-				$('#txt_valorentero').val(txt_valorentero.toFixed(10));
+				$('#txt_valorentero').val(txt_valorentero.toFixed(2));
 			}
 			
 			function Eliminar_Producto(cod_id)
@@ -590,6 +590,10 @@
 						{
 							$.each(result.data,function(key,rs)
 							{
+								if (rs.est_reg=='0')
+								{
+									alert('Producto registrado y deshabilitado. Se habilitará el registro con los nuevos datos a actualizar.');
+								}
 								$('#txt_id').val(rs.id);
 								$('#txt_codigo').val(rs.cod_producto);
 								$('#txt_nombrecorto').val(rs.nom_corto);
@@ -613,6 +617,39 @@
 					}
 				});
 			}
+			
+			function NumCheck(e, field) {
+				key = e.keyCode ? e.keyCode : e.which
+				// backspace
+				if (key == 8 || key == 9 || key == 35 || key == 36 || key == 37 || key == 39) return true
+			 	//if (key == 9) return true
+				// 0-9 a partir del .decimal  
+				if (field.value != "") {
+					if ((field.value.indexOf(".")) > 0) {
+						//si tiene un punto valida dos digitos en la parte decimal
+						if (key > 47 && key < 58) {
+							if (field.value == "") return true
+							//regexp = /[0-9]{1,10}[\.][0-9]{1,3}$/
+							regexp = /[0-9]{2}$/
+							return !(regexp.test(field.value))
+						}
+					}
+				}
+				// 0-9 
+				if (key > 47 && key < 58) {
+					if (field.value == "") return true
+					regexp = /[0-9]{10}/
+					return !(regexp.test(field.value))
+				}
+				// .
+				if (key == 46) {
+					if (field.value == "") return false
+					regexp = /^[0-9]+$/
+					return regexp.test(field.value)
+				}
+				// other key
+				return false
+			  }
 
 		</script>
     </head>   
@@ -651,11 +688,11 @@
 							<td style="text-align:left">
 								<input type="hidden" id="txt_valorigv" value="<?php echo $valor_igv;?>" />
 								<input type="hidden" id="txt_valorotroscargos" value="<?php echo $valor_otroscargos;?>" />
-								<input  type="text" id="txt_valorentero" maxlength="23" placeholder="0.0000000000" onBlur="javascript:Calcular_Montos_VV()" style="text-align:right"/>
+								<input  type="text" id="txt_valorentero" maxlength="23" placeholder="0.00" onkeypress="return NumCheck(event, this);"  onBlur="javascript:Calcular_Montos_VV()" style="text-align:right"/>
 								<label id="lbl_referencia_valor" style="font-size:10px; color:#0000CC; font-weight:bold">(Referencial)</label></td>
-							<td style="text-align:right"><label class="columna">Precio:</label></td>
+							<td style="text-align:right"><label class="columna">Precio de Cobro:</label></td>
 							<td style="text-align:left">
-								<input  type="text" id="txt_precio" maxlength="23" placeholder="0.0000000000" onBlur="javascript:Calcular_Montos_P()" style="text-align:right"/> 
+								<input  type="text" id="txt_precio" maxlength="23" placeholder="0.00" onkeypress="return NumCheck(event, this);"  onBlur="javascript:Calcular_Montos_P()" style="text-align:right"/> 
 									<label id="lbl_referencia_precio" style="font-size:10px; color:#0000CC; font-weight:bold">(Referencial)</label></td>
 						</tr>
 						<tr>

@@ -1,5 +1,5 @@
 <?php
-@session_start();
+//@session_start();
 class producto_model extends CI_Model
 {
 	function __construct()
@@ -119,7 +119,6 @@ class producto_model extends CI_Model
 		$result['result']=0;		
 		$this->db_client =$this->load->database('ncserver',TRUE);	
 		$this->db_client->trans_begin();
-//cod_producto='".$prm_nombrecorto."',	
 		$query="update sgr_producto
 		set	
 			cod_producto='".$prm_codigo."',
@@ -128,12 +127,10 @@ class producto_model extends CI_Model
 			valor_venta=".$prm_valorentero.",
 			precio_venta=".$prm_precio.",
 			id_categoria=".$prm_categoria.", 
-			cod_unimedeq=".$prm_medida."
+			cod_unimedeq=".$prm_medida.",
+			est_reg=1
 		where id='".$prm_id."';";
 		
-		//print_r($query);
-		//return;
-
 		$consulta = $this->db_client->query($query);
 		
 		if ($this->db_client->trans_status() === FALSE)
@@ -156,15 +153,15 @@ class producto_model extends CI_Model
 		return $result;
 	}
 	
-	function Valida_Producto($prm_codigo)
+	function Valida_Producto($prm_codigo, $prm_cod_empr)
 	{
 		$this->load->database('ncserver',TRUE);
 		$consulta = $this->db->query("select  a.id, a.cod_producto, a.nom_corto, a.nom_largo, a.valor_venta, a.precio_venta, a.id_categoria, 
-				b.nombre categoria, d.cod_unimedeq med, d.cod_unidmedsunat 
+				b.nombre categoria, d.cod_unimedeq med, d.cod_unidmedsunat, a.est_reg 
 			from sgr_producto a
 				inner join sgr_multitabla b on a.id_categoria = b.id 
 				left join sgr_unidadmedidaequivalencia d on a.cod_unimedeq=d.cod_unimedeq   
-			where a.cod_producto='".$prm_codigo."';");
+			where a.cod_producto='".$prm_codigo."' and  a.cod_empr=".$prm_cod_empr.";");
 		
 		return $consulta->result_array();
 	}

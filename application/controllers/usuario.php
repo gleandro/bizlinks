@@ -1,4 +1,5 @@
 <?php
+
 if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Usuario extends CI_Controller {
@@ -135,22 +136,10 @@ class Usuario extends CI_Controller {
 		}
     }
 	
-	/*
-	public function Validar_SesiondelUsuario()
-    {
-		$result['status']=0;
-		if(!$this->Usuarioinicio_model->SessionExiste())
-		{
-			$this->load->view('usuario/login'); 
-			$result['status']=0;
-			return;
-		}
-		$result['status']=1;
-    }
-	*/
-	
+		
 	public function validar_usuario()
 	{
+		
 		$result['status']=0;
 		$this->CerrarSessionInterno();		
 		//$prm_correo=trim($this->input->post('txt_correo'));//'iarevalo@neocompra.com';
@@ -162,14 +151,19 @@ class Usuario extends CI_Controller {
 		//print_r($usuarioadmnin);
 		//echo('ilmer');
 		//return(0);	
-		
 
 		if (!empty($usuarioadmnin)) 
 		{
 			if (strtoupper($usuarioadmnin[0]['email_usu'])==strtoupper($prm_login))
 			{
-				//DATOS INICIALES PARA LA SESION		
+				//DATOS INICIALES PARA LA SESION	
+				//print_r('USUARIO datos iniciales ');	
 				$_SESSION['SES_InicioSystem']=$usuarioadmnin;
+				
+				session_name($prm_login); 
+				$_SESSION['SES_MarcoTrabajo'][0]['login_usuario']=$prm_login;	
+				$_SESSION['SES_MarcoTrabajo'][0]["autentificado"]= "SI"; 
+				
 				$_SESSION['SES_MarcoTrabajo'][0]['fecha_session']=date('Y-m-d h:i:s');
 				
 				
@@ -510,8 +504,6 @@ class Usuario extends CI_Controller {
 		$prm_cod_rolseleccion='0';				
 
 		$this->Menu_model->Listar_UsuarioAccesos($prm_cod_usuadm,$prm_cod_emprtmp,$prm_cod_usu,$prm_tip_usu,1,$prm_cod_rolseleccion);
-		
-		
 		
 		
 		if(sizeof($consulta)>0)

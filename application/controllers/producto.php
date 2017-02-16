@@ -13,8 +13,8 @@ class producto extends CI_Controller {
 		$this->load->model('Catalogos_model');
 	}
 	
-    public function index()
-    {
+	public function index()
+	{
 		if(!$this->Usuarioinicio_model->SessionExiste())
 		{
 			//echo 'SESSION EXPIRADA, VUELVA A INICIAR!'; 
@@ -52,7 +52,7 @@ class producto extends CI_Controller {
 			
 			$this->load->view('producto/producto',$prm);
 		}		
-    }
+	}
 	
 	public function get_Configuracion_ValorPrecio()
 	{
@@ -75,36 +75,24 @@ class producto extends CI_Controller {
 			exit;
 		}
 		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
-        $consulta =$this->producto_model->Listar_Productos($prm_cod_empr);
+		$consulta =$this->producto_model->Listar_Productos($prm_cod_empr);
 		
 		if(!empty($consulta))//SI NO ES NULO O VACIO
 		{
 			foreach($consulta as $key=>$v):
-					$contador=$contador+1;
-					$arr[$key]['nro_secuencia'] = $contador;				
-					$arr[$key]['id'] = trim($v['id']);
-					$arr[$key]['cod_producto'] = trim($v['cod_producto']);
-					$arr[$key]['nom_corto'] =trim($v['nom_corto']);				
-					$arr[$key]['nom_largo'] =trim($v['nom_largo']);
-					$arr[$key]['valor_venta'] = number_format(trim($v['valor_venta']),10,'.',','); 
-					$arr[$key]['precio_venta'] = number_format(trim($v['precio_venta']),10,'.',','); 
-					$arr[$key]['categoria'] =  trim($v['categoria']);
-					$arr[$key]['med'] =  trim($v['med']);
-					$arr[$key]['cod_unidmedsunat'] =  trim($v['cod_unidmedsunat']);
-					
-					//id
-					//cod_producto
-					//nom_corto
-					//nom_largo
-					//valor_venta
-					//categoria
-					//med
-					//cod_unidmedsunat 
-				
+				$contador=$contador+1;
+			$arr[$key]['nro_secuencia'] = $contador;				
+			$arr[$key]['id'] = trim($v['id']);
+			$arr[$key]['cod_producto'] = trim($v['cod_producto']);
+			$arr[$key]['nom_corto'] =trim($v['nom_corto']);				
+			$arr[$key]['nom_largo'] =trim($v['nom_largo']);
+			$arr[$key]['valor_venta'] = number_format(trim($v['valor_venta']),2,'.',','); 
+			$arr[$key]['precio_venta'] = number_format(trim($v['precio_venta']),2,'.',','); 
+			$arr[$key]['categoria'] =  trim($v['categoria']);
+			$arr[$key]['med'] =  trim($v['med']);
+			$arr[$key]['cod_unidmedsunat'] =  trim($v['cod_unidmedsunat']);
 			endforeach;
 		}
-		
-		//print_r($arr);
 		
 		if(sizeof($arr)>0)
 		{
@@ -131,44 +119,32 @@ class producto extends CI_Controller {
 			exit;
 		}
 		$prm_cod_id=trim($this->input->post('cod_id'));		
-        $consulta =$this->producto_model->Listar_ProductoId($prm_cod_id);
+		$consulta =$this->producto_model->Listar_ProductoId($prm_cod_id);
 		
 		if(!empty($consulta))//SI NO ES NULO O VACIO
 		{
-			//id
-			//cod_producto
-			//nom_corto
-			//nom_largo
-			//valor_venta
-			//id_categoria
-			//categoria
-			//med
-			//cod_unidmedsunat 
+			//id, cod_producto, nom_corto, nom_largo, valor_venta
+			//id_categoria, categoria, med, cod_unidmedsunat 
 			foreach($consulta as $key=>$v):
 				$contador=$contador+1;
-				$arr[$key]['nro_secuencia'] = $contador;				
-				$arr[$key]['id'] = trim($v['id']);
-				$arr[$key]['cod_producto'] = trim($v['cod_producto']);
-				$arr[$key]['nom_corto'] =trim($v['nom_corto']);				
-				$arr[$key]['nom_largo'] =trim($v['nom_largo']);
-				$arr[$key]['valor_venta'] = trim($v['valor_venta']); 
-				$arr[$key]['precio_venta'] = trim($v['precio_venta']); 
-				$arr[$key]['id_categoria'] =  trim($v['id_categoria']);					
-				$arr[$key]['categoria'] =  trim($v['categoria']);
-				$arr[$key]['med'] =  trim($v['med']);
-				$arr[$key]['cod_unidmedsunat'] =  trim($v['cod_unidmedsunat']);
+			$arr[$key]['nro_secuencia'] = $contador;				
+			$arr[$key]['id'] = trim($v['id']);
+			$arr[$key]['cod_producto'] = trim($v['cod_producto']);
+			$arr[$key]['nom_corto'] =trim($v['nom_corto']);				
+			$arr[$key]['nom_largo'] =trim($v['nom_largo']);
+			$arr[$key]['valor_venta'] = number_format($v['valor_venta'],2,'.',','); 
+			$arr[$key]['precio_venta'] = number_format($v['precio_venta'],2,'.',','); 
+			$arr[$key]['id_categoria'] =  trim($v['id_categoria']);					
+			$arr[$key]['categoria'] =  trim($v['categoria']);
+			$arr[$key]['med'] =  trim($v['med']);
+			$arr[$key]['cod_unidmedsunat'] =  trim($v['cod_unidmedsunat']);
 			endforeach;
 		}
 		
-		//print_r($arr);
-		
-		if(sizeof($arr)>0)
-		{
+		if(sizeof($arr)>0){
 			$result['status']=1;
 			$result['data']=$arr;
-		}
-		else
-		{
+		}else{
 			$result['status']=0;
 			$result['data']="";
 		}
@@ -190,25 +166,25 @@ class producto extends CI_Controller {
 		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
 		$prm_codigo=trim($this->input->post('txt_busqueda_codigoproducto'));	
 		$prm_descripcion=trim($this->input->post('txt_busqueda_descripcionproducto'));		
-        $consulta =$this->producto_model->Busqueda_ProductoFiltro($prm_cod_empr, $prm_codigo, $prm_descripcion);
+		$consulta =$this->producto_model->Busqueda_ProductoFiltro($prm_cod_empr, $prm_codigo, $prm_descripcion);
 		
 		if(!empty($consulta))//SI NO ES NULO O VACIO
 		{
 			foreach($consulta as $key=>$v):
-					$contador=$contador+1;
-					$arr[$key]['nro_secuencia'] = $contador;				
-					$arr[$key]['id'] = trim($v['id']);
-					$arr[$key]['cod_producto'] = trim($v['cod_producto']);
-					$arr[$key]['nom_corto'] =trim($v['nom_corto']);
-					$arr[$key]['nom_largo'] =trim($v['nom_largo']);
-					$arr[$key]['valor_venta'] = number_format($v['valor_venta'],10,'.',','); 
-					$arr[$key]['valor_venta_real'] = $v['valor_venta']; 
-					$arr[$key]['precio_venta'] = number_format($v['precio_venta'],10,'.',','); 
-					$arr[$key]['precio_venta_real'] = $v['precio_venta']; 
-					$arr[$key]['cod_unidmedsunat'] =  trim($v['cod_unidmedsunat']);
-					$arr[$key]['idmed'] =  trim($v['idmed']);
+				$contador=$contador+1;
+			$arr[$key]['nro_secuencia'] = $contador;				
+			$arr[$key]['id'] = trim($v['id']);
+			$arr[$key]['cod_producto'] = trim($v['cod_producto']);
+			$arr[$key]['nom_corto'] =trim($v['nom_corto']);
+			$arr[$key]['nom_largo'] =trim($v['nom_largo']);
+			$arr[$key]['valor_venta'] = number_format($v['valor_venta'],2,'.',','); 
+			$arr[$key]['valor_venta_real'] = $v['valor_venta']; 
+			$arr[$key]['precio_venta'] = number_format($v['precio_venta'],2,'.',','); 
+			$arr[$key]['precio_venta_real'] = $v['precio_venta']; 
+			$arr[$key]['cod_unidmedsunat'] =  trim($v['cod_unidmedsunat']);
+			$arr[$key]['idmed'] =  trim($v['idmed']);
 					//a.id, a.cod_producto, a.nom_corto, a.valor_venta, d.cod_unidmedsunat, idmed
-				
+			
 			endforeach;
 		}
 		//print_r($arr[$key]['valor_venta']);
@@ -331,8 +307,8 @@ class producto extends CI_Controller {
 			exit;
 		}
 		$prm_codigo=trim($this->input->post('txt_codigo'));
-		
-        $consulta =$this->producto_model->Valida_Producto($prm_codigo);
+		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
+		$consulta =$this->producto_model->Valida_Producto($prm_codigo, $prm_cod_empr);
 		
 		if(!empty($consulta))//SI NO ES NULO O VACIO
 		{
@@ -347,17 +323,18 @@ class producto extends CI_Controller {
 			//cod_unidmedsunat 
 			foreach($consulta as $key=>$v):
 				$contador=$contador+1;
-				$arr[$key]['nro_secuencia'] = $contador;				
-				$arr[$key]['id'] = trim($v['id']);
-				$arr[$key]['cod_producto'] = trim($v['cod_producto']);
-				$arr[$key]['nom_corto'] =trim($v['nom_corto']);				
-				$arr[$key]['nom_largo'] =trim($v['nom_largo']);
-				$arr[$key]['valor_venta'] = trim($v['valor_venta']); 
-				$arr[$key]['precio_venta'] = trim($v['precio_venta']); 
-				$arr[$key]['id_categoria'] =  trim($v['id_categoria']);					
-				$arr[$key]['categoria'] =  trim($v['categoria']);
-				$arr[$key]['med'] =  trim($v['med']);
-				$arr[$key]['cod_unidmedsunat'] =  trim($v['cod_unidmedsunat']);
+			$arr[$key]['nro_secuencia'] = $contador;				
+			$arr[$key]['id'] = trim($v['id']);
+			$arr[$key]['cod_producto'] = trim($v['cod_producto']);
+			$arr[$key]['nom_corto'] =trim($v['nom_corto']);				
+			$arr[$key]['nom_largo'] =trim($v['nom_largo']);
+			$arr[$key]['valor_venta'] = trim($v['valor_venta']); 
+			$arr[$key]['precio_venta'] = trim($v['precio_venta']); 
+			$arr[$key]['id_categoria'] =  trim($v['id_categoria']);					
+			$arr[$key]['categoria'] =  trim($v['categoria']);
+			$arr[$key]['med'] =  trim($v['med']);
+			$arr[$key]['cod_unidmedsunat'] =  trim($v['cod_unidmedsunat']);
+			$arr[$key]['est_reg'] =  trim($v['est_reg']);
 			endforeach;
 		}
 		
