@@ -433,33 +433,33 @@
 						newHtml+='</tr>';						
 					});	
 
-					newHtml+='</tbody>';
-					newHtml+='</table>';
-					
-					$('#div_documentodetalle').empty().append(newHtml);	
+newHtml+='</tbody>';
+newHtml+='</table>';
 
-					oTable=$('#Tab_DetalleComprobanteTabla').dataTable({
-						"bPaginate": true,
-						"sScrollX": "100%",
-						"sScrollXInner": "120%",
-						"bScrollCollapse": true,
-						"bJQueryUI": true
-					});
-				 
-					$("#Tab_DetalleComprobanteTabla tbody").click(function(event) 
-					{
-						$(oTable.fnSettings().aoData).each(function (){
-							$(this.nTr).removeClass('row_selected');
-						});
-						$(event.target.parentNode).addClass('row_selected');
-					});
-				},
-				
-				ExportarExcel_General:function()
-				{
-					Descargar_ExcelGeneral();
-				},
-				
+$('#div_documentodetalle').empty().append(newHtml);	
+
+oTable=$('#Tab_DetalleComprobanteTabla').dataTable({
+	"bPaginate": true,
+	"sScrollX": "100%",
+	"sScrollXInner": "120%",
+	"bScrollCollapse": true,
+	"bJQueryUI": true
+});
+
+$("#Tab_DetalleComprobanteTabla tbody").click(function(event) 
+{
+	$(oTable.fnSettings().aoData).each(function (){
+		$(this.nTr).removeClass('row_selected');
+	});
+	$(event.target.parentNode).addClass('row_selected');
+});
+},
+
+ExportarExcel_General:function()
+{
+	Descargar_ExcelGeneral();
+},
+
 			}//FIN NCSISTEMA
 			
 			//INICIO FUNCIONES
@@ -705,152 +705,155 @@
 					}
 					else
 					{
-						document.location.href=urlexportardatos+'retencion/Exportar_ExcelGeneral?param1='+txt_RucEmpresa+'&param2='+txt_DocumentoCliente+'&param3='+txt_serienumeroinicio+'&param4='+txt_serienumerofinal+'&param5='+Cmb_EstadoDocumento+'&param6='+txt_FechaEmisionInicio+'&param7='+txt_FechaEmisionFinal+'&param8='+Cmb_TipoDocumentoSunat+'&param9='+Cmb_EstadoDocumentoSunat+'&param10='+txt_datosseleccionados+'&param11='+txt_RazonSocialCliente+'&param12='+Cmb_TipoMoneda;
-					}
+						document.location.href=urlexportardatos+'retencion/Exportar_ExcelGeneral?param1='+txt_RucEmpresa+'&param2='+txt_DocumentoCliente+'&param3='+txt_serienumeroinicio+'&param4='+txt_serienumerofinal+'&param5='+Cmb_EstadoDocumento+'&param6='+txt_FechaEmisionInicio+'&param7='+txt_FechaEmisionFinal+'&param9='+Cmb_EstadoDocumentoSunat+'&param10='+txt_datosseleccionados+'&param11='+txt_RazonSocialCliente;
+					/*
+					document.location.href=urlexportardatos+'retencion/Exportar_ExcelGeneral?param1='+txt_RucEmpresa+'&param2='+txt_DocumentoCliente+'&param3='+txt_serienumeroinicio+'&param4='+txt_serienumerofinal+'&param5='+Cmb_EstadoDocumento+'&param6='+txt_FechaEmisionInicio+'&param7='+txt_FechaEmisionFinal+'&param8='+Cmb_TipoDocumentoSunat+'&param9='+Cmb_EstadoDocumentoSunat+'&param10='+txt_datosseleccionados+'&param11='+txt_RazonSocialCliente+'&param12='+Cmb_TipoMoneda;
+					*/
 				}
-				
 			}
 
-			function Descargar_DocumentoSeleccionado()
-			{
-				
-			}
-			
-			function Descargar_DocumentoSeleccionadoArchivos()
-			{
-				
-			}
-			
-			function Modificar_DocumentoSeleccionado()
-			{
-				
-			}
-			
-			function DeclararEnviar_DocumentoSeleccionado()
-			{
-				
-			}
-			
-			function ReiniciarCorrelativo_DocumentoSeleccionado()
-			{
-				
-			}
-			
-			function OcultarFilaPassword(id,opcion) 
-			{
-				
-			}
-			
-			function Listar_DocumentoSunat(cod_tipodocumento)
-			{
-				
-			}
+		}
 
-		</script>
-		
-	</head>   
-	<body>
-		<?php header('Content-Type: text/html; charset=ISO-8859-1');?>
-		<div id="Div_HeadSistema"><?php $this->load->view('inicio/head',$Listar_UsuarioAccesos,$Listar_Empresas,$pagina_ver); ?></div>
-		
-		<div id="tabs" style="width:99.7%;float:left;text-align:center;margin-top:5px">
-			<ul>
-				<li><a href="#tabs-1">LISTADO DE RETENCIONES</a></li>
-			</ul>
-			<div id="tabs-1" style="width:95%;float:left">			
-				<div id="div_datosempresa" style="width:100%; float:left; margin-top:10px; border: 1px solid #a6c9e2; border-radius:5px;">
-					<table border="0" width="70%" style="border-collapse:separate; border-spacing:1px 1px;" cellpadding="3" class="tablaFormulario">
-						<tr><td><label class="columna"></label></td></tr>
+		function Descargar_DocumentoSeleccionado()
+		{
+
+		}
+
+		function Descargar_DocumentoSeleccionadoArchivos()
+		{
+
+		}
+
+		function Modificar_DocumentoSeleccionado()
+		{
+
+		}
+
+		function DeclararEnviar_DocumentoSeleccionado()
+		{
+
+		}
+
+		function ReiniciarCorrelativo_DocumentoSeleccionado()
+		{
+
+		}
+
+		function OcultarFilaPassword(id,opcion) 
+		{
+
+		}
+
+		function Listar_DocumentoSunat(cod_tipodocumento)
+		{
+
+		}
+
+	</script>
+
+</head>   
+<body>
+	<?php header('Content-Type: text/html; charset=ISO-8859-1');?>
+	<div id="Div_HeadSistema"><?php $this->load->view('inicio/head',$Listar_UsuarioAccesos,$Listar_Empresas,$pagina_ver); ?></div>
+
+	<div id="tabs" style="width:99.7%;float:left;text-align:center;margin-top:5px">
+		<ul>
+			<li><a href="#tabs-1">LISTADO DE RETENCIONES</a></li>
+		</ul>
+		<div id="tabs-1" style="width:95%;float:left">			
+			<div id="div_datosempresa" style="width:100%; float:left; margin-top:10px; border: 1px solid #a6c9e2; border-radius:5px;">
+				<table border="0" width="70%" style="border-collapse:separate; border-spacing:1px 1px;" cellpadding="3" class="tablaFormulario">
+					<tr><td><label class="columna"></label></td></tr>
+					<tr>
+						<td style="text-align:right;width:15%" ><label class="columna">RUC :</label></td>
+						<td style="text-align:left;width:20%">
+							<!--<input type="hidden" id="txt_tipo_confserie"  value="<?php echo $Tipo_confserie;?>" />-->
+							<input style="width:95%" type="text" id="txt_RucEmpresa" value="<?php echo trim(utf8_decode($Ruc_Empresa));?>"  disabled="disabled" />
+						</td>
+						<td style="text-align:right;width:15%"><label class="columna">Raz&oacute;n Social :</label></td>
+						<td style="text-align:left;width:48%" colspan="3">
+							<input style="width:95%" type="text" id="txt_RazonSocialEmpresa" value="<?php echo trim(utf8_decode($Razon_Social));?>" disabled="disabled" /></td>
+						</tr>
 						<tr>
-							<td style="text-align:right;width:15%" ><label class="columna">RUC :</label></td>
-							<td style="text-align:left;width:20%">
-								<!--<input type="hidden" id="txt_tipo_confserie"  value="<?php echo $Tipo_confserie;?>" />-->
-								<input style="width:95%" type="text" id="txt_RucEmpresa" value="<?php echo trim(utf8_decode($Ruc_Empresa));?>"  disabled="disabled" />
+							<td style="text-align:right"><label class="columna">Proveedor :</label></td>
+							<td style="text-align:left">
+								<input style="width:95%" id="txt_RazonSocialCliente" type="text" value="" placeholder="Buscar Cliente por Raz. Social" />
+								<input style="width:95%" id="txt_DocumentoCliente" type="hidden" value="" />
+							</td>							
+							<td style="text-align:right"><label class="columna">Serie-Num. :</label></td>
+							<td style="text-align:left">
+								<input style="width:70%" id="txt_serienumeroinicio" type="text" value="" maxlength="13"/>
 							</td>
-							<td style="text-align:right;width:15%"><label class="columna">Raz&oacute;n Social :</label></td>
-							<td style="text-align:left;width:48%" colspan="3">
-								<input style="width:95%" type="text" id="txt_RazonSocialEmpresa" value="<?php echo trim(utf8_decode($Razon_Social));?>" disabled="disabled" /></td>
-							</tr>
-							<tr>
-								<td style="text-align:right"><label class="columna">Proveedor :</label></td>
-								<td style="text-align:left">
-									<input style="width:95%" id="txt_RazonSocialCliente" type="text" value="" placeholder="Buscar Cliente por Raz. Social" />
-									<input style="width:95%" id="txt_DocumentoCliente" type="hidden" value="" />
-								</td>							
-								<td style="text-align:right"><label class="columna">Serie-Num. :</label></td>
-								<td style="text-align:left">
-									<input style="width:70%" id="txt_serienumeroinicio" type="text" value="" maxlength="13"/>
-								</td>
-								<td style="text-align:right"><label class="columna">al :</label></td>							
-								<td style="text-align:left">
-									<input style="width:70%" id="txt_serienumerofinal" type="text" value="" maxlength="13" />
-								</td>
-							</tr>
-							<tr>
-								<td style="text-align:right"><label class="columna">Estado Doc. :</label></td>
-								<td style="text-align:left">
-									<select id="Cmb_EstadoDocumento" style="width:98%;height:25px" >
-										<option value="0">TODOS</option>
-										<?php foreach ( $Listar_EstadoDocumento as $v):	?>
-											<option value="<?php echo trim($v['co_item_tabla']); ?>"><?php echo trim(utf8_decode(strtoupper($v['no_corto'])));?> </option>
-										<?php  endforeach; ?>
+							<td style="text-align:right"><label class="columna">al :</label></td>							
+							<td style="text-align:left">
+								<input style="width:70%" id="txt_serienumerofinal" type="text" value="" maxlength="13" />
+							</td>
+						</tr>
+						<tr>
+							<td style="text-align:right"><label class="columna">Estado Doc. :</label></td>
+							<td style="text-align:left">
+								<select id="Cmb_EstadoDocumento" style="width:98%;height:25px" >
+									<option value="0">TODOS</option>
+									<?php foreach ( $Listar_EstadoDocumento as $v):	?>
+										<option value="<?php echo trim($v['co_item_tabla']); ?>"><?php echo trim(utf8_decode(strtoupper($v['no_corto'])));?> </option>
+									<?php  endforeach; ?>
+								</select>
+							</td>
+
+							<td style="text-align:right"><label class="columna">Fec. Emisi&oacute;n :</label></td>
+							<td style="text-align:left">
+								<input style="width:70%; text-align:center" id="txt_FechaEmisionInicio" type="text" value="" disabled="disabled" title="Desde (##/##/####)" />
+							</td>
+							<td style="text-align:right"><label class="columna">al :</label></td>	
+							<td style="text-align:left">
+								<input style="width:70%; text-align:center" id="txt_FechaEmisionFinal" type="text" value="" disabled="disabled" title="Hasta (##/##/####)" />
+							</td>
+						</tr>
+						<tr>
+							<td style="text-align:right"><label class="columna">Estado Sunat :</label></td>
+							<td style="text-align:left">
+								<div id="div_Estadodocumentosunat">
+									<select id="Cmb_EstadoDocumentoSunat" style="width:98%;height:25px" >
+										<option value="0">TODOS</option>	
+										<?php foreach ( $Listar_EstadoSunatRetencion as $v):	?>
+											<option value="<?php echo trim($v['co_item_tabla']); ?>"><?php echo trim(strtoupper(utf8_decode($v['no_largo'])));?> </option>
+										<?php  endforeach; ?>																	
 									</select>
-								</td>
+								</div>
+							</td>
+							<td style="text-align:right" colspan="4"><label class="columna"></label></td>
 
-								<td style="text-align:right"><label class="columna">Fec. Emisi&oacute;n :</label></td>
-								<td style="text-align:left">
-									<input style="width:70%; text-align:center" id="txt_FechaEmisionInicio" type="text" value="" disabled="disabled" title="Desde (##/##/####)" />
-								</td>
-								<td style="text-align:right"><label class="columna">al :</label></td>	
-								<td style="text-align:left">
-									<input style="width:70%; text-align:center" id="txt_FechaEmisionFinal" type="text" value="" disabled="disabled" title="Hasta (##/##/####)" />
-								</td>
-							</tr>
-							<tr>
-								<td style="text-align:right"><label class="columna">Estado Sunat :</label></td>
-								<td style="text-align:left">
-									<div id="div_Estadodocumentosunat">
-										<select id="Cmb_EstadoDocumentoSunat" style="width:98%;height:25px" >
-											<option value="0">TODOS</option>	
-											<?php foreach ( $Listar_EstadoSunatRetencion as $v):	?>
-												<option value="<?php echo trim($v['co_item_tabla']); ?>"><?php echo trim(strtoupper(utf8_decode($v['no_largo'])));?> </option>
-											<?php  endforeach; ?>																	
-										</select>
-									</div>
-								</td>
-								<td style="text-align:right" colspan="4"><label class="columna"></label></td>
-
-							</tr>
-							<tr>
-								<td></td>
-								<td style="text-align:left;width:10%" colspan="5">
-									<table width="100%" border="0">
-										<tr>
-											<td  width="10%">
-												<a href="javascript:ncsistema.Listar_Retenciones()" >
+						</tr>
+						<tr>
+							<td></td>
+							<td style="text-align:left;width:10%" colspan="5">
+								<table width="100%" border="0">
+									<tr>
+										<td  width="10%">
+											<a href="javascript:ncsistema.Listar_Retenciones()" >
+												<button id="" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" style="width:105px; height:32px" type="submit">
+													<span class="ui-button-icon-left ui-icon ui-icon-search"></span>
+													<span class="ui-button-text">Buscar</span></button>
+												</a>
+											</td>
+											<td>
+												<a href="javascript:Limpiar_Busqueda()" >
 													<button id="" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" style="width:105px; height:32px" type="submit">
-														<span class="ui-button-icon-left ui-icon ui-icon-search"></span>
-														<span class="ui-button-text">Buscar</span></button>
+														<span class="ui-button-icon-left ui-icon ui-icon-document-b"></span>
+														<span class="ui-button-text">Limpiar</span></button>
 													</a>
 												</td>
-												<td>
-													<a href="javascript:Limpiar_Busqueda()" >
-														<button id="" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" style="width:105px; height:32px" type="submit">
-															<span class="ui-button-icon-left ui-icon ui-icon-document-b"></span>
-															<span class="ui-button-text">Limpiar</span></button>
-														</a>
-													</td>
-													<td width="80%">
-														<div style="width:40px; height:15px" id="div_procesarbuscar">  </div>
-													</td>
-												</tr>
-											</table>
-										</td>
-									</tr>
-								</table>
-							</div>	
-							<div style="width:100%;border:solid 1px;float:left;margin-top:10px; border: 1px solid #a6c9e2;border-radius:5px;">	
-								<table width="100%"  border="0px" class="ui-widget-header">
+												<td width="80%">
+													<div style="width:40px; height:15px" id="div_procesarbuscar">  </div>
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</table>
+						</div>	
+						<div style="width:100%;border:solid 1px;float:left;margin-top:10px; border: 1px solid #a6c9e2;border-radius:5px;">	
+							<table width="100%"  border="0px" class="ui-widget-header">
 					<!--
 					<input id="txt_datosseleccionados_estado" type="hidden" value="" />
 					<input id="txt_cantidaddocumborrador" type="hidden" value="0" />

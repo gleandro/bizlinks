@@ -141,7 +141,6 @@ class Catalogos extends CI_Controller {
 		
 		$prm_tipo_usuario=$this->Usuarioinicio_model->Get_Tip_Usu();
 		//print_r($prm_tipo_confserie);
-		
 		if ($prm_tipo_usuario==1)//administrador
 		{
 			$consulta =$this->Catalogos_model->Listar_SeriesDocumentos($prm_tip_doc,$prm_cod_empr);
@@ -167,14 +166,13 @@ class Catalogos extends CI_Controller {
 			$cod_tipconfig=$consulta[0]['tip_conf'];
 
 			foreach($consulta as $key=>$v):
-				$arr[$key]['tip_conf'] =trim($v['tip_conf']); 
+				$arr[$key]['tip_conf'] =  trim($v['tip_conf']); 
 				$arr[$key]['cod_usu'] =  trim($v['cod_usu']);
 				$arr[$key]['ser_doc'] =  trim($v['ser_doc']);
 				$arr[$key]['num_doc'] =  str_pad(trim($v['num_doc']),8, "0", STR_PAD_LEFT); 
 				$arr[$key]['letra_inicio'] =  substr(trim($v['ser_doc']),0,1);
 			endforeach;
 		}
-
 		if(sizeof($arr)>0)
 		{
 			$result['status']=1;

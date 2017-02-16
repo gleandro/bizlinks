@@ -14,8 +14,7 @@ class Seriedocumentos_model extends CI_Model
 
 		$this->load->database('ncserver',TRUE);
 		
-		
-		$consulta = $this->db->query("select 
+		$query="select 
 					cod_confser,
 					cod_empr,
 					cod_usu,
@@ -24,8 +23,10 @@ class Seriedocumentos_model extends CI_Model
 						where aa.no_tabla='TIPO_DOCUMENTO' and aa.in_habilitado=1 and aa.co_item_tabla=b.tip_doc) nomb_tipdoc,
 					ser_doc,
 					num_doc
-		from sgr_configuracionseries b where cod_empr=".$prm_cod_empr." and est_reg=1 order by 5;");
-		
+		from sgr_configuracionseries b where cod_empr=".$prm_cod_empr." and est_reg=1 order by 5;";
+
+		//print_r($query);
+		$consulta = $this->db->query($query);	
 		return $consulta->result_array();
 	}
 	
@@ -204,7 +205,7 @@ class Seriedocumentos_model extends CI_Model
 	{
 
 		$this->load->database('ncserver',TRUE);
-		$consulta = $this->db->query("select 
+		$query="select 
 					a.cod_confserusu,
 					a.cod_usu,
 					(select aa.no_corto from tm_tabla_multiple aa 
@@ -216,8 +217,10 @@ class Seriedocumentos_model extends CI_Model
 		from sgr_configuracionseriesusuario a 
 				inner join sgr_configuracionseries b on a.cod_confser=b.cod_confser
 				inner join sgr_usuario c on c.cod_usu=a.cod_usu
-		where b.cod_empr=".$prm_cod_empr." and a.est_reg=1;");
-		
+		where b.cod_empr=".$prm_cod_empr." and a.est_reg=1;";
+
+		//print_r($query);
+		$consulta = $this->db->query($query);
 		return $consulta->result_array();
 	}
 	

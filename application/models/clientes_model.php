@@ -157,8 +157,7 @@ class Clientes_model extends CI_Model
 					'Correlativo del Cliente Extranjero',
 					0,
 					'-',
-					'".$prm_cod_empr."'			
-				);";
+					'".$prm_cod_empr."');";
 				$this->db_client->query($query);
 				if ($this->db_client->trans_status() === FALSE)
 				{

@@ -269,7 +269,7 @@ class Comprobante extends CI_Controller {
 			$prm_tip_afectacion=trim($this->input->post('cmb_tipoafectacion'));
 			$prm_val_igv=trim($this->input->post('txt_igv'));
 			$prm_val_total=trim($this->input->post('txt_valortotal'));	
-		//print_r($prm_val_descuento);
+			//print_r($prm_val_descuento);
 			if(!$this->Usuarioinicio_model->MarcoTrabajoExiste())
 			{
 				$prm_cod_empr=0;

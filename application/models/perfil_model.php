@@ -177,7 +177,7 @@ class Perfil_model extends CI_Model
 				and bb.est_reg=1 and bb.cod_perfil=".$prm_cod_perfil."
 			where bb.cod_men is null order by aa.ord_ejec;";
 		
-		//print_r();
+		print_r($query);
 		$consulta = $this->db->query($query);
 			
 		return $consulta->result_array();

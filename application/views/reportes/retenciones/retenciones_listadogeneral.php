@@ -19,13 +19,13 @@
 	
 	$PHPExcel->getActiveSheet()->setCellValue('C8', $param6. ' '); 
 	$PHPExcel->getActiveSheet()->setCellValue('E8', $param7. ' '); 
-	$PHPExcel->getActiveSheet()->setCellValue('G7', 'parametro 8'); 
+	$PHPExcel->getActiveSheet()->setCellValue('G7', $param8. ' '); 
 	//$PHPExcel->getActiveSheet()->setCellValue('G7', ''.$param8. ' '); 
 	
 	$PHPExcel->getActiveSheet()->setCellValue('C9', $param5. ' ');
 	$PHPExcel->getActiveSheet()->setCellValue('A10', $param9. ' ');
-	$PHPExcel->getActiveSheet()->setCellValue('G8', 'parametro 11');
-	$PHPExcel->getActiveSheet()->setCellValue('G9', 'parametro 12');
+	$PHPExcel->getActiveSheet()->setCellValue('G8', 'RETENCION'. ' ');
+	$PHPExcel->getActiveSheet()->setCellValue('G9', $param12. ' ');
 	//$PHPExcel->getActiveSheet()->setCellValue('G8', $param11. ' ');
 	//$PHPExcel->getActiveSheet()->setCellValue('G9', $param12. ' ');
 	
