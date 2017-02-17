@@ -190,7 +190,7 @@
 							newHtml+='<td style="text-align:left">'+rs.desc_prod+'</td>';
 							newHtml+='<td style="text-align:left">'+rs.uni_med+'</td>';
 							newHtml+='<td style="text-align:right">'+rs.cant_prod+'</td>';
-							newHtml+='<td style="text-align:right">'+rs.val_unitario+'</td>';
+							newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_unitario)).toFixed(2)+'</td>';
 							newHtml+='<td style="text-align:right">'+rs.val_igv+'</td>';
 							if (tipo_registro=='1')
 							{
@@ -281,7 +281,7 @@
 							newHtml+='<th style="width:25%">ValorVenta</td>';	
 						}else
 						{
-							newHtml+='<th style="width:25%">Precio</td>';	
+							newHtml+='<th style="width:25%">PrecioCobro</td>';	
 						}				
 						newHtml+='<th style="width:10%">U.N.Sunat</td>';
 						//a.id, a.cod_producto, a.nom_corto, a.precio, d.cod_unidmedsunat
@@ -1041,13 +1041,9 @@
 				$('#txt_descripcion').val(nom_corto);
 				$('#cmb_unidadmedida').val(cod_unidmedsunat);
 				
-				//$('#txt_valorunitario').val(valor_venta);
-				//$('#txt_precio').val(precio_venta);
-				
 				if (txt_config_valorprecio==0)
 				{
-					$('#txt_valorunitario').val(vv_precio);
-					$('#txt_precio').val(txt_cero.toFixed(10));
+					$('#txt_valorunitario').val(parseFloat(vv_precio).toFixed(2));
 					
 					$("#txt_valorunitario").prop('disabled', false);
 					$("#txt_descuento").prop('disabled', false);
@@ -1055,8 +1051,8 @@
 					$("#txt_descuentoIGV").prop('disabled', true);
 				}else
 				{
-					$('#txt_precio').val(vv_precio);
-					$('#txt_valorunitario').val(txt_cero.toFixed(10));
+					$('#txt_precio').val(parseFloat(vv_precio).toFixed(2));
+					
 					$("#txt_valorunitario").prop('disabled', true);
 					$("#txt_descuento").prop('disabled', true);
 					$("#txt_precio").prop('disabled', false);
@@ -1121,14 +1117,10 @@
 						}			
 					});
 				}
-				
 			}
-			
 			
 			$(function() 
 			{
-
-
 				function Registrar_Producto() 
 				{
 					var valid = true;
@@ -1142,8 +1134,10 @@
 					var txt_isc=$.trim($('#txt_isc').val());	
 					var cmb_tipoafectacion=$.trim($('#cmb_tipoafectacion').val());	
 					var txt_igv=$.trim($('#txt_igv').val());	
-					var txt_valortotal=$.trim($('#txt_valortotal').val());	
+					var txt_valortotal=$.trim($('#txt_valortotal').val());
+					var txt_preciocobro=$.trim($('#txt_precio').val());
 					var txt_RucEmpresa=$.trim($('#txt_RucEmpresa').val());	
+					var txt_descuentoIGV=$.trim($('#txt_descuentoIGV').val());
 					
 					allFields = $([]).add( $('#txt_codigoprod') ).add( $('#txt_cantidad') ).add( $('#cmb_unidadmedida') ).add( $('#txt_descuento') ).add( $('#txt_descripcion') ).add( $('#txt_valorunitario') ).add( $('#cmb_tipoafectacion') );
 					
@@ -1231,7 +1225,9 @@
 							txt_igv:txt_igv,
 							txt_valortotal:txt_valortotal,
 							txt_RucEmpresa:txt_RucEmpresa,
-							cod_tipregist:cod_tipregist
+							cod_tipregist:cod_tipregist,
+							txt_preciocobro:txt_preciocobro,
+							txt_descuentoIGV:txt_descuentoIGV
 						},
 						beforeSend:function()
 						{
@@ -1296,7 +1292,7 @@
 				
 				dialog = $("#dialog-form").dialog({
 					autoOpen: false,
-					height: 440,
+					height: 450,
 					width: 550,
 					modal: true,
 					buttons: 
@@ -1662,13 +1658,17 @@
 				
 				var txt_cantidad=$.trim($('#txt_cantidad').val());
 				var txt_descuento=($.trim($('#txt_descuento').val())).replace(',', '');
-				//alert(txt_descuento);
 				var cod_tipafect=$.trim($('#cmb_tipoafectacion').val());
 				var txt_valorigv=$.trim($('#txt_valorigv').val());//captura valor de 18
 				var txt_valorotroscargos=$.trim($('#txt_valorotroscargos').val());
-				if (txt_valorotroscargos=="" || isNaN(txt_valorotroscargos))
-				{ txt_valorotroscargos=0;
+				
+				//var txt_valorigv=(parseFloat($('#txt_valorigv').val())/100).toFixed(2);//captura valor de 18//0.18
+				//var txt_valorotroscargos=(parseFloat($('#txt_valorotroscargos').val())/100).toFixed(2);//0.10
+				
+				if (txt_valorotroscargos=="" || isNaN(txt_valorotroscargos)){
+					txt_valorotroscargos=0;
 				}
+				
 				var tipo_registro=0;				
 				if ($("#cbox_exportaciondocumento").is(":checked"))//EXPORTACION
 				{
@@ -1678,17 +1678,14 @@
 					{
 						tipo_registro=3;
 					}
-					else
-					{
+					else{
 						tipo_registro=1;
 					}
 				$('#div_mensajereferencia').empty().append('');
-				if (txt_cantidad=="" || isNaN(txt_cantidad))
-				{
+				if (txt_cantidad=="" || isNaN(txt_cantidad)){
 					txt_cantidad=0;
 				}
-				if (txt_descuento=="" || isNaN(txt_descuento))
-				{
+				if (txt_descuento=="" || isNaN(txt_descuento)){
 					txt_descuento=0;
 				}
 				
@@ -1698,40 +1695,64 @@
 				var txt_descuentoIGV=0;
 				var txt_preciototal=0;
 				var txt_valorunitario=0;
+				var txt_preciounitario=0;
 				
-				
-				if (txt_config_valorprecio==0)
+				if (txt_config_valorprecio==0)//Tipo de configuración es por valor venta
 				{
 					txt_valorunitario=($.trim($('#txt_valorunitario').val())).replace(',', '');
-					if (txt_valorunitario=="" || isNaN(txt_valorunitario))
-					{
+					if (txt_valorunitario=="" || isNaN(txt_valorunitario)){
 						txt_valorunitario=0;
 					}
 					
 					if (tipo_registro==1)//NORMAL
 					{
 						if (cod_tipafect=='10')//GRAVADO - OPERACION ONEROSA
-						{				
-							txt_igv=(((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100));
-							txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
+						{	
+							txt_preciounitario=parseFloat(parseFloat(txt_valorunitario)*(1+parseFloat(txt_valorigv)/100)).toFixed(2);
 							
-							txt_precio=parseFloat(txt_valorunitario)*parseFloat(1+txt_valorigv/100);
-							txt_descuentoIGV=parseFloat(txt_descuento)*parseFloat(1+txt_valorigv/100);
-							txt_preciototal=(parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV);
+							txt_precio=parseFloat(parseFloat(txt_valorunitario)*(1+parseFloat(txt_valorigv)/100).toFixed(2));
+							txt_descuentoIGV=parseFloat(parseFloat(txt_descuento)*(1+parseFloat(txt_valorigv)/100)).toFixed(2);
+							
+							if (txt_cantidad==0){
+								txt_igv=0;
+								txt_valortotal=0;
+								txt_preciototal=0;
+							}
+							else{
+								txt_igv=parseFloat(( (parseFloat(txt_cantidad)*parseFloat(txt_valorunitario)) -parseFloat(txt_descuento)) * parseFloat(txt_valorigv/100)).toFixed(2);
+								txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(2);
+								txt_preciototal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV)).toFixed(2);
+							}
 						}else 
 							if (cod_tipafect=='20')//EXONERADO - OPERACION ONEROSA
-							{				
-								//txt_igv=(((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100));
-								txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
-								txt_precio=parseFloat(txt_valorunitario);
-								txt_preciototal=txt_valortotal;
+							{	
+								txt_preciounitario=parseFloat(txt_valorunitario).toFixed(2);
+								txt_precio=parseFloat(txt_valorunitario).toFixed(2);
+								txt_descuentoIGV=parseFloat(txt_descuento).toFixed(2);
+								
+								if (txt_cantidad==0){
+									txt_valortotal=0;
+									txt_preciototal=0;
+								}
+								else{
+									txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(2);
+									txt_preciototal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV)).toFixed(2);
+								}
 							}else 
 								if (cod_tipafect=='30')//INAFECTO - OPERACION ONEROSA
 								{				
-									//txt_igv=(((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100));
-									txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
-									txt_precio=parseFloat(txt_valorunitario);
-									txt_preciototal=txt_valortotal;
+									txt_preciounitario=parseFloat(txt_valorunitario).toFixed(2);
+									txt_precio=parseFloat(txt_valorunitario).toFixed(2);
+									txt_descuentoIGV=parseFloat(txt_descuento).toFixed(2);
+									
+									if (txt_cantidad==0){
+										txt_valortotal=0;
+										txt_preciototal=0;
+									}
+									else{
+										txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(2);
+										txt_preciototal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV)).toFixed(2);
+									}
 								}
 					}
 					else 
@@ -1740,61 +1761,79 @@
 						{				
 							if (cod_tipafect=='40')//EXPORTACION
 							{				
-								//txt_igv=(((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100));
-								txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
-								txt_precio=parseFloat(txt_valorunitario)
-								txt_preciototal=txt_valortotal;
+								txt_preciounitario=parseFloat(txt_valorunitario).toFixed(2);
+								txt_precio=parseFloat(txt_valorunitario).toFixed(2);
+								txt_descuentoIGV=parseFloat(txt_descuento).toFixed(2);
+								
+								if (txt_cantidad==0){
+									txt_valortotal=0;
+									txt_preciototal=0;
+								}
+								else{
+									txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(2);
+									txt_preciototal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV)).toFixed(2);
+								}
 							}
 						}else 
 							if (tipo_registro==3)//OPERACIONES GRATUITAS
 							{				
-								if (cod_tipafect=='11' || cod_tipafect=='12' || cod_tipafect=='13' || cod_tipafect=='14' || cod_tipafect=='15' || cod_tipafect=='16')//EXPORTACION
+								if (cod_tipafect=='11' || cod_tipafect=='12' || cod_tipafect=='13' || cod_tipafect=='14' || cod_tipafect=='15' || cod_tipafect=='16')//
 								{				
-									txt_igv=(((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100));
-									txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
-									txt_precio=0;
 									txt_descuentoIGV=0;
+									txt_descuento=0;
+									//VALIDAR EL CALCULO DEL IGV
+									txt_igv=parseFloat((( parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100)).toFixed(2);
+									txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(2);
+									
+									txt_precio=0;
+									txt_preciounitario=0;
 									txt_preciototal=0;
 									
 									$('#div_mensajereferencia').empty().append('IGV Referencial');
 								}else 
 									if (cod_tipafect=='21' || cod_tipafect=='31' || cod_tipafect=='32' || cod_tipafect=='33' || cod_tipafect=='34' || cod_tipafect=='35' || cod_tipafect=='36')//EXPORTACION
-									{				
-										//txt_igv=(((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100));
-										txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
-										txt_precio=0;
+									{	
 										txt_descuentoIGV=0;
+										txt_descuento=0;	
+										//VALIDAR EL CALCULO DEL IGV
+										//txt_igv=(((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100));
+										txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(2);
+										
+										txt_precio=0;
+										txt_preciounitario=0;
 										txt_preciototal=0;
 									}
 							}
 					}
-					$('#txt_igv').val(txt_igv.toFixed(10));
-					$('#txt_valortotal').val(txt_valortotal.toFixed(10));
+					$('#txt_igv').val(parseFloat(txt_igv).toFixed(2));
+					$('#txt_valortotal').val(parseFloat(txt_valortotal).toFixed(2));
 					
-					$('#txt_precio').val(txt_precio.toFixed(10));
-					$('#txt_descuentoIGV').val(txt_descuentoIGV.toFixed(10));
-					$('#txt_preciototal').val(txt_preciototal.toFixed(10));
-				}else
+					$('#txt_precio').val(parseFloat(txt_precio).toFixed(2));
+					$('#txt_preciounitario').val(parseFloat(txt_preciounitario).toFixed(2));
+					$('#txt_descuentoIGV').val(parseFloat(txt_descuentoIGV).toFixed(2));
+					$('#txt_preciototal').val(parseFloat(txt_preciototal).toFixed(2));
+				}
+				else//Tipo de configuración es por Precio de Cobro
 				{
-					txt_precio=($.trim($('#txt_precio').val())).replace(',', '');
+					txt_precio=($.trim($('#txt_precio').val())).replace(',', '');//es precio por cobro
 					txt_descuentoIGV=($.trim($('#txt_descuentoIGV').val())).replace(',', '');
-					//txt_valorotroscargos: 10
-					//txt_valorigv: 18 (1+igv/100)
-					
-					if (txt_precio=="" || isNaN(txt_precio))
-					{
+					//txt_valorigv=18
+					//txt_valorotroscargos=10=jala de parametros iniciales el %
+					if (txt_precio=="" || isNaN(txt_precio)){
 						txt_precio=0;
 					}
-					if (txt_descuentoIGV==""  || isNaN(txt_descuentoIGV))
-					{
+					if (txt_descuentoIGV==""  || isNaN(txt_descuentoIGV)){
 						txt_descuentoIGV=0;
 					}
 					if (tipo_registro==1)//NORMAL
 					{
 						if (cod_tipafect=='10')//GRAVADO - OPERACION ONEROSA
 						{				
-							txt_valorunitario=(parseFloat(txt_precio)/(1+(parseFloat(txt_valorigv)/100)+(parseFloat(txt_valorotroscargos)/100)));
-							txt_descuento=(parseFloat(txt_descuentoIGV)/(1+(parseFloat(txt_valorigv)/100)+(parseFloat(txt_valorotroscargos)/100)));
+							txt_valorunitario=parseFloat(parseFloat(txt_precio)/(1+(parseFloat(txt_valorigv)/100)+(parseFloat(txt_valorotroscargos)/100))).toFixed(2);
+							txt_descuento=parseFloat(parseFloat(txt_descuentoIGV)/(1+(parseFloat(txt_valorigv)/100)+(parseFloat(txt_valorotroscargos)/100))).toFixed(2);
+							txt_preciounitario=parseFloat(parseFloat(txt_valorunitario)*(1+(parseFloat(txt_valorigv)/100))).toFixed(2);
+							
+							//txt_precio=parseFloat(txt_valorunitario)*parseFloat(1+txt_valorigv/100+txt_valorotroscargos/100);
 							if (txt_cantidad==0)
 							{
 								txt_igv=0;
@@ -1802,35 +1841,41 @@
 								txt_preciototal=0;
 							}
 							else{
-								txt_igv=(((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100));
-								txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
-								txt_preciototal=(parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV);
+								txt_igv=parseFloat(((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100)).toFixed(2);
+								txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(2);
+								txt_preciototal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV)).toFixed(2);
 							}
 						}else 
 							if (cod_tipafect=='20')//EXONERADO - OPERACION ONEROSA
 							{	
 								//alert(txt_precio);
-								txt_valorunitario=parseFloat(txt_precio);
-								txt_descuento=parseFloat(txt_descuentoIGV);	
-								if (txt_cantidad==0)
+								txt_valorunitario=parseFloat(parseFloat(txt_precio)/(1+(parseFloat(txt_valorotroscargos)/100))).toFixed(2);
+								txt_preciounitario=parseFloat(txt_valorunitario).toFixed(2);
+								txt_descuento=parseFloat(parseFloat(txt_descuentoIGV)/(1+(parseFloat(txt_valorotroscargos)/100))).toFixed(2);	
+								if (txt_cantidad==0){
 									txt_valortotal=0;
-								else
-									txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
-								
-								txt_preciototal=parseFloat(txt_valortotal);
-								
+									txt_preciototal=0;
+								}
+								else{
+									txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(2);
+									txt_preciototal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV)).toFixed(2);
+								}
 							}else 
 								if (cod_tipafect=='30')//INAFECTO - OPERACION ONEROSA
 								{	
-									txt_valorunitario=parseFloat(txt_precio);
-									txt_descuento=parseFloat(txt_descuentoIGV);	
-									if (txt_cantidad==0)
+									txt_valorunitario=parseFloat(parseFloat(txt_precio)/(1+(parseFloat(txt_valorotroscargos)/100))).toFixed(2);
+									txt_preciounitario=parseFloat(txt_valorunitario).toFixed(2);
+									txt_descuento=parseFloat(parseFloat(txt_descuentoIGV)/(1+(parseFloat(txt_valorotroscargos)/100))).toFixed(2);
+									if (txt_cantidad==0){
 										txt_valortotal=0;
-									else
-										txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
-									
-									txt_preciototal=parseFloat(txt_valortotal);
+										txt_preciototal=0;
+									}
+									else{
+										txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(2);
+										txt_preciototal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV)).toFixed(2);
+									}
 								}
+							//alert(txt_valorunitario);
 					}else
 					{
 						if (tipo_registro==2)//EXPORTACION
@@ -1839,13 +1884,10 @@
 							{				
 								txt_valorunitario=parseFloat(txt_precio);//(parseFloat(txt_precio)/(1+(parseFloat(txt_valorigv)/100)+(parseFloat(txt_valorotroscargos)/100)));
 								txt_descuento=parseFloat(txt_descuentoIGV);
-								txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
-								//txt_precio=parseFloat(txt_valorunitario)
-								txt_preciototal=txt_valortotal;
-								/*//txt_igv=(((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100));
-								txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
-								txt_precio=parseFloat(txt_valorunitario)
-								txt_preciototal=txt_valortotal;*/
+								txt_preciounitario=parseFloat(txt_valorunitario).toFixed(2);
+								
+								txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(2);
+								txt_preciototal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV)).toFixed(2);
 							}
 						}else
 							if (tipo_registro==3)//OPERACIONES GRATUITAS
@@ -1853,10 +1895,10 @@
 								
 								if (cod_tipafect=='11' || cod_tipafect=='12' || cod_tipafect=='13' || cod_tipafect=='14' || cod_tipafect=='15' || cod_tipafect=='16')//EXPORTACION
 								{				
-									txt_valorunitario=(parseFloat(txt_precio)/(1+(parseFloat(txt_valorigv)/100)+(parseFloat(txt_valorotroscargos)/100)));
+									txt_valorunitario=parseFloat(parseFloat(txt_precio)/(1+(parseFloat(txt_valorigv)/100)+(parseFloat(txt_valorotroscargos)/100))).toFixed(2);
 									txt_descuento=0;
-									txt_igv=(((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100));
-									txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
+									txt_igv=parseFloat(((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100)).toFixed(2);
+									txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(2);
 									txt_precio=0;
 									txt_descuentoIGV=0;
 									txt_preciototal=0;
@@ -1864,21 +1906,22 @@
 								}else 
 									if (cod_tipafect=='21' || cod_tipafect=='31' || cod_tipafect=='32' || cod_tipafect=='33' || cod_tipafect=='34' || cod_tipafect=='35' || cod_tipafect=='36')//EXPORTACION
 									{		
-										txt_valorunitario=(parseFloat(txt_precio)/(1+(parseFloat(txt_valorigv)/100)+(parseFloat(txt_valorotroscargos)/100)));
+										txt_valorunitario=parseFloat(parseFloat(txt_precio)/(1+(parseFloat(txt_valorigv)/100)+(parseFloat(txt_valorotroscargos)/100))).toFixed(2);
 										txt_descuento=0;
-										txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
+										txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(2);
 										txt_precio=0;
 										txt_descuentoIGV=0;
 										txt_preciototal=0;
 									}
 							}
 					}
-					$('#txt_valorunitario').val(txt_valorunitario.toFixed(10));
-					$('#txt_descuento').val(txt_descuento.toFixed(10));
-
-					$('#txt_igv').val(txt_igv.toFixed(10));
-					$('#txt_valortotal').val(txt_valortotal.toFixed(10));
-					$('#txt_preciototal').val(txt_preciototal.toFixed(10));
+					$('#txt_igv').val(parseFloat(txt_igv).toFixed(2));
+					$('#txt_valortotal').val(parseFloat(txt_valortotal).toFixed(2));
+					
+					$('#txt_valorunitario').val(parseFloat(txt_valorunitario).toFixed(2));
+					$('#txt_descuento').val(parseFloat(txt_descuento).toFixed(2));
+					$('#txt_preciounitario').val(parseFloat(txt_preciounitario).toFixed(2));
+					$('#txt_preciototal').val(parseFloat(txt_preciototal).toFixed(2));
 				}
 				
 			}
@@ -1942,6 +1985,7 @@
 				$('#txt_valortotal').val('');
 				
 				$('#txt_precio').val('');
+				$('#txt_preciounitario').val('');
 				$('#txt_descuentoIGV').val('');
 				$('#txt_preciototal').val('');
 				
@@ -2294,7 +2338,6 @@
 				//Seleccionar_CheckExportacion();
 
 			}
-			
 
 			function Etiquetas_TipoDocumento(cod_tipodocumento)
 			{
@@ -2473,10 +2516,7 @@
 							}
 						}
 					});
-					
-					
 				}
-
 			}
 			
 			function Seleccionar_Tiponotadebito(cod_tipond)
@@ -3217,8 +3257,6 @@
 				$("#chekbox_opeinafecta").prop('checked', false);
 			}
 			
-			
-			
 			function Seleccionar_CheckOperacionGratuitas()
 			{
 				if ($("#cbox_opergratisdocumento").is(":checked"))
@@ -3242,43 +3280,14 @@
 					//OcultarFilaTabla('row_cargos',1);
 					OcultarOtrosCargos_Checked(1);
 				}
-				//var cmb_tipodocumentosunat=$.trim($('#cmb_tipodocumentosunat').val());			
-				/*
-				if ($("#cbox_exportaciondocumento").is(":checked"))
-				{
-					$('#div_titulodocumento').empty().append('Documento Cliente:');
-					$("#cmb_tipodocumentocliente").prop('disabled', false);
-					$("#txt_razonsocialcliente").prop('disabled', true);	
-					$("#txt_direccioncliente").prop('disabled', true);
-					$('#div_verdatoscliente').empty().append('<a href="javascript:ver_datoscliente()"><img align="center" src="<?php echo base_url();?>application/helpers/image/ico/nc_buscar.png" title="Ver Detalle" width="15"  height="15" border="0" ></a>');	
-										
-					//$("#txt_descuento").prop('disabled', true);
-					
-					//Serie_Documento(cmb_tipodocumentosunat,'','','','');
-					Tipo_Afectacion();						 
-				}
-				else
-				{					
-					$('#div_titulodocumento').empty().append('Documento Cliente:');
-					$("#cmb_tipodocumentocliente").prop('disabled', false);
-					$("#txt_razonsocialcliente").prop('disabled', true);	
-					$("#txt_direccioncliente").prop('disabled', true);
-					$('#div_verdatoscliente').empty().append('<a href="javascript:ver_datoscliente()"><img align="center" src="<?php echo base_url();?>application/helpers/image/ico/nc_buscar.png" title="Ver Detalle" width="15"  height="15" border="0" ></a>');	
-					
-					//$("#txt_descuento").prop('disabled', false);
-					
-					//Serie_Documento(cmb_tipodocumentosunat,'','','','');
-					Tipo_Afectacion();					
-				}*/			
+				
 			}
 			
 			function Seleccionar_TipoDocumento(codigo_tipodoc)
 			{
-			
-				if (codigo_tipodoc=='')
-				{
-					
-				}
+				//if (codigo_tipodoc=='')	{
+				//	return;
+				//}
 			
 				if ($("#cbox_exportaciondocumento").is(":checked"))
 				{
@@ -3538,7 +3547,38 @@
 				}
 			}
 			
-			
+			function NumCheck(e, field) {
+				key = e.keyCode ? e.keyCode : e.which
+				// backspace
+				if (key == 8 || key == 9 || key == 35 || key == 36 || key == 37 || key == 39) return true
+			 	//if (key == 9) return true
+				// 0-9 a partir del .decimal  
+				if (field.value != "") {
+					if ((field.value.indexOf(".")) > 0) {
+						//si tiene un punto valida dos digitos en la parte decimal
+						if (key > 47 && key < 58) {
+							if (field.value == "") return true
+							//regexp = /[0-9]{1,10}[\.][0-9]{1,3}$/
+							regexp = /[0-9]{2}$/
+							return !(regexp.test(field.value))
+						}
+					}
+				}
+				// 0-9 
+				if (key > 47 && key < 58) {
+					if (field.value == "") return true
+					regexp = /[0-9]{10}/
+					return !(regexp.test(field.value))
+				}
+				// .
+				if (key == 46) {
+					if (field.value == "") return false
+					regexp = /^[0-9]+$/
+					return regexp.test(field.value)
+				}
+				// other key
+				return false
+			  }
 			
 		</script>
 		
@@ -3985,7 +4025,7 @@
 						<table width="100%" border="0" style="border-spacing:0px 0px;">
 							<tr>
 								<td width="40%">
-									<input style="text-align:right" type="text" name="txt_cantidad" id="txt_cantidad" placeholder="0.0" onBlur="javascript:Calcular_Montos()">
+									<input style="text-align:right" type="text" name="txt_cantidad" id="txt_cantidad" placeholder="0.00" onkeypress="return NumCheck(event, this);" onBlur="javascript:Calcular_Montos()">
 								</td>
 								<td >
 								</td>
@@ -4011,13 +4051,16 @@
 									<table width="100%" border="0" style="border-spacing:0px 0px;">
 										<tr>
 											<td width="40%">
-												<input type="text" name="txt_valorunitario" id="txt_valorunitario" placeholder="0.0000000000" style="text-align:right" onBlur="javascript:Calcular_Montos()">
+												<input type="text" name="txt_valorunitario" id="txt_valorunitario" placeholder="0.00" onkeypress="return NumCheck(event, this);" style="text-align:right" onBlur="javascript:Calcular_Montos()">
 											</td>
 											<td >
 											</td>
 										</tr>
 									</table>
 								</td>
+							</tr>
+							<tr height="100%"><td colspan="2" >
+								<input type="text" name="space1" id="space1" style="width:0; visibility:hidden"  ></td>
 							</tr>
 							<tr>
 								<td style="font-weight:bold">
@@ -4027,7 +4070,7 @@
 									<table width="100%" border="0" style="border-spacing:0px 0px;">
 										<tr>
 											<td width="40%">
-												<input type="text" name="txt_descuento" id="txt_descuento" placeholder="0.0000000000" style="text-align:right" onBlur="javascript:Calcular_Montos()">
+												<input type="text" name="txt_descuento" id="txt_descuento" placeholder="0.00" onkeypress="return NumCheck(event, this);" style="text-align:right" onBlur="javascript:Calcular_Montos()">
 											</td>
 											<td >
 											</td>
@@ -4043,7 +4086,7 @@
 									<table width="100%" border="0" style=" border-spacing:0px 0px;">
 										<tr>
 											<td width="40%">
-												<input type="text" name="txt_isc" id="txt_isc" placeholder="0.0000000000" disabled="disabled" style="text-align:right">
+												<input type="text" name="txt_isc" id="txt_isc" placeholder="0.00" disabled="disabled" style="text-align:right">
 											</td>
 											<td >
 											</td>
@@ -4059,7 +4102,7 @@
 									<table width="100%" border="0" style=" border-spacing:0px 0px;">
 										<tr>
 											<td width="40%">
-												<input type="text" name="txt_igv" id="txt_igv" placeholder="0.0000000000" disabled="disabled" class="" style="text-align:right">
+												<input type="text" name="txt_igv" id="txt_igv" placeholder="0.00" disabled="disabled" class="" style="text-align:right">
 											</td>
 											<td ><div id="div_mensajereferencia"></div>
 											</td>
@@ -4075,7 +4118,7 @@
 									<table width="100%" border="0" style=" border-spacing:0px 0px;">
 										<tr>
 											<td width="40%">
-												<input type="text" name="txt_valortotal" id="txt_valortotal" placeholder="0.0000000000" disabled="disabled" class="" style="text-align:right">
+												<input type="text" name="txt_valortotal" id="txt_valortotal" placeholder="0.00" disabled="disabled" class="" style="text-align:right">
 											</td>
 											<td >
 											</td>
@@ -4091,13 +4134,29 @@
 					  	<table border="0px" style="height: 100%;">
 							<tr>
 								<td style="font-weight:bold" width="45%">
-									Precio:
+									Precio Unitario:
+								</td>
+								<td>
+									<table width="100%" border="0" style="border-spacing:0px 0px;">
+										<tr>
+											<td width="40%">
+												<input type="text" name="txt_preciounitario" id="txt_preciounitario" placeholder="0.00" disabled="disabled" style="text-align:right">
+											</td>
+											<td >
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td style="font-weight:bold" width="45%">
+									Precio de Cobro:
 								</td>
 								<td width="55%">
 									<table width="100%" border="0" style="border-spacing:0px 0px;">
 										<tr>
 											<td width="40%">
-												<input type="text" name="txt_precio" id="txt_precio" placeholder="0.0000000000"  disabled="disabled" style="text-align:right" onBlur="javascript:Calcular_Montos()">
+												<input type="text" name="txt_precio" id="txt_precio" placeholder="0.00" onkeypress="return NumCheck(event, this);" disabled="disabled" style="text-align:right" onBlur="javascript:Calcular_Montos()">
 											</td>
 											<td >
 											</td>
@@ -4113,7 +4172,7 @@
 									<table width="100%" border="0" style="border-spacing:0px 0px;">
 										<tr>
 											<td width="40%">
-												<input type="text" name="txt_descuentoIGV" id="txt_descuentoIGV" placeholder="0.0000000000" disabled="disabled" style="text-align:right" onBlur="javascript:Calcular_Montos()">
+												<input type="text" name="txt_descuentoIGV" id="txt_descuentoIGV" placeholder="0.00" onkeypress="return NumCheck(event, this);" disabled="disabled" style="text-align:right" onBlur="javascript:Calcular_Montos()">
 											</td>
 											<td >
 											</td>
@@ -4121,11 +4180,11 @@
 									</table>
 								</td>
 							</tr>
-							<tr height="100%"><td colspan="2" >&#160;</td>
+							<tr height="100%"><td colspan="2" >
+								<input type="text" name="space11" id="space1" style="width:0; visibility:hidden"  ></td>
 							</tr>
-							<tr height="100%"><td colspan="2" >&#160;</td>
-							</tr>
-							<tr height="100%"><td colspan="2" >&#160;</td>
+							<tr height="100%"><td colspan="2" >
+								<input type="text" name="space111" id="space111" style="width:0; visibility:hidden"  ></td>
 							</tr>
 							<tr>
 								<td style="font-weight:bold">
@@ -4135,7 +4194,7 @@
 									<table width="100%" border="0" style="border-spacing:0px 0px;">
 										<tr>
 											<td width="40%">
-												<input type="text" name="txt_preciototal" id="txt_preciototal" placeholder="0.0000000000" disabled="disabled" style="text-align:right">
+												<input type="text" name="txt_preciototal" id="txt_preciototal" placeholder="0.00" disabled="disabled" style="text-align:right">
 											</td>
 											<td >
 											</td>

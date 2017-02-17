@@ -1,39 +1,39 @@
 <!doctype html>
 <html>
 <head>
-	<title>SFE Bizlinks - Retención</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+		<title>SFE Bizlinks - Retención</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+		
+		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/jquery-ui.css"/>
+		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/jquery-ui.min.css"/>
+		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/plugins/dataTable/css/dataTables-all.css" />
+		<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>application/helpers/jquery/flexigrid/flexigrid/flexigrid.css" />
 
-	<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/jquery-ui.css"/>
-	<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/jquery-ui.min.css"/>
-	<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/plugins/dataTable/css/dataTables-all.css" />
-	<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>application/helpers/jquery/flexigrid/flexigrid/flexigrid.css" />
+		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/css/inicio.css"/>
+		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/css/menusystem.css"/>
+		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/css/tabla_documento.css"/>
+		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/css/botones.css"/>
+		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/css/site.css"/>
+		
+		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/external/jquery/jquery.js"></script>
+		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/jquery-ui.js"></script>
+		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/plugins/jquery.alphanumeric.min.js"></script>
+		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/plugins/jquery.maskedinput.min.js"></script>		
+		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/plugins/dataTable/js/dataTables.min.js"></script>
+		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/plugins/jquery.ui.datepicker-es.js"></script> 
+		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/flexigrid/flexigrid/flexigrid.js"></script>
+		
+		<script>var urlexportardatos="<?php echo base_url();?>"</script>
+		
+		<script type="text/javascript">	
 
-	<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/css/inicio.css"/>
-	<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/css/menusystem.css"/>
-	<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/css/tabla_documento.css"/>
-	<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/css/botones.css"/>
-	<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/css/site.css"/>
-
-	<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/external/jquery/jquery.js"></script>
-	<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/jquery-ui.js"></script>
-	<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
-	<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/plugins/jquery.alphanumeric.min.js"></script>
-	<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/plugins/jquery.maskedinput.min.js"></script>		
-	<script type="text/javascript" src="<?php echo base_url();?>application/helpers/plugins/dataTable/js/dataTables.min.js"></script>
-	<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/plugins/jquery.ui.datepicker-es.js"></script> 
-	<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/flexigrid/flexigrid/flexigrid.js"></script>
-
-	<script>var urlexportardatos="<?php echo base_url();?>"</script>
-
-	<script type="text/javascript">	
-
-		$(document).ready(function()
-		{
-			$.datepicker.setDefaults($.datepicker.regional["es"]);
-			$("#tabs").tabs();
-			ncsistema.Listar_RetencionesTabla('',0);	
-			$('#txt_FechaEmisionInicio').datepicker({
+			$(document).ready(function()
+			{
+				$.datepicker.setDefaults($.datepicker.regional["es"]);
+				$("#tabs").tabs();
+				ncsistema.Listar_RetencionesTabla('',0);	
+				$('#txt_FechaEmisionInicio').datepicker({
 					//defaultDate: new Date().getDay-5,
 					showOn: 'button',					
 					buttonImage: "<?php echo base_url()?>application/helpers/image/ico/calendar_icon.gif",
@@ -44,22 +44,22 @@
 					changeMonth: true ,
 					changeYear: true 
 				});
-
-			$('#txt_FechaEmisionFinal').datepicker({
-				showOn: 'button',					
-				buttonImage: "<?php echo base_url()?>application/helpers/image/ico/calendar_icon.gif",
-				buttonImageOnly: true,
-				dateFormat: 'dd/mm/yy',
-				buttonText: "Hasta (##/##/####)",
-				maxDate: 'today',
-				changeMonth: true ,
-				changeYear: true
-			});
-			$('#txt_FechaEmisionFinal').datepicker('setDate', new Date());
-			$('#txt_FechaEmisionInicio').datepicker('setDate', 'today -1');
-			ncsistema.Buscar_Clientes();
-		})
-
+				
+				$('#txt_FechaEmisionFinal').datepicker({
+					showOn: 'button',					
+					buttonImage: "<?php echo base_url()?>application/helpers/image/ico/calendar_icon.gif",
+					buttonImageOnly: true,
+					dateFormat: 'dd/mm/yy',
+					buttonText: "Hasta (##/##/####)",
+					maxDate: 'today',
+					changeMonth: true ,
+					changeYear: true
+				});
+				$('#txt_FechaEmisionFinal').datepicker('setDate', new Date());
+				$('#txt_FechaEmisionInicio').datepicker('setDate', 'today -1');
+				ncsistema.Buscar_Clientes();
+			})
+			
 			//INICIO NCSISTEMA
 			ncsistema=
 			{
@@ -185,36 +185,36 @@
 					newHtml+='<table width="100%"  cellpadding="0" cellspacing="0" class="display" id="Tab_ListaRetenciones">';
 					newHtml+='<thead>';
 					newHtml+='<tr>';						
-					newHtml+='<th width:3%>Opci&oacute;n</td>';						
-					newHtml+='<th width:10%>Proveedor</td>';						
-					newHtml+='<th width:20%>SerieNúmero</td>';
-					newHtml+='<th width:5%>Imp.Total a Pagar</td>';
-					newHtml+='<th width:5%>Moneda a Pagar</td>';
-					newHtml+='<th width:5%>Imp.Total Retenido</td>';
-					newHtml+='<th width:5%>Moneda Retenido</td>';
-					newHtml+='<th width:7%>Fec.Emisi&oacute;n</td>';
-					newHtml+='<th width:7%>Est.Doc.</td>';
-					newHtml+='<th width:8%>Est.SUNAT</td>';
-					newHtml+='<th width:25%>Descripci&oacute;n</td>';
-					newHtml+='<th width:5%>Visto</td>';
+						newHtml+='<th width:3%>Opci&oacute;n</td>';						
+						newHtml+='<th width:10%>Proveedor</td>';						
+						newHtml+='<th width:20%>SerieNúmero</td>';
+						newHtml+='<th width:5%>Imp.Total a Pagar</td>';
+						newHtml+='<th width:5%>Moneda a Pagar</td>';
+						newHtml+='<th width:5%>Imp.Total Retenido</td>';
+						newHtml+='<th width:5%>Moneda Retenido</td>';
+						newHtml+='<th width:7%>Fec.Emisi&oacute;n</td>';
+						newHtml+='<th width:7%>Est.Doc.</td>';
+						newHtml+='<th width:8%>Est.SUNAT</td>';
+						newHtml+='<th width:25%>Descripci&oacute;n</td>';
+						newHtml+='<th width:5%>Visto</td>';
 					newHtml+='</tr>';
 					newHtml+='</thead>';
-					newHtml+='<tbody>';
+        			newHtml+='<tbody>';
 					contador=0;
 					$.each(data,function(key,rs)
 					{
 						newHtml+='<tr>';										
-						newHtml+='<td style="text-align:center;color:#990000;font-weight:bold"><input id="cbox_seleccion_'+key+'" type="checkbox" value="" name="cbox_seleccion_'+key+'" onChange="javascrip:Seleccionar_DatosBusqueda('+key+',\''+rs.tipodocumento+'\',\''+rs.serienumeroretencion+'\',\''+rs.bl_estadoregistro+'\',\''+rs.estadosunat+'\')" ></td>';
-						newHtml+='<td style="text-align:left">'+rs.razonsocialproveedor+'</td>';		
-						newHtml+='<td style="text-align:center">'+rs.serienumeroretencion+'</td>';
-						newHtml+='<td style="text-align:right">'+rs.importetotalpagado+'</td>';
-						newHtml+='<td style="text-align:center">'+rs.tipomonedapagado+'</td>';	
-						newHtml+='<td style="text-align:right">'+rs.importetotalretenido+'</td>';			
-						newHtml+='<td style="text-align:center">'+rs.tipomonedaretenido+'</td>';
-						newHtml+='<td style="text-align:center">'+rs.fechaemision+'</td>';
-						newHtml+='<td style="text-align:left">'+rs.estado_documento+'</td>';
-						newHtml+='<td style="text-align:left">'+rs.nombreestadosunat+'</td>';
-						newHtml+='<td style="text-align:left">'+rs.obssunat+'</td>';
+							newHtml+='<td style="text-align:center;color:#990000;font-weight:bold"><input id="cbox_seleccion_'+key+'" type="checkbox" value="" name="cbox_seleccion_'+key+'" onChange="javascrip:Seleccionar_DatosBusqueda('+key+',\''+rs.tipodocumento+'\',\''+rs.serienumeroretencion+'\',\''+rs.bl_estadoregistro+'\',\''+rs.estadosunat+'\')" ></td>';
+							newHtml+='<td style="text-align:left">'+rs.razonsocialproveedor+'</td>';		
+							newHtml+='<td style="text-align:center">'+rs.serienumeroretencion+'</td>';
+							newHtml+='<td style="text-align:right">'+rs.importetotalpagado+'</td>';
+							newHtml+='<td style="text-align:center">'+rs.tipomonedapagado+'</td>';	
+							newHtml+='<td style="text-align:right">'+rs.importetotalretenido+'</td>';			
+							newHtml+='<td style="text-align:center">'+rs.tipomonedaretenido+'</td>';
+							newHtml+='<td style="text-align:center">'+rs.fechaemision+'</td>';
+							newHtml+='<td style="text-align:left">'+rs.estado_documento+'</td>';
+							newHtml+='<td style="text-align:left">'+rs.nombreestadosunat+'</td>';
+							newHtml+='<td style="text-align:left">'+rs.obssunat+'</td>';
 							if (rs.visualizado==0)//NO VISTO
 							{
 								newHtml+='<td style="text-align:left"><img align="left" src="<?php echo base_url();?>application/helpers/image/ico/ncinactivo.png" title="Enviado, recepcionado, no visualizado" ></td>';								
@@ -223,26 +223,9 @@
 							{
 								newHtml+='<td style="text-align:center"><img align="left" src="<?php echo base_url();?>application/helpers/image/ico/ncactivo.png" title="Enviado, recepcionado, visualizado" ></td>';
 							}
-							/*
-							$arr[$key]['nro_secuencia'] = $Contador;
-							$arr[$key]['razonsocialproveedor'] =strtoupper(trim($v['razonsocialproveedor'])); 
-							$arr[$key]['tipodocumento'] =trim($v['tipodocumento']); 
-							$arr[$key]['serieNumeroRetencion'] =trim($v['serieNumeroRetencion']); 
-							$arr[$key]['importetotalpagado'] =  trim($v['importetotalpagado']);
-							$arr[$key]['tipomonedapagado'] =  trim(strtoupper($v['tipomonedapagado']));
-							$arr[$key]['importetotalretenido'] =  trim($v['importetotalretenido']);
-							$arr[$key]['tipomonedaretenido'] =  trim(strtoupper($v['tipomonedaretenido']));
-							$arr[$key]['fechaemision'] = trim($v['fechaemision']);				
-							$arr[$key]['bl_estadoregistro'] =  trim($v['bl_estadoregistro']);
-							$arr[$key]['estado_documento'] =  trim(strtoupper($v['estadoregistro']));
-							$arr[$key]['estadosunat'] =  trim($v['estadosunat']);
-							$arr[$key]['nombreestadosunat']=strtoupper($this->Comprobante_model->Listar_EstadoDocumento($v['tipodocumento'],strtoupper($v['estadosunat'])));
-							$arr[$key]['numerodocumentoemisor'] =  trim($v['numerodocumentoemisor']);						
-							$arr[$key]['visualizado'] =  trim($v['visualizado']);
-							$arr[$key]['obssunat'] ='Pendiente de envio - Programado';
-							$arr[$key]['cant_reintento'] =  trim($v['reintento']);*/
-							newHtml+='</tr>';						
-						});	
+							
+						newHtml+='</tr>';						
+					});	
 					newHtml+='</tbody>';
 					newHtml+='</table>';
 					
@@ -255,7 +238,7 @@
 						"bScrollCollapse": true,
 						"bJQueryUI": true
 					});
-
+				 
 					$("#Tab_ListaRetenciones tbody").click(function(event) 
 					{
 						$(oTable.fnSettings().aoData).each(function (){
@@ -321,21 +304,21 @@
 					newHtml='';
 					newHtml+='<table width="100%"  cellpadding="0" cellspacing="0" class="display" id="Tab_DetalleComprobanteTabla">';
 					newHtml+='<thead>';
-					newHtml+='<tr>';	
-					newHtml+='<th width:3%>Item</td>';					
-					newHtml+='<th width:3%>Tipo</td>';						
-					newHtml+='<th width:5%>Documento</td>';						
-					newHtml+='<th width:10%>Fecha de Emisión</td>';
-					newHtml+='<th width:10%>Fecha de Pago</td>';
-					newHtml+='<th width:20%>Nro de Pago</td>';
-					newHtml+='<th width:50%>Moneda Origen</td>';
-					newHtml+='<th width:50%>Importe Operación Origen</td>';
-					newHtml+='<th width:50%>Importe de Pago sin Retención</td>';
-					newHtml+='<th width:50%>Importe Retenido S/.</td>';
-					newHtml+='<th width:50%>Importe Total a Pagar S/.</td>';
+					newHtml+='<tr>';						
+						newHtml+='<th width:3%>Item</td>';						
+						newHtml+='<th width:5%>Tipo</td>';						
+						newHtml+='<th width:12%>Documento</td>';
+						newHtml+='<th width:10%>Fec. Emisión</td>';
+						newHtml+='<th width:10%>Fec. Pago</td>';
+						newHtml+='<th width:5%>Nro. Pago</td>';
+						newHtml+='<th width:8%>Moneda Origen</td>';
+						newHtml+='<th width:10%>Imp.Oper. Origen</td>';
+						newHtml+='<th width:15%>Imp.Pago Sin Retención</td>';
+						newHtml+='<th width:12%>Importe Retenido.S/.</td>';
+						newHtml+='<th width:10%>Imp.Total Pagar.S/.</td>';
 					newHtml+='</tr>';
 					newHtml+='</thead>';
-					newHtml+='<tbody>';
+        			newHtml+='<tbody>';
 					
 					$.each(data,function(key,rs)
 					{					
@@ -344,7 +327,7 @@
 							$('#div_param1').empty().append(rs.razonsocialemisor);	
 							$('#div_param2').empty().append(rs.nombrecomercialemisor);	
 							$('#div_param3').empty().append(rs.direccionemisor);	
-							$('#div_param4').empty().append(rs.departamentoemisor+' - '+rs.provinciaemisor+' - '+rs.distritoemisor);	
+							$('#div_param4').empty().append(rs.departamentoemisor+' - '+rs.provinciaemisor+' - '+rs.distritoemisor+rs.urbanizacionemisor);	
 							
 							$('#div_param5').empty().append(rs.nombre_tipodocumentoemisor);	
 							$('#div_param6').empty().append(rs.numerodocumentoemisor);	
@@ -355,111 +338,66 @@
 							$('#div_param10').empty().append(rs.numerodocumentoadquiriente);	
 							$('#div_param11').empty().append(rs.fechaemision);	
 							$('#div_param12').empty().append(rs.direccioncliente);	
-							$('#div_param13').empty().append(rs.tipomonedacabecera);	
-							$('#div_param14').empty().append(rs.tasaretencion);							
-							$('#div_param15').empty().append(rs.textoleyenda_1);							
+							$('#div_param13').empty().append(rs.tasaretencion+'%');	
 							
-							OcultarFilaPassword('row1',0);
-							OcultarFilaPassword('row2',0);
-							OcultarFilaPassword('row3',0);
-							OcultarFilaPassword('row4',0);
-							OcultarFilaPassword('row5',0);
-							OcultarFilaPassword('row6',0);//NO HAY
-							OcultarFilaPassword('row7',0);
-							OcultarFilaPassword('row8',0);
-							OcultarFilaPassword('row9',0);/**/
+							//OcultarFilaPassword('row1',0);
+							//OcultarFilaPassword('row2',0);
 							
-							if (rs.importetotalpagado>0)
-							{
-								OcultarFilaPassword('row1',1);
-								$('#div_param16').empty().append(rs.tipomoneda);
-								$('#div_param17').empty().append(rs.importetotalpagado);
-							}
 							if (rs.importetotalretenido>0)
 							{
-								OcultarFilaPassword('row2',1);
-								$('#div_param18').empty().append(rs.tipomoneda);
-								$('#div_param19').empty().append(rs.importetotalretenido);
+								//OcultarFilaPassword('row1',1);
+								$('#div_param16').empty().append(rs.tipomonedaretenido);
+								$('#div_param17').empty().append(rs.importetotalretenido);
 							}
-							/*
-							if (rs.totalvalorventanetoopexonerada>0)
+							if (rs.importetotalpagado>0)
 							{
-								OcultarFilaPassword('row3',1);
-								$('#div_param20').empty().append(rs.tipomoneda);
-								$('#div_param21').empty().append(rs.totalvalorventanetoopexonerada);
+								//OcultarFilaPassword('row2',1);
+								$('#div_param18').empty().append(rs.tipomonedapagado);
+								$('#div_param19').empty().append(rs.importetotalpagado);
 							}
-							if (rs.totalvalorventanetoopgratuitas>0)
-							{
-								OcultarFilaPassword('row4',1);
-								$('#div_param22').empty().append(rs.tipomoneda);
-								$('#div_param23').empty().append(rs.totalvalorventanetoopgratuitas);
-							}
-							if (rs.totaldescuentos>0)
-							{
-								OcultarFilaPassword('row5',1);
-								$('#div_param24').empty().append(rs.tipomoneda);
-								$('#div_param25').empty().append(rs.totaldescuentos);
-							}
-							//falta ics
-							if (rs.totaligv>0)
-							{
-								OcultarFilaPassword('row7',1);
-								$('#div_param28').empty().append(rs.tipomoneda);
-								$('#div_param29').empty().append(rs.totaligv);
-							}
-							//otros cargos no hay
-							if (rs.totalventa>0)
-							{
-								OcultarFilaPassword('row9',1);
-								$('#div_param32').empty().append(rs.tipomoneda);
-								$('#div_param33').empty().append(rs.totalventa);
-							}
-							*/
 						}
 						newHtml+='<tr>';															
-
-						newHtml+='<td style="text-align:left">'+rs.numeroordenitem+'</td>';		
-						newHtml+='<td style="text-align:left">'+rs.tipo_doc+'</td>';
-						newHtml+='<td style="text-align:left">'+rs.numerodocumentorelacionado+'</td>';
-						newHtml+='<td style="text-align:left">'+rs.fechaemisiondocumentorelaciona+'</td>';	
-						newHtml+='<td style="text-align:right">'+rs.fechapago+'</td>';			
-						newHtml+='<td style="text-align:center">'+rs.numeropago+'</td>';
-						newHtml+='<td style="text-align:left">'+rs.tipomoneda+'</td>';
-						newHtml+='<td style="text-align:left">'+rs.importetotaldocumentorelaciona+'</td>';
-						newHtml+='<td style="text-align:left">'+rs.importepagosinretencion+'</td>';
-						newHtml+='<td style="text-align:left">'+rs.importeretenido+'</td>';
-						newHtml+='<td style="text-align:left">'+rs.importetotalpagarneto+'</td>';
-
+							newHtml+='<td style="text-align:left">'+rs.numeroordenitem+'</td>';		
+							newHtml+='<td style="text-align:left">'+rs.nomb_tipodocumento+'</td>';
+							newHtml+='<td style="text-align:left">'+rs.numerodocumentorelacionado+'</td>';
+							newHtml+='<td style="text-align:center">'+rs.fechaemisiondocumentorelaciona+'</td>';	
+							newHtml+='<td style="text-align:center">'+rs.fechapago+'</td>';			
+							newHtml+='<td style="text-align:center">'+rs.numeropago+'</td>';
+							newHtml+='<td style="text-align:center">'+rs.tipomonedarelacionado+'</td>';
+							newHtml+='<td style="text-align:right">'+rs.importetotaldocumentorelaciona+'</td>';
+							newHtml+='<td style="text-align:right">'+rs.importepagosinretencion+'</td>';
+							newHtml+='<td style="text-align:right">'+rs.importeretenido+'</td>';
+							newHtml+='<td style="text-align:right">'+rs.importetotalpagarneto+'</td>';
 						newHtml+='</tr>';						
 					});	
+					
+					newHtml+='</tbody>';
+					newHtml+='</table>';
+					
+					$('#div_documentodetalle').empty().append(newHtml);	
 
-newHtml+='</tbody>';
-newHtml+='</table>';
-
-$('#div_documentodetalle').empty().append(newHtml);	
-
-oTable=$('#Tab_DetalleComprobanteTabla').dataTable({
-	"bPaginate": true,
-	"sScrollX": "100%",
-	"sScrollXInner": "120%",
-	"bScrollCollapse": true,
-	"bJQueryUI": true
-});
-
-$("#Tab_DetalleComprobanteTabla tbody").click(function(event) 
-{
-	$(oTable.fnSettings().aoData).each(function (){
-		$(this.nTr).removeClass('row_selected');
-	});
-	$(event.target.parentNode).addClass('row_selected');
-});
-},
-
-ExportarExcel_General:function()
-{
-	Descargar_ExcelGeneral();
-},
-
+					oTable=$('#Tab_DetalleComprobanteTabla').dataTable({
+						"bPaginate": true,
+						"sScrollX": "100%",
+						"sScrollXInner": "100%",
+						"bScrollCollapse": true,
+						"bJQueryUI": true
+					});
+				 
+					$("#Tab_DetalleComprobanteTabla tbody").click(function(event) 
+					{
+						$(oTable.fnSettings().aoData).each(function (){
+							$(this.nTr).removeClass('row_selected');
+						});
+						$(event.target.parentNode).addClass('row_selected');
+					});
+				},
+				
+				ExportarExcel_General:function()
+				{
+					Descargar_ExcelGeneral();
+				},
+				
 			}//FIN NCSISTEMA
 			
 			//INICIO FUNCIONES
@@ -467,17 +405,107 @@ ExportarExcel_General:function()
 			{
 				function Imprimir_DocumentoSeleccionadoDetalle() 
 				{
-					
+					var txt_datosseleccionados=$.trim($('#txt_datosseleccionados').val());	
+					var txt_cantidadseleccionados=$.trim($('#txt_cantidadseleccionados').val());	
+					var txt_rucemisor=$.trim($('#txt_RucEmpresa').val());
+
+					if (txt_cantidadseleccionados>0)
+					{
+						$.ajax({
+							url:'<?php echo base_url()?>retencion/Comprobar_DocumentoImprimir',
+							type: 'post',
+							dataType: 'json',
+							data:
+							{
+								param1:txt_datosseleccionados,
+								param2:txt_rucemisor
+							},
+							beforeSend:function()
+							{								
+							},
+							success:function(result)
+							{
+								if(result.status==1)
+								{
+									document.location.href=urlexportardatos+'retencion/Imprimir_DocumentoSeleccionado?param1='+txt_datosseleccionados+'&param2='+txt_rucemisor;
+								}
+								else if(result.status==2)
+								{
+									alert(urlexportardatos);
+									alert("No existen los archivos seleccionados");
+								}
+								else if (result.status==1000)
+								{
+									document.location.href= '<?php echo base_url()?>usuario';
+									return;
+								}
+								else
+								{
+									alert("Error al crear los archivos seleccionados");
+								}
+							}
+						});	
+					}
+					else
+					{
+						alert("Debe seleccionar al menos un registro");
+					}
 				}
+				
 				function Descargar_DocumentoSeleccionadoDetalle() 
 				{
+					var txt_datosseleccionados=$.trim($('#txt_datosseleccionados').val());	
+					var txt_cantidadseleccionados=$.trim($('#txt_cantidadseleccionados').val());	
+					var txt_rucemisor=$.trim($('#txt_RucEmpresa').val());
 					
+					if (txt_cantidadseleccionados>0)
+					{
+					
+						$.ajax({
+								url:'<?php echo base_url()?>retencion/Crear_ArchivosDocumentoSeleccionado',
+								type: 'post',
+								dataType: 'json',
+								data:
+								{
+									param1:txt_datosseleccionados,
+									param2:txt_rucemisor
+								},
+								beforeSend:function()
+								{
+									
+								},
+								success:function(result)
+								{
+									if(result.status==1)
+									{
+										Descargar_DocumentoSeleccionadoArchivos();
+									}
+									else if(result.status==2)
+									{
+										alert("No se encontraron archivos para los documentos seleccionados");
+									}
+									else if (result.status==1000)
+									{
+										document.location.href= '<?php echo base_url()?>usuario';
+										return;
+									}
+									else
+									{
+										alert("Error al crear los archivos seleccionados");
+									}
+								}
+							});
+					}
+					else
+					{
+						alert("Debe seleccionar al menos un registro");
+					}
 				}
-
+			
 				dialogdetallecomprobante = $("#dialog-form-detalledocumento").dialog({
 					autoOpen: false,
 					height: 650,
-					width: 850,
+					width: 950,
 					modal: true,
 					buttons: 
 					{
@@ -492,9 +520,8 @@ ExportarExcel_General:function()
 					{
 					}
 				});
-
 			});
-
+						
 			function Limpiar_Busqueda()
 			{
 				$('#txt_DocumentoCliente').val('');
@@ -523,7 +550,6 @@ ExportarExcel_General:function()
 					if (txt_datosseleccionados=='')
 					{
 						txt_datosseleccionados=tipodocumento+'-'+serienumero;
-						
 					}
 					else
 					{
@@ -551,17 +577,11 @@ ExportarExcel_General:function()
 						if (txt_datosseleccionados_estado=='')
 						{
 							txt_datosseleccionados_estado=resumenid;
-						}
-						else
+						}else
 						{
 							txt_datosseleccionados_estado=txt_datosseleccionados_estado+','+resumenid;
 						}	
 					}	
-					/*No hay editar
-					if (estado_doc=='B' || estado_doc=='E' || estado_sunat=='SIGNED')//PARA EL CONTROL DE EDITAR
-					{
-						txt_cantidaddocumborrador++;
-					}*/
 				}	
 				else
 				{
@@ -587,11 +607,6 @@ ExportarExcel_General:function()
 						txt_datosseleccionados_estado=txt_datosseleccionados_estado.replace(","+resumenid, ""); 
 						txt_datosseleccionados_estado=txt_datosseleccionados_estado.replace(resumenid, ""); 
 					}
-					/*
-					if (estado_doc=='B' || estado_doc=='E' || estado_sunat=='SIGNED')//PARA EL CONTROL DE EDITAR
-					{
-						txt_cantidaddocumborrador--;
-					}*/
 				}
 				$('#txt_datosseleccionados').val($.trim(txt_datosseleccionados));
 				$('#txt_cantidadseleccionados').val($.trim(txt_cantidadseleccionados));
@@ -606,38 +621,38 @@ ExportarExcel_General:function()
 				if (txt_cantidadseleccionados>0)
 				{
 					$.ajax({
-						url:'<?php echo base_url()?>retencion/Comprobar_DocumentoImprimir',
-						type: 'post',
-						dataType: 'json',
-						data:
-						{
-							param1:txt_datosseleccionados,
-							param2:txt_rucemisor
-						},
-						beforeSend:function()
-						{								
-						},
-						success:function(result)
-						{
-							if(result.status==1)
+							url:'<?php echo base_url()?>retencion/Comprobar_DocumentoImprimir',
+							type: 'post',
+							dataType: 'json',
+							data:
 							{
-								document.location.href=urlexportardatos+'retencion/Imprimir_DocumentoSeleccionado?param1='+txt_datosseleccionados+'&param2='+txt_rucemisor;
-							}
-							else if(result.status==2)
+								param1:txt_datosseleccionados,
+								param2:txt_rucemisor
+							},
+							beforeSend:function()
+							{								
+							},
+							success:function(result)
 							{
-								alert("No existen los archivos seleccionados");
+								if(result.status==1)
+								{
+									document.location.href=urlexportardatos+'retencion/Imprimir_DocumentoSeleccionado?param1='+txt_datosseleccionados+'&param2='+txt_rucemisor;
+								}
+								else if(result.status==2)
+								{
+									alert("No existen los archivos seleccionados");
+								}
+								else if (result.status==1000)
+								{
+									document.location.href= '<?php echo base_url()?>usuario';
+									return;
+								}
+								else
+								{
+									alert("Error al crear los archivos seleccionados");
+								}
 							}
-							else if (result.status==1000)
-							{
-								document.location.href= '<?php echo base_url()?>usuario';
-								return;
-							}
-							else
-							{
-								alert("Error al crear los archivos seleccionados");
-							}
-						}
-					});	
+						});	
 				}
 				else
 				{
@@ -645,34 +660,95 @@ ExportarExcel_General:function()
 				}
 			}
 			
+			function Descargar_DocumentoSeleccionado()
+			{
+				var txt_datosseleccionados=$.trim($('#txt_datosseleccionados').val());	
+				var txt_cantidadseleccionados=$.trim($('#txt_cantidadseleccionados').val());	
+				var txt_rucemisor=$.trim($('#txt_RucEmpresa').val());
+				
+				if (txt_cantidadseleccionados>0)
+				{
+				
+					$.ajax({
+							url:'<?php echo base_url()?>retencion/Crear_ArchivosDocumentoSeleccionado',
+							type: 'post',
+							dataType: 'json',
+							data:
+							{
+								param1:txt_datosseleccionados,
+								param2:txt_rucemisor
+							},
+							beforeSend:function()
+							{
+							},
+							success:function(result)
+							{
+								if(result.status==1)
+								{
+									Descargar_DocumentoSeleccionadoArchivos();
+								}
+								else if(result.status==2)
+								{
+									alert("No se encontraron archivos para los documentos seleccionados.");
+								}
+								else if (result.status==1000)
+								{
+									document.location.href= '<?php echo base_url()?>usuario';
+									return;
+								}
+								else
+								{
+									alert("Error al crear los archivos seleccionados.");
+								}
+							}
+						});						
+				}
+				else
+				{
+					alert("Debe seleccionar al menos un registro");
+				}
+			}
+			
+			function Descargar_DocumentoSeleccionadoArchivos()
+			{
+				var txt_datosseleccionados=$.trim($('#txt_datosseleccionados').val());	
+				var txt_rucemisor=$.trim($('#txt_RucEmpresa').val());
+
+				document.location.href=urlexportardatos+'retencion/Descargar_DocumentoSeleccionado?param1='+txt_datosseleccionados+'&param2='+txt_rucemisor;	
+			}
+			/*
+			function OcultarFilaPassword(id,opcion) 
+			{
+				if (!document.getElementById) return false;
+				fila = document.getElementById(id);
+				
+				if (opcion==0)//OCULTA LA FILA
+				{
+					if (fila.style.display != "none") 
+					{
+						fila.style.display = "none"; //ocultar fila
+					}
+				}
+				else
+				{
+					if (fila.style.display == "none") 
+					{
+						fila.style.display = ""; //mostrar fila
+					}
+				}
+			}*/
+			
 			function Descargar_ExcelGeneral()
 			{
 				var Cmb_OpcionesExportarExcel=$.trim($('#Cmb_OpcionesExportarExcel').val());	
-				
-				/*
-				var txt_RucEmpresa=$.trim($('#txt_RucEmpresa').val());
-				var txt_DocumentoCliente=$.trim($('#txt_DocumentoCliente').val());					
-				var txt_RazonSocialCliente=$.trim($('#txt_RazonSocialCliente').val());				
-				var txt_serienumeroinicio=$.trim($('#txt_serienumeroinicio').val());
-				var txt_serienumerofinal=$.trim($('#txt_serienumerofinal').val());				
-				var Cmb_EstadoDocumento=$.trim($('#Cmb_EstadoDocumento').val());				
-				var txt_FechaEmisionInicio=$.trim($('#txt_FechaEmisionInicio').val());
-				var txt_FechaEmisionFinal=$.trim($('#txt_FechaEmisionFinal').val());				
-				var Cmb_TipoDocumentoSunat=$.trim($('#Cmb_TipoDocumentoSunat').val());
-				var Cmb_EstadoDocumentoSunat=$.trim($('#Cmb_EstadoDocumentoSunat').val());
-				var txt_datosseleccionados=$.trim($('#txt_datosseleccionados').val());
-				var Cmb_TipoMoneda=$.trim($('#Cmb_TipoMoneda').val());
-				*/
 				var txt_botonbusqueda=$.trim($('#txt_botonbusqueda').val());
 				if (txt_botonbusqueda==0)
 				{
-					alert('No ha realizado ninguna busqueda');
+					alert('No ha realizado ninguna búsqueda');
 					return;
-				}				
+				}	
 				var str = $('#txt_filtrobusqueda').val();
 				var resultado = str.split(','); 
-				
-				//alert(resultado[11]);
 				
 				var txt_RucEmpresa=resultado[0];
 				var txt_DocumentoCliente=resultado[1];			
@@ -682,102 +758,61 @@ ExportarExcel_General:function()
 				var Cmb_EstadoDocumento=resultado[5];		
 				var txt_FechaEmisionInicio=resultado[6];
 				var txt_FechaEmisionFinal=resultado[7];				
-				//var Cmb_TipoDocumentoSunat=resultado[8];
 				var Cmb_EstadoDocumentoSunat=resultado[8];
+				//var Cmb_TipoDocumentoSunat=resultado[8];
 				//var Cmb_TipoMoneda=resultado[10];
 				var txt_datosseleccionados=$.trim($('#txt_datosseleccionados').val());
-				
-				
 				
 				if (Cmb_OpcionesExportarExcel==1)
 				{
 					txt_datosseleccionados='';
-					document.location.href=urlexportardatos+'retencion/Exportar_ExcelGeneral?param1='+txt_RucEmpresa+'&param2='+txt_DocumentoCliente+'&param3='+txt_serienumeroinicio+'&param4='+txt_serienumerofinal+'&param5='+Cmb_EstadoDocumento+'&param6='+txt_FechaEmisionInicio+'&param7='+txt_FechaEmisionFinal+'&param9='+Cmb_EstadoDocumentoSunat+'&param10='+txt_datosseleccionados+'&param11='+txt_RazonSocialCliente;
-					/*
-					document.location.href=urlexportardatos+'retencion/Exportar_ExcelGeneral?param1='+txt_RucEmpresa+'&param2='+txt_DocumentoCliente+'&param3='+txt_serienumeroinicio+'&param4='+txt_serienumerofinal+'&param5='+Cmb_EstadoDocumento+'&param6='+txt_FechaEmisionInicio+'&param7='+txt_FechaEmisionFinal+'&param8='+Cmb_TipoDocumentoSunat+'&param9='+Cmb_EstadoDocumentoSunat+'&param10='+txt_datosseleccionados+'&param11='+txt_RazonSocialCliente+'&param12='+Cmb_TipoMoneda;
-					*/
-				}
-				else
+					document.location.href=urlexportardatos+'retencion/Exportar_ExcelGeneral?param1='+txt_RucEmpresa+'&param2='+txt_DocumentoCliente+'&param3='+txt_serienumeroinicio+'&param4='+txt_serienumerofinal+'&param5='+Cmb_EstadoDocumento+'&param6='+txt_FechaEmisionInicio+'&param7='+txt_FechaEmisionFinal+'&param8='+Cmb_EstadoDocumentoSunat+'&param9='+txt_datosseleccionados+'&param10='+txt_RazonSocialCliente;
+				}else
 				{
 					if (txt_datosseleccionados=='')
 					{
 						alert('No existe datos seleccionados');
-					}
-					else
+					}else
 					{
-						document.location.href=urlexportardatos+'retencion/Exportar_ExcelGeneral?param1='+txt_RucEmpresa+'&param2='+txt_DocumentoCliente+'&param3='+txt_serienumeroinicio+'&param4='+txt_serienumerofinal+'&param5='+Cmb_EstadoDocumento+'&param6='+txt_FechaEmisionInicio+'&param7='+txt_FechaEmisionFinal+'&param9='+Cmb_EstadoDocumentoSunat+'&param10='+txt_datosseleccionados+'&param11='+txt_RazonSocialCliente;
-					/*
-					document.location.href=urlexportardatos+'retencion/Exportar_ExcelGeneral?param1='+txt_RucEmpresa+'&param2='+txt_DocumentoCliente+'&param3='+txt_serienumeroinicio+'&param4='+txt_serienumerofinal+'&param5='+Cmb_EstadoDocumento+'&param6='+txt_FechaEmisionInicio+'&param7='+txt_FechaEmisionFinal+'&param8='+Cmb_TipoDocumentoSunat+'&param9='+Cmb_EstadoDocumentoSunat+'&param10='+txt_datosseleccionados+'&param11='+txt_RazonSocialCliente+'&param12='+Cmb_TipoMoneda;
-					*/
+						document.location.href=urlexportardatos+'retencion/Exportar_ExcelGeneral?param1='+txt_RucEmpresa+'&param2='+txt_DocumentoCliente+'&param3='+txt_serienumeroinicio+'&param4='+txt_serienumerofinal+'&param5='+Cmb_EstadoDocumento+'&param6='+txt_FechaEmisionInicio+'&param7='+txt_FechaEmisionFinal+'&param8='+Cmb_EstadoDocumentoSunat+'&param9='+txt_datosseleccionados+'&param10='+txt_RazonSocialCliente;
+					}
 				}
 			}
+			
+			function Listar_DocumentoSunat(cod_tipodocumento)
+			{
+				
+			}
 
-		}
-
-		function Descargar_DocumentoSeleccionado()
-		{
-
-		}
-
-		function Descargar_DocumentoSeleccionadoArchivos()
-		{
-
-		}
-
-		function Modificar_DocumentoSeleccionado()
-		{
-
-		}
-
-		function DeclararEnviar_DocumentoSeleccionado()
-		{
-
-		}
-
-		function ReiniciarCorrelativo_DocumentoSeleccionado()
-		{
-
-		}
-
-		function OcultarFilaPassword(id,opcion) 
-		{
-
-		}
-
-		function Listar_DocumentoSunat(cod_tipodocumento)
-		{
-
-		}
-
-	</script>
-
-</head>   
-<body>
-	<?php header('Content-Type: text/html; charset=ISO-8859-1');?>
-	<div id="Div_HeadSistema"><?php $this->load->view('inicio/head',$Listar_UsuarioAccesos,$Listar_Empresas,$pagina_ver); ?></div>
-
-	<div id="tabs" style="width:99.7%;float:left;text-align:center;margin-top:5px">
-		<ul>
-			<li><a href="#tabs-1">LISTADO DE RETENCIONES</a></li>
-		</ul>
-		<div id="tabs-1" style="width:95%;float:left">			
-			<div id="div_datosempresa" style="width:100%; float:left; margin-top:10px; border: 1px solid #a6c9e2; border-radius:5px;">
-				<table border="0" width="70%" style="border-collapse:separate; border-spacing:1px 1px;" cellpadding="3" class="tablaFormulario">
-					<tr><td><label class="columna"></label></td></tr>
-					<tr>
-						<td style="text-align:right;width:15%" ><label class="columna">RUC :</label></td>
-						<td style="text-align:left;width:20%">
-							<!--<input type="hidden" id="txt_tipo_confserie"  value="<?php echo $Tipo_confserie;?>" />-->
-							<input style="width:95%" type="text" id="txt_RucEmpresa" value="<?php echo trim(utf8_decode($Ruc_Empresa));?>"  disabled="disabled" />
-						</td>
-						<td style="text-align:right;width:15%"><label class="columna">Raz&oacute;n Social :</label></td>
-						<td style="text-align:left;width:48%" colspan="3">
-							<input style="width:95%" type="text" id="txt_RazonSocialEmpresa" value="<?php echo trim(utf8_decode($Razon_Social));?>" disabled="disabled" /></td>
+		</script>
+		
+    </head>   
+    <body>
+		<?php header('Content-Type: text/html; charset=ISO-8859-1');?>
+		<div id="Div_HeadSistema"><?php $this->load->view('inicio/head',$Listar_UsuarioAccesos,$Listar_Empresas,$pagina_ver); ?></div>
+		
+		<div id="tabs" style="width:99.7%;float:left;text-align:center;margin-top:5px">
+			<ul>
+				<li><a href="#tabs-1">LISTADO DE RETENCIONES</a></li>
+			</ul>
+			<div id="tabs-1" style="width:95%;float:left">			
+				<div id="div_datosempresa" style="width:100%; float:left; margin-top:10px; border: 1px solid #a6c9e2; border-radius:5px;">
+					<table border="0" width="70%" style="border-collapse:separate; border-spacing:1px 1px;" cellpadding="3" class="tablaFormulario">
+						<tr><td><label class="columna"></label></td></tr>
+						<tr>
+							<td style="text-align:right;width:15%" ><label class="columna">RUC :</label></td>
+							<td style="text-align:left;width:20%">
+								<!--<input type="hidden" id="txt_tipo_confserie"  value="<?php echo $Tipo_confserie;?>" />-->
+								<input style="width:95%" type="text" id="txt_RucEmpresa" value="<?php echo trim(utf8_decode($Ruc_Empresa));?>"  disabled="disabled" />
+							</td>
+							<td style="text-align:right;width:15%"><label class="columna">Raz&oacute;n Social :</label></td>
+							<td style="text-align:left;width:48%" colspan="3">
+								<input style="width:95%" type="text" id="txt_RazonSocialEmpresa" value="<?php echo trim(utf8_decode($Razon_Social));?>" disabled="disabled" /></td>
 						</tr>
 						<tr>
 							<td style="text-align:right"><label class="columna">Proveedor :</label></td>
 							<td style="text-align:left">
-								<input style="width:95%" id="txt_RazonSocialCliente" type="text" value="" placeholder="Buscar Cliente por Raz. Social" />
+								<input style="width:95%" id="txt_RazonSocialCliente" type="text" value="" placeholder="Buscar Proveedor por Raz. Social" />
 								<input style="width:95%" id="txt_DocumentoCliente" type="hidden" value="" />
 							</td>							
 							<td style="text-align:right"><label class="columna">Serie-Num. :</label></td>
@@ -815,238 +850,198 @@ ExportarExcel_General:function()
 								<div id="div_Estadodocumentosunat">
 									<select id="Cmb_EstadoDocumentoSunat" style="width:98%;height:25px" >
 										<option value="0">TODOS</option>	
-										<?php foreach ( $Listar_EstadoSunatRetencion as $v):	?>
-											<option value="<?php echo trim($v['co_item_tabla']); ?>"><?php echo trim(strtoupper(utf8_decode($v['no_largo'])));?> </option>
-										<?php  endforeach; ?>																	
+											<?php foreach ( $Listar_EstadoSunatRetencion as $v):	?>
+										<option value="<?php echo trim($v['co_item_tabla']); ?>"><?php echo trim(strtoupper(utf8_decode($v['no_largo'])));?> </option>
+											<?php  endforeach; ?>																	
 									</select>
 								</div>
 							</td>
 							<td style="text-align:right" colspan="4"><label class="columna"></label></td>
-
+							
 						</tr>
 						<tr>
 							<td></td>
 							<td style="text-align:left;width:10%" colspan="5">
 								<table width="100%" border="0">
-									<tr>
-										<td  width="10%">
-											<a href="javascript:ncsistema.Listar_Retenciones()" >
-												<button id="" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" style="width:105px; height:32px" type="submit">
-													<span class="ui-button-icon-left ui-icon ui-icon-search"></span>
-													<span class="ui-button-text">Buscar</span></button>
-												</a>
-											</td>
-											<td>
-												<a href="javascript:Limpiar_Busqueda()" >
-													<button id="" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" style="width:105px; height:32px" type="submit">
-														<span class="ui-button-icon-left ui-icon ui-icon-document-b"></span>
-														<span class="ui-button-text">Limpiar</span></button>
-													</a>
-												</td>
-												<td width="80%">
-													<div style="width:40px; height:15px" id="div_procesarbuscar">  </div>
-												</td>
-											</tr>
-										</table>
+								  <tr>
+									<td  width="10%">
+										<a href="javascript:ncsistema.Listar_Retenciones()" >
+											<button id="" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" style="width:105px; height:32px" type="submit">
+												<span class="ui-button-icon-left ui-icon ui-icon-search"></span>
+												<span class="ui-button-text">Buscar</span></button>
+										</a>
 									</td>
-								</tr>
-							</table>
-						</div>	
-						<div style="width:100%;border:solid 1px;float:left;margin-top:10px; border: 1px solid #a6c9e2;border-radius:5px;">	
-							<table width="100%"  border="0px" class="ui-widget-header">
+									<td>
+										<a href="javascript:Limpiar_Busqueda()" >
+												<button id="" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" style="width:105px; height:32px" type="submit">
+													<span class="ui-button-icon-left ui-icon ui-icon-document-b"></span>
+													<span class="ui-button-text">Limpiar</span></button>
+											</a>
+									</td>
+									<td width="80%">
+										<div style="width:40px; height:15px" id="div_procesarbuscar">  </div>
+									</td>
+								  </tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+				</div>	
+			<div style="width:100%;border:solid 1px;float:left;margin-top:10px; border: 1px solid #a6c9e2;border-radius:5px;">	
+				<table width="100%"  border="0px" class="ui-widget-header">
 					<!--
 					<input id="txt_datosseleccionados_estado" type="hidden" value="" />
 					<input id="txt_cantidaddocumborrador" type="hidden" value="0" />
 					<input id="txt_cantidaddocum_estado" type="hidden" value="0" />
-				-->
-				<input id="txt_datosseleccionados" type="hidden" value="" />
-				<input id="txt_cantidadseleccionados" type="hidden" value="0" />
-				<input id="txt_filtrobusqueda" type="hidden" value="" />
-				<input id="txt_botonbusqueda" type="hidden" value="0" />
-				<tr">
-				<td style="text-align:center; vertical-align:middle ;width:5%">
-					<a href="javascript:ncsistema.ExportarExcel_General()" >
-						<img src="<?php echo base_url();?>application/helpers/image/iconos/exportarexcel.jpg" width="30" height="30" />
-					</a>
-				</td>
-				<td style="text-align:left; width:35%; vertical-align:middle">
-					<select id="Cmb_OpcionesExportarExcel" style="height:25px" >
-						<option value="1">LISTADO COMPLETO</option>
-						<option value="2">LISTADO SELECCIONADO</option>
-					</select>
-				</td>
-				<td align="right" style="width:60%; vertical-align:middle">
-					<button style="width:125px; height:32px" id="btn_Verdetalle" title="Ver detalle del documento" 
-					class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
-					onClick="javascrip:ncsistema.Detalle_Retenciones()">
-					<span class="ui-button-icon-left ui-icon ui-icon-newwin"></span>
-					<span class="ui-button-text">Ver Detalle</span></button>
-					<button style="width:120px; height:32px" id="btn_ImprimirPrincipal" title="Imprimir" 
-					class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"
-					onClick="javascrip:Imprimir_DocumentoSeleccionado()">
-					<span class="ui-button-icon-left ui-icon ui-icon-print"></span>
-					<span class="ui-button-text">Imprimir</span></button>
-					<button style="width:120px; height:32px"  id="btn_DescargarPrincipal" title="Descargar" 
-					class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"
-					onClick="javascrip:Descargar_DocumentoSeleccionado()">
-					<span class="ui-button-icon-left ui-icon ui-icon-disk"></span>
-					<span class="ui-button-text">Descargar</span></button>
-				</td>	
-			</tr>
-		</table>
-	</div>
-	<div id="div_ListadoRetenciones" style="width:100%;border:solid 0px;float:left;text-align:center;margin-top:5px">
-	</div>
-</div>
-</div>
-
-<div id="dialog-form-detalledocumento" title="Detalle del Comprobante">
-	<form>
-		<div> 
-			<div>
-				<table width="100%" border="1">
-					<tr>
-						<td style="width:70%">
-							<table width="100%" border="0">
-								<tr>
-									<td><div id="div_param1"></div></td>
-								</tr>
-								<tr>
-									<td><div id="div_param2"></div></td>
-								</tr>
-								<tr>
-									<td><div id="div_param3"></div></td>
-								</tr>
-								<tr>
-									<td><div id="div_param4"></div></td>
-								</tr>
-							</table>
+					-->
+					<input id="txt_datosseleccionados" type="hidden" value="" />
+					<input id="txt_cantidadseleccionados" type="hidden" value="0" />
+					<input id="txt_filtrobusqueda" type="hidden" value="" />
+					<input id="txt_botonbusqueda" type="hidden" value="0" />
+					<tr">
+						<td style="text-align:center; vertical-align:middle ;width:5%">
+							<a href="javascript:ncsistema.ExportarExcel_General()" >
+								<img src="<?php echo base_url();?>application/helpers/image/iconos/exportarexcel.jpg" width="30" height="30" />
+							</a>
 						</td>
-
-						<td style="width:30%;text-align:center">
-							<table width="100%" border="0">
-								<tr>
-									<td><div id="div_param5"></div></td>
-								</tr>
-								<tr>
-									<td><div id="div_param6"></div></td>
-								</tr>
-								<tr>
-									<td><div id="div_param7"></div></td>
-								</tr>
-								<tr>
-									<td><div id="div_param8"></div></td>
-								</tr>
-							</table>
+						<td style="text-align:left; width:35%; vertical-align:middle">
+							<select id="Cmb_OpcionesExportarExcel" style="height:25px" >
+								<option value="1">LISTADO COMPLETO</option>
+								<option value="2">LISTADO SELECCIONADO</option>
+							</select>
 						</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<table width="100%" border="0">
-								<tr>
-									<td style="width:15%">Nombre/Razón Social:</td>
-									<td style="width:30%"><div id="div_param9"></div></td>
-									<td style="width:7%">RUC:</td>
-									<td style="width:20%"><div id="div_param10"></div></td>
-									<td style="width:13%">Fecha Emisión:</td>
-									<td style="width:15%"><div id="div_param11"></div></td>
-								</tr>
-								<tr>
-									<td>Dirección:</td>
-									<td><div id="div_param12"></div></td>
-									<td>Moneda:</td>
-									<td><div id="div_param13"></div></td>
-									<td>Tasa:</td>
-									<td><div id="div_param14"></div></td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-
-
-				</table>
-			</div>
-			<div> 
-				<div id="div_documentodetalle"></div>
-			</div>
-			<div> 
-				<table width="100%">
-					<tr>
-						<td colspan="2">
-							<table width="100%" border="0">
-								<tr>
-									<td style="width:60%"><div id="div_param15"></div></td>
-									<td style="width:40%">										
-										<table width="100%" border="1">
-											<tr id="row1">
-												<td style="width:40%;text-align:right">Importe Total Retenido :</td>
-												<td style="width:20%;text-align:center"><div id="div_param16"></div></td>
-												<td style="width:40%;text-align:right"><div id="div_param17"></div></td>
-											</tr>
-
-											<tr id="row2">
-												<td style="width:40%;text-align:right">Importe Total Pagado :</td>
-												<td style="width:20%;text-align:center"><div id="div_param18"></div></td>
-												<td style="width:40%;text-align:right"><div id="div_param19"></div></td>
-											</tr>
-												<!--
-												<tr id="row3">
-													<td style="width:40%;text-align:right">Operacion Exoneradas : </td>
-													<td style="width:20%;text-align:center"><div id="div_param20"></div></td>
-													<td style="width:40%;text-align:right"><div id="div_param21"></div></td>
-												</tr>
-												
-												<tr id="row4">
-													<td style="width:40%;text-align:right">Operacion Gratuitas : 	 </td>
-													<td style="width:20%;text-align:center"><div id="div_param22"></div></td>
-													<td style="width:40%;text-align:right"><div id="div_param23"></div></td>
-												</tr>
-												<tr id="row5">
-													<td style="width:40%;text-align:right">Descuentos : </td>
-													<td style="width:20%;text-align:center"><div id="div_param24"></div></td>
-													<td style="width:40%;text-align:right"><div id="div_param25"></div></td>
-												</tr>
-												<tr id="row6">
-													<td style="width:40%;text-align:right">I.S.C 0% : </td>
-													<td style="width:20%;text-align:center"><div id="div_param26"></div></td>
-													<td style="width:40%;text-align:right"><div id="div_param27"></div></td>
-												</tr>
-												<tr id="row7">
-													<td style="width:40%;text-align:right">IGV 18% :  </td>
-													<td style="width:20%;text-align:center"><div id="div_param28"></div></td>
-													<td style="width:40%;text-align:right"><div id="div_param29"></div></td>
-												</tr>
-												
-												<tr id="row8">
-													<td style="width:40%;text-align:right">Otros Cargos :</td>
-													<td style="width:20%;text-align:center"><div id="div_param30"></div></td>
-													<td style="width:40%;text-align:right"><div id="div_param31"></div></td>
-												</tr>
-												<tr id="row9">
-													<td style="width:40%;text-align:right">Importe Total :</td>
-													<td style="width:20%;text-align:center"><div id="div_param32"></div></td>
-													<td style="width:40%;text-align:right"><div id="div_param33"></div></td>
-												</tr>
-											-->
-										</table>
-										
-									</td>
-								</tr>	
-							</table>
-						</td>
-					</tr>
-
-
-					<tr>
-						<td colspan="2">
-							<!-- Representación Impresa de la Factura Electrónica, consulte en https://sfe.bizlinks.com.pe -->
-						</td>
+						<td align="right" style="width:60%; vertical-align:middle">
+							<button style="width:125px; height:32px" id="btn_Verdetalle" title="Ver detalle del documento" 
+								class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
+								onClick="javascrip:ncsistema.Detalle_Retenciones()">
+								<span class="ui-button-icon-left ui-icon ui-icon-newwin"></span>
+								<span class="ui-button-text">Ver Detalle</span></button>
+							<button style="width:120px; height:32px" id="btn_ImprimirPrincipal" title="Imprimir" 
+								class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"
+								onClick="javascrip:Imprimir_DocumentoSeleccionado()">
+								<span class="ui-button-icon-left ui-icon ui-icon-print"></span>
+								<span class="ui-button-text">Imprimir</span></button>
+							<button style="width:120px; height:32px"  id="btn_DescargarPrincipal" title="Descargar" 
+								class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"
+								onClick="javascrip:Descargar_DocumentoSeleccionado()">
+								<span class="ui-button-icon-left ui-icon ui-icon-disk"></span>
+								<span class="ui-button-text">Descargar</span></button>
+						</td>	
 					</tr>
 				</table>
+				</div>
+				<div id="div_ListadoRetenciones" style="width:100%;border:solid 0px;float:left;text-align:center;margin-top:5px">
+				</div>
 			</div>
 		</div>
-	</form>
-</div>		
+		
+		<div id="dialog-form-detalledocumento" title="Detalle del Comprobante">
+		 	<form>
+			<div> 
+				<div>
+					<table width="100%" border="1">
+						<tr>
+							<td style="width:70%">
+								<table width="100%" border="0">
+									<tr>
+										<td><label class="columna"><div id="div_param1"></div></label></td>
+									</tr>
+									<tr>
+										<td><div id="div_param2"></div></td>
+									</tr>
+									<tr>
+										<td><div id="div_param3"></div></td>
+									</tr>
+									<tr>
+										<td><div id="div_param4"></div></td>
+									</tr>
+								</table>
+							</td>
+							
+							<td style="width:30%;text-align:center">
+								<table width="100%" border="0">
+									<tr>
+										<td><label class="columna"><div id="div_param5"></div></label></td>
+									</tr>
+									<tr>
+										<td><div id="div_param6"></div></td>
+									</tr>
+									<tr>
+										<td><label class="columna"><div id="div_param7"></div></label></td>
+									</tr>
+									<tr>
+										<td><div id="div_param8"></div></td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<table width="100%" border="0">
+									<tr>
+										<td style="width:15%;"><label class="columna">Nombre/Razón Social:</label></td>
+										<td style="width:30%"><div id="div_param9"></div></td>
+										<td style="width:7%; text-align:right"><label class="columna">RUC :</label></td>
+										<td style="width:20%"><div id="div_param10"></div></td>
+										<td style="width:13%; text-align:right"><label class="columna">Fecha Emisión :</label></td>
+										<td style="width:15%"><div id="div_param11"></div></td>
+									</tr>
+									<tr>
+										<td ><label class="columna">Dirección:</label></td>
+										<td><div id="div_param12"></div></td>
+										<td style="text-align:right"><label class="columna">Tasa :</label></td>
+										<td colspan="3"><div id="div_param13"></div></td>
+										
+									</tr>
+								</table>
+							</td>
+						</tr>
+						
+						
+					</table>
+				</div>
+				<div> 
+					<div id="div_documentodetalle"></div>
+				</div>
+				<div> 
+					<table width="100%">
+						<tr>
+							<td colspan="2">
+								<table width="100%" border="0">
+									<tr>
+										<td style="width:60%"><div id="div_param15"></div></td>
+										<td style="width:40%">										
+											<table width="100%" border="1">
+												<tr id="row1">
+													<td style="width:50%;text-align:right"><label class="columna">Importe Total Retenido :</label></td>
+													<td style="width:20%;text-align:center"><div id="div_param16"></div></td>
+													<td style="width:30%;text-align:right"><div id="div_param17"></div></td>
+												</tr>
 
-</body>	
+												<tr id="row2">
+													<td style="width:50%;text-align:right"><label class="columna">Importe Total Pagado :</label></td>
+													<td style="width:20%;text-align:center"><div id="div_param18"></div></td>
+													<td style="width:30%;text-align:right"><div id="div_param19"></div></td>
+												</tr>
+											</table>
+										
+										</td>
+									</tr>	
+								</table>
+							</td>
+						</tr>
+						
+						
+						<tr>
+							<td colspan="2">
+								<!-- Representación Impresa de la Factura Electrónica, consulte en https://sfe.bizlinks.com.pe -->
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		  </form>
+		</div>		
+		
+    </body>	
 </html>

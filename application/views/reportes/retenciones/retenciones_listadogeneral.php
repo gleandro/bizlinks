@@ -19,15 +19,12 @@
 	
 	$PHPExcel->getActiveSheet()->setCellValue('C8', $param6. ' '); 
 	$PHPExcel->getActiveSheet()->setCellValue('E8', $param7. ' '); 
-	$PHPExcel->getActiveSheet()->setCellValue('G7', $param8. ' '); 
-	//$PHPExcel->getActiveSheet()->setCellValue('G7', ''.$param8. ' '); 
+	$PHPExcel->getActiveSheet()->setCellValue('G7', ''.$param8. ' '); 
 	
 	$PHPExcel->getActiveSheet()->setCellValue('C9', $param5. ' ');
 	$PHPExcel->getActiveSheet()->setCellValue('A10', $param9. ' ');
-	$PHPExcel->getActiveSheet()->setCellValue('G8', 'RETENCION'. ' ');
-	$PHPExcel->getActiveSheet()->setCellValue('G9', $param12. ' ');
 	//$PHPExcel->getActiveSheet()->setCellValue('G8', $param11. ' ');
-	//$PHPExcel->getActiveSheet()->setCellValue('G9', $param12. ' ');
+	$PHPExcel->getActiveSheet()->setCellValue('G9', $param12. ' ');
 	
 	$fila=12;
 	$contador=1;
@@ -38,23 +35,22 @@
 			foreach ($lista_datosdocumento as $ind => $val) 
 			{	
 				$PHPExcel->getActiveSheet()->setCellValue('A'. $fila, $contador); 
-				$PHPExcel->getActiveSheet()->setCellValue('B'. $fila, trim($val['razonsocialadquiriente'])); 
-				$PHPExcel->getActiveSheet()->setCellValue('C'. $fila, trim($val['nomb_tipodocumento'])); 
-				$PHPExcel->getActiveSheet()->setCellValue('D'. $fila, trim($val['serienumero'])); 
-				$PHPExcel->getActiveSheet()->setCellValue('E'. $fila, trim($val['tipomoneda']));
-				$PHPExcel->getActiveSheet()->setCellValue('F'. $fila,  trim($val['totalventa']).' ');			
-				$PHPExcel->getActiveSheet()->setCellValue('G'. $fila,  trim($val['fechaemision']));
-				$PHPExcel->getActiveSheet()->setCellValue('H'. $fila,  trim($val['estado_documento']));			
-				$PHPExcel->getActiveSheet()->setCellValue('I'. $fila,  trim($val['nombreestadosunat']));
+				$PHPExcel->getActiveSheet()->setCellValue('B'. $fila, trim($val['razonsocialproveedor'])); 
+				$PHPExcel->getActiveSheet()->setCellValue('C'. $fila, trim($val['serienumeroretencion'])); 
+				$PHPExcel->getActiveSheet()->setCellValue('D'. $fila, trim($val['importetotalpagado'])); 
+				$PHPExcel->getActiveSheet()->setCellValue('E'. $fila, trim($val['tipomonedapagado']));
+				$PHPExcel->getActiveSheet()->setCellValue('F'. $fila,  trim($val['importetotalretenido']));			
+				$PHPExcel->getActiveSheet()->setCellValue('G'. $fila,  trim($val['tipomonedaretenido']));
+				$PHPExcel->getActiveSheet()->setCellValue('H'. $fila,  trim($val['fechaemision']));			
+				$PHPExcel->getActiveSheet()->setCellValue('I'. $fila,  trim($val['estado_documento']));
+				$PHPExcel->getActiveSheet()->setCellValue('J'. $fila,  trim($val['nombreestadosunat']));
 				if ($val['visualizado']==1)
 				{
-					$PHPExcel->getActiveSheet()->setCellValue('J'. $fila,  'SI');
-				}
-				else
-				{
-					$PHPExcel->getActiveSheet()->setCellValue('J'. $fila,  'NO');
+					$PHPExcel->getActiveSheet()->setCellValue('K'. $fila,  'SI');
+				}else{
+					$PHPExcel->getActiveSheet()->setCellValue('K'. $fila,  'NO');
 				}			
-				$PHPExcel->getActiveSheet()->setCellValue('K'. $fila,  trim($val['obssunat']));
+				$PHPExcel->getActiveSheet()->setCellValue('L'. $fila,  trim($val['obssunat']));
 
 				$fila++;
 				$contador++;
@@ -64,41 +60,34 @@
 		{
 			foreach ($lista_datosdocumento as $ind => $val) 
 			{	
-				$posicion = strpos($param10, trim($val['serienumero']));			 
+				$posicion = strpos($param10, trim($val['serienumeroretencion']));			 
 				if($posicion !== FALSE)	
 				{
-					
 					$PHPExcel->getActiveSheet()->setCellValue('A'. $fila, $contador); 
-					$PHPExcel->getActiveSheet()->setCellValue('B'. $fila, trim($val['razonsocialadquiriente'])); 
-					$PHPExcel->getActiveSheet()->setCellValue('C'. $fila, trim($val['nomb_tipodocumento'])); 
-					$PHPExcel->getActiveSheet()->setCellValue('D'. $fila, trim($val['serienumero'])); 
-					$PHPExcel->getActiveSheet()->setCellValue('E'. $fila, trim($val['tipomoneda']));
-					$PHPExcel->getActiveSheet()->setCellValue('F'. $fila,  trim($val['totalventa']).' ');				
-					$PHPExcel->getActiveSheet()->setCellValue('G'. $fila,  trim($val['fechaemision']));
-					$PHPExcel->getActiveSheet()->setCellValue('H'. $fila,  trim($val['estado_documento']));
-					$PHPExcel->getActiveSheet()->setCellValue('I'. $fila,  trim($val['nombreestadosunat']));
+					$PHPExcel->getActiveSheet()->setCellValue('B'. $fila, trim($val['razonsocialproveedor'])); 
+					$PHPExcel->getActiveSheet()->setCellValue('C'. $fila, trim($val['serienumeroretencion'])); 
+					$PHPExcel->getActiveSheet()->setCellValue('D'. $fila, trim($val['importetotalpagado'])); 
+					$PHPExcel->getActiveSheet()->setCellValue('E'. $fila, trim($val['tipomonedapagado']));
+					$PHPExcel->getActiveSheet()->setCellValue('F'. $fila,  trim($val['importetotalretenido']).' ');			
+					$PHPExcel->getActiveSheet()->setCellValue('G'. $fila,  trim($val['tipomonedaretenido']));
+					$PHPExcel->getActiveSheet()->setCellValue('H'. $fila,  trim($val['fechaemision']));			
+					$PHPExcel->getActiveSheet()->setCellValue('I'. $fila,  trim($val['estado_documento']));
+					$PHPExcel->getActiveSheet()->setCellValue('J'. $fila,  trim($val['nombreestadosunat']));
 					if ($val['visualizado']==1)
 					{
-						$PHPExcel->getActiveSheet()->setCellValue('J'. $fila,  'SI');
-					}
-					else
-					{
-						$PHPExcel->getActiveSheet()->setCellValue('J'. $fila,  'NO');
+						$PHPExcel->getActiveSheet()->setCellValue('K'. $fila,  'SI');
+					}else{
+						$PHPExcel->getActiveSheet()->setCellValue('K'. $fila,  'NO');
 					}			
-					$PHPExcel->getActiveSheet()->setCellValue('K'. $fila,  trim($val['obssunat']));
+					$PHPExcel->getActiveSheet()->setCellValue('L'. $fila,  trim($val['obssunat']));
+				
 					$fila++;
 					$contador++;
 				}
 			}
 		}
 	}
-	/*	
-	$PHPExcel->getActiveSheet()->setCellValue('A18', strtoupper($moneda_letras .' '.$lista_datosdocumento[0]['nom_moneda']));
-	$PHPExcel->getActiveSheet()->setCellValue('I19', $lista_datosdocumento[0]['sub_total']); 
-	$PHPExcel->getActiveSheet()->setCellValue('I20', $lista_datosdocumento[0]['igv_doc']);
-	$PHPExcel->getActiveSheet()->setCellValue('I21', $lista_datosdocumento[0]['total_doc']); 
-	*/
-
+	
 	//prepare download
 	$filename=   'ListaRetenciones';//$lista_datosdocumento[0]['nom_tipdoc'].'_'.$lista_datosdocumento[0]['ser_doc'].'-'.$lista_datosdocumento[0]['num_doc']; 
 	header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;meta charset="utf-8"');
@@ -109,8 +98,6 @@
 	$objWriter->save('php://output'); 
 	
 	exit;
-	
-	//just some random filename   mt_rand(1,100000)
 
 ?>
 

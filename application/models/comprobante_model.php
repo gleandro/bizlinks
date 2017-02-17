@@ -1,5 +1,5 @@
 <?php
-@session_start();
+//@session_start();
 class Comprobante_model extends CI_Model
 {
 	function __construct()
@@ -8,7 +8,9 @@ class Comprobante_model extends CI_Model
 	}
 	
 	
-	function Guardar_Registroproductos($prm_cod_usu,$prm_cod_prod,$prm_cant_prod,$prm_uni_med,$prm_desc_prod,$prm_val_unitario,$prm_val_descuento,$prm_val_isc,$prm_tip_afectacion,$prm_val_igv,$prm_val_total,$prm_cod_empr,$prm_ruc_empr,$prm_cod_tipregist)
+	function Guardar_Registroproductos($prm_cod_usu,$prm_cod_prod,$prm_cant_prod,$prm_uni_med,$prm_desc_prod,
+		$prm_val_unitario,$prm_val_descuento,$prm_val_isc,$prm_tip_afectacion,$prm_val_igv,$prm_val_total,
+		$prm_cod_empr,$prm_ruc_empr,$prm_cod_tipregist,$prm_val_txt_preciocobro, $prm_val_descuento_inc_igv)
 	{
 		$result['result']=0;		
 		$this->db_client =$this->load->database('ncserver',TRUE);	
@@ -30,7 +32,9 @@ class Comprobante_model extends CI_Model
 		val_total,
 		cod_empr,
 		ruc_empr,
-		cod_tipregist
+		cod_tipregist,
+		val_preciocobro,
+		val_descuento_inc_igv
 		)
 		values
 		(
@@ -47,7 +51,9 @@ class Comprobante_model extends CI_Model
 		'".$prm_val_total."',
 		'".$prm_cod_empr."',
 		'".$prm_ruc_empr."',
-		'".$prm_cod_tipregist."'
+		'".$prm_cod_tipregist."',
+		'".$prm_val_txt_preciocobro."',
+		'".$prm_val_descuento_inc_igv."'
 		);";
 		/* 
 		print_r($query);	
@@ -72,7 +78,7 @@ class Comprobante_model extends CI_Model
 	
 	function Listar_ProductosDocumento($prm_cod_usu,$prm_cod_empr)
 	{
-
+		
 		$this->load->database('ncserver',TRUE);
 		$query="
 		select 
@@ -90,7 +96,9 @@ class Comprobante_model extends CI_Model
 		val_total,
 		cod_empr,
 		ruc_empr,
-		cod_tipregist
+		cod_tipregist,
+		val_preciocobro,
+		val_descuento_inc_igv
 		from sgr_registroproductos_temp a
 		where cod_usu='".$prm_cod_usu."'		and cod_empr='".$prm_cod_empr."' ";
 
@@ -178,14 +186,14 @@ class Comprobante_model extends CI_Model
 		$prm_descuentosglobales,
 		$prm_textoleyenda_3,
 		$prm_codigoleyenda_3,
-
+		
 		$prm_porcentajepercepcion,
 		$prm_baseimponiblepercepcion,
 		$prm_totalpercepcion,
 		$prm_totalventaconpercepcion,
 		$datosadquiriente,
 		$prm_totalvalorventanetoopgratuitas,
-
+		
 		$prm_codigoserienumeroafectado,
 		$prm_serienumeroafectado,
 		$prm_motivodocumento,
@@ -208,7 +216,7 @@ class Comprobante_model extends CI_Model
 		
 		$this->db_client =$this->load->database('ncserver',TRUE);	
 		$this->db_client->trans_begin();
-
+		
 		if ($prm_tipo_registro==0)
 		{
 			$prm_blestadoregistro='B';
@@ -437,10 +445,10 @@ class Comprobante_model extends CI_Model
 				{
 					$query_colum=$query_colum."codigoAuxiliar".$prm_adicionalCampos[$prm_adicionalCantidad-1].","; 				
 					$query_valores=$query_valores."'".$prm_adicionalCodigo[$prm_adicionalCantidad-1]."',";
-
+					
 					$query_colum=$query_colum."textoAuxiliar".$prm_adicionalCampos[$prm_adicionalCantidad-1].","; 				
 					$query_valores=$query_valores."'".$prm_adicionalValor[$prm_adicionalCantidad-1]."',";
-
+					
 					$prm_adicionalCantidad--;
 				}
 			}
@@ -464,7 +472,7 @@ class Comprobante_model extends CI_Model
 				}
 			}
 		}//end if
-
+		
 		if ($prm_totaldetraccion!=''){
 			if ($prm_totaldetraccion!=''){
 				$query_colum=$query_colum."totaldetraccion,";			$query_valores=$query_valores."'".$prm_totaldetraccion."',";
@@ -629,7 +637,7 @@ class Comprobante_model extends CI_Model
 				}
 			}
 		//FIN INSERCCION SPE_EINVOICEHEADER_ADD
-
+			
 		//INICIO PARA INSERCCION DEL DETALLE DEL COMPROBANTE: SPE_EINVOICEDETAIL
 			$consulta = $this->db_client->query("select 
 				tmp_prod,
@@ -646,9 +654,11 @@ class Comprobante_model extends CI_Model
 				val_total,
 				cod_empr,
 				ruc_empr,
-				cod_tipregist
+				cod_tipregist,
+				val_preciocobro,
+				val_descuento_inc_igv
 				from sgr_registroproductos_temp where cod_empr='".$prm_cod_empr."' and cod_usu='".$prm_cod_usu."';");				
-
+			
 			if ($this->db_client->trans_status() === FALSE)
 			{
 				$this->db_client->trans_rollback();
@@ -667,15 +677,16 @@ class Comprobante_model extends CI_Model
 		}
 		
 		$contador=1;
+		$Conf_Tipo_Venta=$_SESSION['SES_MarcoTrabajo'][0]['conf_venta'];
 		foreach($detalledocumento as $key=>$v):		
-			$val_descuento=trim($v['val_descuento']);//number_format(trim($v['val_descuento']), 2, '.', '');
+			$val_descuento=number_format(trim($v['val_descuento']), 2, '.', '');
 		$val_precioconigv=0;
 			if ( ($v['val_igv'])>0)//exonerada onerosa  , inafecto onerosa
 			{
-				$val_precioconigv=number_format(trim(round(($v['val_unitario']*(1+$valorigv)),2)), 2, '.', '');
+				$val_precioconigv=number_format(trim(($v['val_unitario']*(1+$valorigv))), 2, '.', '');
 			}else
 			{
-				$val_precioconigv=number_format(trim(round(($v['val_unitario']),2)), 2, '.', '');
+				$val_precioconigv=number_format(trim($v['val_unitario']), 2, '.', '');
 			}
 			$var_importeunitariosinimpuesto=0;
 			$var_importereferencial='';
@@ -719,13 +730,18 @@ class Comprobante_model extends CI_Model
 				//Se condiciona solo para factura y boleta
 				if($prm_tipodocumento=='03' || $prm_tipodocumento=='01')
 				{
-					$PrecioTotal_tmp=(($v['cant_prod'])*($val_precioconigv))-($val_descuento*(1+$valorigv));
+					$PrecioTotal_tmp=(($v['cant_prod'])*($v['val_preciocobro'])) - $v['val_descuento_inc_igv'];//($val_descuento*(1+$valorigv));
 					$query_colum=$query_colum."codigoauxiliar40_1,"; 		$query_valores=$query_valores."'9122',";
 					$query_colum=$query_colum."textoAuxiliar40_1,"; 		$query_valores=$query_valores."'".number_format(trim($PrecioTotal_tmp), 2, '.', '')."',";
 				}
 			}
 			//Fin requerimiento 4
-
+			//Inicio Req. 7: Cuando el registro de venta es del tipo 1 se registra el precio de cobro
+			if ($Conf_Tipo_Venta==1){
+				$query_colum=$query_colum."codigoauxiliar40_2,"; 		$query_valores=$query_valores."'9123',";
+				$query_colum=$query_colum."textoAuxiliar40_2,"; 		$query_valores=$query_valores."'".number_format(trim($v['val_preciocobro']), 2, '.', '')."',";
+			}
+			//Fin Requerimiento 4		
 			$query_colum=$query_colum."importeigv,";					$query_valores=$query_valores."'".number_format(trim($v['val_igv']), 2, '.', '')."',";
 			$query_colum=$query_colum."codigorazonexoneracion,";		$query_valores=$query_valores."'".trim($v['tip_afectacion'])."',";
 			
@@ -752,7 +768,7 @@ class Comprobante_model extends CI_Model
 			$contador++;				
 			endforeach;
 		//FIN INSERCCION: SPE_EINVOICEDETAIL
-
+			
 			$query="delete from sgr_registroproductos_temp where cod_empr='".$prm_cod_empr."' and cod_usu='".$prm_cod_usu."';";
 			$this->db_client->query($query);		
 			if ($this->db_client->trans_status() === FALSE)
@@ -762,7 +778,7 @@ class Comprobante_model extends CI_Model
 				$result['numero']=-6;
 				return $result;
 			}
-
+			
 		if ($prm_documentomodificar=='')//SI NO HAY DOCUMENTO A MODIFICAR ENTONCES SE ESTA REGISTRANDO UNO NUEVO
 		{
 			$query="update sgr_configuracionseries set num_doc=num_doc+1  
@@ -783,10 +799,10 @@ class Comprobante_model extends CI_Model
 
 		return $result;
 	}	
-
+	
 	function Eliminar_DocumentosUsuario($prm_cod_empr,$prm_cod_usu)
 	{
-
+		
 		$this->load->database('ncserver',TRUE);
 		$query="delete from sgr_registroproductos_temp where cod_empr='".$prm_cod_empr."' and cod_usu='".$prm_cod_usu."';";
 		$this->db->query($query);
@@ -822,8 +838,8 @@ class Comprobante_model extends CI_Model
 			from sgr_multitabla b where b.grupo_nombre='TIPO_MONEDA' and b.activo=1 
 			and b.grupo_id=5
 			and b.valorcadena=a.tipomoneda) tipomoneda,
-
-
+			
+			
 			a.totalventa,
 			a.fechaemision,
 			a.bl_estadoregistro,
@@ -833,10 +849,10 @@ class Comprobante_model extends CI_Model
 			and b.co_item_tabla=a.bl_estadoregistro) estado_documento,
 			a.inhabilitado,
 			b.bl_estadoproceso estadosunat,	
-
+			
 			b.bl_mensaje,
 			b.bl_mensajesunat,
-
+			
 			a.bl_reintento,
 			b.reintento,
 			a.numerodocumentoemisor,
@@ -848,7 +864,7 @@ class Comprobante_model extends CI_Model
 			and a.numerodocumentoemisor=b.numerodocumentoemisor
 			and a.tipodocumento=b.tipodocumento
 			and a.serienumero=b.serienumero				
-
+			
 			";
 			
 			$query=$query." where a.numerodocumentoemisor='".$prm_ruc_empr."' ";
@@ -885,17 +901,17 @@ class Comprobante_model extends CI_Model
 						{
 							$query=$query." and a.bl_estadoregistro='".$prm_cod_estdoc."' ";
 						}
-
+						
 						if ($prm_tipo_documentosunat!='0')	
 						{
 							$query=$query." and a.tipodocumento='".$prm_tipo_documentosunat."' ";
 						}
-
+						
 						if ($prm_tipomoneda!='0')	
 						{
 							$query=$query." and a.tipomoneda='".$prm_tipomoneda."' ";
 						}
-
+						
 						$query=$query." order by fechaemision;";
 					}
 		else if ($rol_usuario==2) //RECEPTOR
@@ -924,10 +940,10 @@ class Comprobante_model extends CI_Model
 			and b.co_item_tabla=a.bl_estadoregistro) estado_documento,
 			a.inhabilitado,
 			b.bl_estadoproceso estadosunat,
-
+			
 			b.bl_mensaje,
 			b.bl_mensajesunat,		
-
+			
 			a.bl_reintento,
 			b.reintento,
 			a.numerodocumentoemisor,
@@ -970,39 +986,39 @@ class Comprobante_model extends CI_Model
 						{
 							$query=$query." and a.bl_estadoregistro='".$prm_cod_estdoc."' ";
 						}
-
+						
 						if ($prm_tipo_documentosunat!='0')	
 						{
 							$query=$query." and a.tipodocumento='".$prm_tipo_documentosunat."' ";
 						}
-
+						
 						if ($prm_tipomoneda!='0')	
 						{
 							$query=$query." and a.tipomoneda='".$prm_tipomoneda."' ";
 						}
-
+						
 						$query=$query." order by fechaemision;";
 					}
 					else
 					{
 						$query="";
 					}
-
+					
 		//print($query);
 		//return;		
-
+					
 					$consulta =  $this->db_client->query($query);		
 					return $consulta->result_array();
 
 				}
-
+				
 				function Listar_EstadoDocumento($prm_tipodocumento,$prm_estado)
 				{
 					$prm_conect_db='ncserver';
 					$this->db_client = $this->load->database($prm_conect_db, true);
-
+					
 					$query="";
-
+					
 					if ($prm_tipodocumento=='01')
 					{
 						$query="select no_largo from tm_tabla_multiple where no_tabla='ESTADO_DOCUMENTOSUNATFACTURA_PORTAL' and in_habilitado=1 and no_corto='".$prm_estado."';";
@@ -1021,13 +1037,13 @@ class Comprobante_model extends CI_Model
 						select no_largo from tm_tabla_multiple where no_tabla='ESTADO_DOCUMENTOSUNATBOLETA_PORTAL' and in_habilitado=1 and no_corto='".$prm_estado."'
 						) a group by no_largo;";
 					}
-
+					
 					$consulta =  $this->db_client->query($query);	
 					$listaestado=$consulta->result_array();
 					$estadodocumento='';
-
+					
 		//print_r($query);
-
+					
 		if(!empty($listaestado))//SI NO ES NULO O VACIO
 		{
 			$estadodocumento=$listaestado[0]['no_largo'];
@@ -1070,6 +1086,8 @@ class Comprobante_model extends CI_Model
 		a.lugardestino,
 		a.textoleyenda_1,
 		a.tipomoneda,
+		(select c.nombre from sgr_multitabla c where c.grupo_nombre='TIPO_MONEDA' and c.activo=1 
+		and c.grupo_id=5 and c.valorcadena=a.tipomoneda) tipomonedadescripcion,
 		a.totalbonificacion,
 		a.totaldescuentos,
 		a.totaldetraccion,
@@ -1096,7 +1114,7 @@ class Comprobante_model extends CI_Model
 		a.serienumero=b.serienumero
 		where a.numerodocumentoemisor='".$prm_ruc_empremisor."' and a.tipodocumento='".$prm_tipo_documento."' and a.serienumero='".$prm_serie_numero."'
 		order by a.tipodocumento,a.serienumero,b.numeroordenitem;";
-
+		
 		$consulta =  $this->db_client->query($query);		
 		return $consulta->result_array();
 
@@ -1122,11 +1140,9 @@ class Comprobante_model extends CI_Model
 		and a.fechaemision='".$prm_fechaemision."'
 		and a.numerodocumentoemisor='".$prm_rucproveedor."'
 		and b.bl_estadoproceso<>'SIGNED' ";
-
-
+		
 		$consulta =  $this->db_client->query($query);		
 		return $consulta->result_array();
-
 	}
 	
 	function Listar_ErrorDocumento($prm_numerodocumentoemisor,$prm_tipodocumentoemisor,$prm_tipodedocumento,$prm_serienumero)
@@ -1169,12 +1185,12 @@ class Comprobante_model extends CI_Model
 				and numerodocumentoemisor='".$prm_numerodocumentoemisor."'
 				and tipodocumento= '".$datos_documento[0]."'
 				and serienumero= '".$datos_documento[1].'-'.$datos_documento[2]."'";
-
+				
 				$this->db_client->query($query);
-
+				
 					//print_r($query);
 					//return;
-
+				
 				if ($this->db_client->trans_status() === FALSE)
 				{
 					$this->db_client->trans_rollback();
@@ -1187,7 +1203,7 @@ class Comprobante_model extends CI_Model
 		
 		$this->db_client->trans_commit();
 		$result['result']=1;
-
+		
 		return $result;
 
 	}
@@ -1251,7 +1267,7 @@ class Comprobante_model extends CI_Model
 		a.tipodocumentoreferenciacorregi,
 		a.numerodocumentoreferenciacorre,
 		a.bl_origen,
-
+		
 		b.numeroordenitem,
 		b.codigoproducto,
 		b.descripcion,
@@ -1267,14 +1283,14 @@ class Comprobante_model extends CI_Model
 		b.importecargo,
 		b.importereferencial,
 		b.codigoimportereferencial
-
+		
 		from spe_einvoiceheader a
 		inner join spe_einvoicedetail b on 
 		a.tipodocumentoemisor=b.tipodocumentoemisor 
 		and a.numerodocumentoemisor=b.numerodocumentoemisor
 		and a.tipodocumento=b.tipodocumento
 		and a.serienumero=b.serienumero
-
+		
 		where a.tipodocumentoemisor='".$prm_tipodocumentoemisor."'
 		and a.numerodocumentoemisor='".$prm_numerodocumentoemisor."'
 		and a.tipodocumento='".$prm_tipodedocumento."'
@@ -1296,11 +1312,11 @@ class Comprobante_model extends CI_Model
 		$lista_documento=explode(',',$prm_documento);	
 
 		foreach($lista_documento as $key=>$v):		
-
+			
 			if (strlen($v)>3)//AVECES LLEGA VACIO
 		{			 
 			$detalle_documento=explode('-',$v);
-
+			
 				//RA-20160519-4-A
 			if ($detalle_documento[3]=='SIGNED')
 			{
@@ -1312,10 +1328,10 @@ class Comprobante_model extends CI_Model
 				$query="update spe_einvoiceheader set bl_reintento=0 where tipodocumentoemisor='6' and numerodocumentoemisor='".$prm_ruc_empr."'  
 				and tipodocumento='".$detalle_documento[0]."' and serienumero='".$detalle_documento[1].'-'.$detalle_documento[2]."';";
 			}
-
+			
 				//print_r($query);	
 				//return;	
-
+			
 			$this->db_client->query($query);
 			if ($this->db_client->trans_status() === FALSE)
 			{
@@ -1324,7 +1340,7 @@ class Comprobante_model extends CI_Model
 				return $result;
 			}
 		}
-
+		
 		endforeach;
 		
 		$this->db_client->trans_commit();
@@ -1344,7 +1360,7 @@ class Comprobante_model extends CI_Model
 		and tipodocumento='".$prm_tipodocumento."' and serienumero='".$prm_serienumero."' and visualizado=0;";
 		
 		$this->db_client->query($query);
-
+		
 		$result['result']=1;
 		
 		
@@ -1385,7 +1401,7 @@ class Comprobante_model extends CI_Model
 
 		//print_r($query);
 		//return;
-
+		
 		$consulta =  $this->db_client->query($query);		
 		return $consulta->result_array();
 
@@ -1406,7 +1422,7 @@ class Comprobante_model extends CI_Model
 
 		//print_r($query);
 		//return;
-
+		
 		$consulta =  $this->db_client->query($query);		
 		return $consulta->result_array();
 	}
@@ -1418,7 +1434,7 @@ class Comprobante_model extends CI_Model
 		$query="";
 		$query="select codigo, observacion, numerodocumentoemisor from bl_adicionales_auxiliares 
 		where numerodocumentoemisor='".$prm_tipodocumentoemisor."' order by orden;";
-		$consulta =  $this->db_client->query($query);
+		$consulta =  $this->db_client->query($query);		
 		return $consulta->result_array();
 	}
 
