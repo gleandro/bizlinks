@@ -1,5 +1,5 @@
 <?php
-@session_start();
+//@session_start();
 class Catalogos_model extends CI_Model
 {
 	function __construct()
@@ -55,6 +55,15 @@ class Catalogos_model extends CI_Model
 		}
 
 		$query=$query.");";
+		$consulta=$this->db->query($query);
+		return $consulta->result_array();	
+	}
+	
+	function Listar_TipodeDocumento_Todos()
+	{
+
+		$this->load->database('ncserver',TRUE);
+		$query="select co_item_tabla,no_corto from tm_tabla_multiple where no_tabla='TIPO_DOCUMENTO' and in_habilitado=1 and co_item_tabla in('01','03','07','08','20');";
 		$consulta=$this->db->query($query);
 		return $consulta->result_array();	
 	}

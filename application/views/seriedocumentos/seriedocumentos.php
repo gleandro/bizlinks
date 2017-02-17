@@ -757,13 +757,13 @@
 			{
 				var txt_cod_empr=$.trim($('#txt_cod_empr').val());
 				var txt_RazonSocialEmpresa=$.trim($('#txt_RazonSocialEmpresa').val());
-				var txt_tipo_confunid=$.trim($('#txt_tipo_confunid').val());
-				if(txt_tipo_confunid==1)//UNIDADES DE SUNAT
+				var txt_tipo_confserie=$.trim($('#txt_tipo_confserie').val());
+				if(txt_tipo_confserie==1)
 				{
 					$('#div_tipoconfiguracion').empty().append('SERIES POR EMPRESA');
 					
 				}
-				else if(txt_tipo_confunid==2)//UNIDADES PROPIAS
+				else if(txt_tipo_confserie==2)
 				{
 					$('#div_tipoconfiguracion').empty().append('SERIES POR USUARIO');	
 					
@@ -775,6 +775,7 @@
 				var txt_cod_empr=$.trim($('#txt_cod_empr').val());
 				var txt_RazonSocialEmpresa=$.trim($('#txt_RazonSocialEmpresa').val());
 				var txt_tipo_confserie=$.trim($('#txt_tipo_confserie').val());
+				//alert(txt_cod_empr);
 				if (txt_tipo_confserie==2)//
 				{
 					$('#txt_cod_EmisorSerieUsuario').val(txt_cod_empr);
@@ -786,8 +787,11 @@
 					$('#txt_cod_EmisorSerieUsuario').val('');
 					$('#txt_desc_EmisorSerieUsuario').val('');
 					//alert('conf else');
-					Listar_Tipodocumentoseries('');
+					//$('#cmb_tipodocumentoseries').val('0');
+					//$('#Cmb_TipoDocumentoSunat').val('0');	
+					Listar_Tipodocumentoseries("0");
 				}
+				
 			}
 			
 			
