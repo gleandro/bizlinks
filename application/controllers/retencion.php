@@ -247,6 +247,58 @@ class Retencion extends CI_Controller {
 		echo json_encode($result);
 	}
 
+	public function receptor_retencionlistar()
+	{
+		if(!$this->Usuarioinicio_model->SessionExiste())
+		{
+			$this->load->view('usuario/login'); 
+		}
+		else
+		{
+			$prm_cod_usuadm=$this->Usuarioinicio_model->Get_Cod_UsuAdm();
+			$prm_cod_usu=$this->Usuarioinicio_model->Get_Cod_Usu();
+			$prm_tip_usu=$this->Usuarioinicio_model->Get_Tip_Usu();		
+			if(!$this->Usuarioinicio_model->MarcoTrabajoExiste()){
+				$prm_cod_empr=0;
+			}else{
+				$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
+			}
+			$prm['Listar_UsuarioAccesos']=$this->Menu_model->Listar_UsuarioAccesosInvitado($prm_cod_usuadm,$prm_cod_empr,$prm_cod_usu,$prm_tip_usu);
+			$prm['Listar_Empresas']=$this->Empresa_model->Listar_EmpresaContacto($prm_cod_usuadm,$prm_tip_usu,$prm_cod_usu);
+			$Listar_EmpresaId=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);
+			if(!empty($Listar_EmpresaId))//SI NO ES NULO O VACIO
+			{
+				$prm['Ruc_Empresa']=$Listar_EmpresaId[0]['ruc_empr'];	
+				$prm['Razon_Social']=$Listar_EmpresaId[0]['raz_social'];
+				$prm['Tipo_confserie']=$Listar_EmpresaId[0]['tipo_confserie'];
+			}else{
+				$prm['Ruc_Empresa']='';	
+				$prm['Razon_Social']='';
+				$prm['Tipo_confserie']='';
+			}
+			
+			$prm['Listar_EstadoDocumento']=$this->Catalogos_model->Listar_EstadoDocumento();
+			//Obtener estados sunat bajo la condicion si es inHouse o no
+			$Listar_Parametros=$this->Catalogos_model->Listar_Parametros();
+			if(!empty($Listar_Parametros))//SI NO ES NULO O VACIO
+			{
+				$prm['Valor_Inhouse']=$Listar_Parametros[0]['is_inhouse'];
+			}else{
+				$prm['Valor_Inhouse']=0;
+			}
+			if ($prm['Valor_Inhouse']==0)
+			{
+				$prm['Listar_EstadoSunatRetencion']=$this->Catalogos_model->Listar_EstadoSunatRetencion_NoIn();
+			}
+			else{
+				$prm['Listar_EstadoSunatRetencion']=$this->Catalogos_model->Listar_EstadoSunatRetencion();
+			}
+			
+			$prm['pagina_ver']='retencion';
+			$this->load->view('retencion/receptor_retencionlistar',$prm);
+		}		
+	}
+	
 	public function Listar_Retenciones()
 	{
 		$arr=NULL;
@@ -297,35 +349,35 @@ class Retencion extends CI_Controller {
 			$prm_serie_numerofinal,$prm_cod_estdoc,$prm_fec_emisinicio,$prm_fec_emisfinal,
 			$prm_estado_documentosunat,$prm_razonsocialcliente);
 		
-			if(!empty($consulta))//SI NO ES NULO O VACIO
-			{
-				foreach($consulta as $key=>$v):
-					if ($prm_estado_documentosunat=='0')
+		if(!empty($consulta))//SI NO ES NULO O VACIO
+		{
+			foreach($consulta as $key=>$v):
+				if ($prm_estado_documentosunat=='0')
+				{
+					if ($prm_documento_cliente=='-')
 					{
-						if ($prm_documento_cliente=='-')
+						$posicion = strpos($prm_razonsocialcliente,$v['razonsocialproveedor']);
+						if($posicion !== FALSE)	
 						{
-							$posicion = strpos($prm_razonsocialcliente,$v['razonsocialproveedor']);
-							if($posicion !== FALSE)	
-							{
-								$Contador=$Contador+1;
-								$arr[$key]['nro_secuencia'] = $Contador;
-								$arr[$key]['razonsocialproveedor'] =strtoupper(trim($v['razonsocialproveedor'])); 
-								$arr[$key]['tipodocumento'] =trim($v['tipodocumento']); 
-								$arr[$key]['serienumeroretencion'] =trim($v['serienumeroretencion']); 
-								$arr[$key]['importetotalpagado'] =  trim($v['importetotalpagado']);
-								$arr[$key]['tipomonedapagado'] =  trim(strtoupper($v['tipomonedapagado']));
-								$arr[$key]['importetotalretenido'] =  trim($v['importetotalretenido']);
-								$arr[$key]['tipomonedaretenido'] =  trim(strtoupper($v['tipomonedaretenido']));
-								$arr[$key]['fechaemision'] = trim($v['fechaemision']);				
-								$arr[$key]['bl_estadoregistro'] =  trim($v['bl_estadoregistro']);
-								$arr[$key]['estado_documento'] =  trim(strtoupper($v['estadoregistro']));
-								$arr[$key]['estadosunat'] =  trim($v['estadosunat']);
-								$arr[$key]['nombreestadosunat']=strtoupper($this->Comprobante_model->Listar_EstadoDocumento($v['tipodocumento'],strtoupper($v['estadosunat'])));
-								$arr[$key]['numerodocumentoemisor'] =  trim($v['numerodocumentoemisor']);						
-								$arr[$key]['visualizado'] =  trim($v['visualizado']);
-								if ( $v['mensajeresponse']=='1'){
-									$arr[$key]['obssunat'] ='Pendiente de envio - Programado';
-								}else{
+							$Contador=$Contador+1;
+							$arr[$key]['nro_secuencia'] = $Contador;
+							$arr[$key]['razonsocialproveedor'] =strtoupper(trim($v['razonsocialproveedor'])); 
+							$arr[$key]['tipodocumento'] =trim($v['tipodocumento']); 
+							$arr[$key]['serienumeroretencion'] =trim($v['serienumeroretencion']); 
+							$arr[$key]['importetotalpagado'] =  trim($v['importetotalpagado']);
+							$arr[$key]['tipomonedapagado'] =  trim(strtoupper($v['tipomonedapagado']));
+							$arr[$key]['importetotalretenido'] =  trim($v['importetotalretenido']);
+							$arr[$key]['tipomonedaretenido'] =  trim(strtoupper($v['tipomonedaretenido']));
+							$arr[$key]['fechaemision'] = trim($v['fechaemision']);				
+							$arr[$key]['bl_estadoregistro'] =  trim($v['bl_estadoregistro']);
+							$arr[$key]['estado_documento'] =  trim(strtoupper($v['estadoregistro']));
+							$arr[$key]['estadosunat'] =  trim($v['estadosunat']);
+							$arr[$key]['nombreestadosunat']=strtoupper($this->Comprobante_model->Listar_EstadoDocumento($v['tipodocumento'],strtoupper($v['estadosunat'])));
+							$arr[$key]['numerodocumentoemisor'] =  trim($v['numerodocumentoemisor']);						
+							$arr[$key]['visualizado'] =  trim($v['visualizado']);
+							if ( $v['mensajeresponse']=='1'){
+								$arr[$key]['obssunat'] ='Pendiente de envio - Programado';
+							}else{
 								if ($v['bl_estadoregistro']=='E') //ERROR LOCAL
 								{	//TRAER LOS DATOS DEL ERROR
 									$Listar_ErrorDocumento=$this->Retencion_model->Listar_ErrorDocumento($prm_ruc_empr,$v['tipodocumentoemisor'],$v['tipodocumento'],$v['serieNumeroRetencion']);
@@ -523,38 +575,37 @@ class Retencion extends CI_Controller {
 				echo json_encode($result);
 				exit;
 			}
-
 			$prm_cod_documento=trim($this->input->post('param1'));
 			$prm_ruc_emisor=trim($this->input->post('param2'));
 
 			$carpetaemisor='6-'.$prm_ruc_emisor;		
-			$carpeta = ''; //keys/			
-			$rutadescargar=$this->Catalogos_model->Listar_RutaDocumentoDescargar();
-			if(!empty($rutadescargar))//SI NO ES NULO O VACIO
-			{
-				$carpeta=$rutadescargar[0]['valorcadena'];
-			}		
-			$nombrearchivopdf='';
-			$tipofirma='';
-
-			$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
-
-			$Listar_EmpresaId=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);
-
-			if(!empty($Listar_EmpresaId))//SI NO ES NULO O VACIO
-			{
-				$tipofirma=$Listar_EmpresaId[0]['tipo_conffirma'];
-			}
-
-			$lista_documento=explode(',',$prm_cod_documento);
-			if(!empty($lista_documento))
-			{
-				$listadearchivos=NULL;
-				$contador=0;
-				$cantidad=0;
-				foreach($lista_documento as $key=>$v):
-					if (strlen($v)>4)
-					{
+		$carpeta = ''; //keys/			
+		$rutadescargar=$this->Catalogos_model->Listar_RutaDocumentoDescargar();
+		if(!empty($rutadescargar))//SI NO ES NULO O VACIO
+		{
+			$carpeta=$rutadescargar[0]['valorcadena'];
+		}		
+		$nombrearchivopdf='';
+		$tipofirma='';
+		
+		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
+		
+		$Listar_EmpresaId=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);
+		
+		if(!empty($Listar_EmpresaId))//SI NO ES NULO O VACIO
+		{
+			$tipofirma=$Listar_EmpresaId[0]['tipo_conffirma'];
+		}
+		
+		$lista_documento=explode(',',$prm_cod_documento);
+		if(!empty($lista_documento))
+		{
+			$listadearchivos=NULL;
+			$contador=0;
+			$cantidad=0;
+			foreach($lista_documento as $key=>$v):
+				if (strlen($v)>4)
+				{
 					if ($tipofirma==1)//BIZLIN
 					{
 						$nombrearchivopdf=$prm_ruc_emisor.'-'.$v;
@@ -604,29 +655,29 @@ class Retencion extends CI_Controller {
 			$prm_ruc_emisor = basename($_GET['param2']);		
 
 			$carpetaemisor='6-'.$prm_ruc_emisor;		
-			$carpeta = ''; 	//keys/			
-			$rutadescargar=$this->Catalogos_model->Listar_RutaDocumentoDescargar();
-			if(!empty($rutadescargar))//SI NO ES NULO O VACIO
-			{
-				$carpeta=$rutadescargar[0]['valorcadena'];
-			}		
-			$nombrearchivopdf='';
-			$tipofirma='';
-			$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
-			$Listar_EmpresaId=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);
-
-			if(!empty($Listar_EmpresaId))//SI NO ES NULO O VACIO
-			{
-				$tipofirma=$Listar_EmpresaId[0]['tipo_conffirma'];
-			}		
-			$lista_documento=explode(',',$prm_cod_documento);
-			if(!empty($lista_documento))
-			{
-				$listadearchivos=NULL;
-				$contador=0;
-				foreach($lista_documento as $key=>$v):
-					if (strlen($v)>4)
-					{
+		$carpeta = ''; //keys/			
+		$rutadescargar=$this->Catalogos_model->Listar_RutaDocumentoDescargar();
+		if(!empty($rutadescargar))//SI NO ES NULO O VACIO
+		{
+			$carpeta=$rutadescargar[0]['valorcadena'];
+		}		
+		$nombrearchivopdf='';
+		$tipofirma='';
+		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
+		$Listar_EmpresaId=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);
+		
+		if(!empty($Listar_EmpresaId))//SI NO ES NULO O VACIO
+		{
+			$tipofirma=$Listar_EmpresaId[0]['tipo_conffirma'];
+		}		
+		$lista_documento=explode(',',$prm_cod_documento);
+		if(!empty($lista_documento))
+		{
+			$listadearchivos=NULL;
+			$contador=0;
+			foreach($lista_documento as $key=>$v):
+				if (strlen($v)>4)
+				{
 					if ($tipofirma==1)//BIZLIN
 					{
 						$nombrearchivopdf=$prm_ruc_emisor.'-'.$v;
@@ -683,17 +734,8 @@ class Retencion extends CI_Controller {
 
 			$prm_tipo_documento=$datos_seleccionados[0];
 			$prm_serie_numero=$datos_seleccionados[1].'-'.$datos_seleccionados[2];
-
+		//print_r('INICIA');
 			$consulta =$this->Retencion_model->Listar_DetalleDocumento($prm_ruc_empremisor,$prm_tipo_documento,$prm_serie_numero);
-
-			/*BUSCANDO LAS CARACTERISTICAS*/
-			/*$direccioncliente='';
-			$detallecaracteristica=$this->Retencion_model->Buscar_DetalleCaracteristica('6',$prm_ruc_empremisor,$prm_tipo_documento,$prm_serie_numero,'direccionAdquiriente');
-			return;
-			if(!empty($detallecaracteristica))//SI NO ES NULO O VACIO
-			{
-				$direccioncliente =  $detallecaracteristica[0]['valor'];
-			}*/
 
 		if(!empty($consulta))//SI NO ES NULO O VACIO
 		{
@@ -702,76 +744,54 @@ class Retencion extends CI_Controller {
 			$arr[$key]['razonsocialemisor'] =strtoupper(trim($v['razonsocialemisor'])); 
 			$arr[$key]['nombrecomercialemisor'] =trim($v['nombrecomercialemisor']); 
 			$arr[$key]['direccionemisor'] =trim($v['direccionemisor']);
-			$arr[$key]['urbanizacionEmisor'] =trim($v['urbanizacionemisor']); 
+			if (trim($v['urbanizacionemisor'])<>'-')
+			{
+				$arr[$key]['urbanizacionemisor'] =' - '.trim($v['urbanizacionemisor']); 
+			}else{
+				$arr[$key]['urbanizacionemisor'] =''; 
+			}
 			$arr[$key]['distritoemisor'] =trim($v['distritoemisor']); 
 			$arr[$key]['provinciaemisor'] =trim($v['provinciaemisor']); 
 			$arr[$key]['departamentoemisor'] =trim($v['departamentoemisor']); 
 			$arr[$key]['numerodocumentoemisor'] =trim($v['numerodocumentoemisor']); 
 			$arr[$key]['tipodocumentoemisor'] =trim($v['tipodocumentoemisor']); 
 			$arr[$key]['nombre_tipodocumentoemisor'] =trim($v['nombre_tipodocumentoemisor']); 
-			$arr[$key]['tasaretencion'] =trim($v['tasaretencion']);
 
 			$arr[$key]['serienumero'] =trim($v['serienumeroretencion']); 
 			$arr[$key]['tipodocumento'] =trim($v['tipodocumento']); 
 			$arr[$key]['nombre_tipodocumento'] =trim($v['nombre_tipodocumento']);
+
 			$arr[$key]['fechaemision'] = trim($v['fechaemision']);		
-				//me quede en validar AQUI
 			$arr[$key]['numerodocumentoadquiriente'] =trim($v['numerodocumentoproveedor']); 
 			$arr[$key]['razonsocialadquiriente'] =trim($v['razonsocialproveedor']); 	
-				//$arr[$key]['direccioncliente'] =$direccioncliente; //ojo aqui ya se considera directo
-			$arr[$key]['direccioncliente'] =trim($v['direccionproveedor']);						
-				//$arr[$key]['textoleyenda_1'] =trim($v['textoleyenda_1']);				
-			if ($v['tipomonedadocumentorelacionado']=='PEN')
-			{
-				$arr[$key]['tipomonedacabecera'] =trim($v['tipomonedadocumentorelacionado']).' - Sol'; 
-			}
-			else
-			{
-				$arr[$key]['tipomonedacabecera'] =trim($v['tipomonedadocumentorelacionado']).' - Dolar';
-			}
-			$arr[$key]['tipomoneda'] =trim($v['tipomonedadocumentorelacionado']);
+			$arr[$key]['direccioncliente'] =trim($v['direccionproveedor']); 
+			$arr[$key]['tasaretencion'] =trim($v['tasaretencion']); 
 
-			$arr[$key]['numeroordenitem'] =$Contador; 
-			$arr[$key]['tipo_doc'] =trim($v['tipo_doc']); 
+			$arr[$key]['importetotalretenido'] =trim($v['importetotalretenido']); 
+			$arr[$key]['tipomonedaretenido'] =trim($v['tipomonedaretenido']); 
+			$arr[$key]['importetotalpagado'] =trim($v['importetotalpagado']);
+			$arr[$key]['tipomonedapagado'] =trim($v['tipomonedapagado']); 
+
+				//detalle
+			$arr[$key]['numeroordenitem'] =trim($v['numeroordenitem']); 
+			$arr[$key]['tipodocumentorelacionado'] =trim($v['tipodocumentorelacionado']); 
+			$arr[$key]['nomb_tipodocumento'] =trim($v['nomb_tipodocumento']); 
+
 			$arr[$key]['numerodocumentorelacionado'] =trim($v['numerodocumentorelacionado']); 
 			$arr[$key]['fechaemisiondocumentorelaciona'] =trim($v['fechaemisiondocumentorelaciona']); 
 			$arr[$key]['fechapago'] =trim($v['fechapago']); 
 			$arr[$key]['numeropago'] =trim($v['numeropago']); 
+			$arr[$key]['tipomonedadocumentorelacionado'] =trim($v['tipomonedadocumentorelacionado']); 
+			$arr[$key]['tipomonedarelacionado'] =trim($v['tipomonedarelacionado']); 				
 			$arr[$key]['importetotaldocumentorelaciona'] =trim($v['importetotaldocumentorelaciona']); 
 			$arr[$key]['importepagosinretencion'] =trim($v['importepagosinretencion']); 
 			$arr[$key]['importeretenido'] =trim($v['importeretenido']); 
 			$arr[$key]['importetotalpagarneto'] =trim($v['importetotalpagarneto']); 
+			$arr[$key]['bl_estadoregistro'] =trim($v['bl_estadoregistro']); 
+			$arr[$key]['estadoregistro'] =trim($v['estadoregistro']); 
 
-
-				//Pie del detalle
-			$arr[$key]['importetotalpagado'] =trim($v['importetotalpagado']); 
-			$arr[$key]['importetotalretenido'] =trim($v['importetotalretenido']); 
-
-			/*
-				$arr[$key]['totalvalorventanetoopgravadas'] =trim($v['totalvalorventanetoopgravadas']); 
-				$arr[$key]['totalvalorventanetoopnogravada'] =trim($v['totalvalorventanetoopnogravada']);
-				$arr[$key]['totalvalorventanetoopexonerada'] =trim($v['totalvalorventanetoopexonerada']); 	
-				$arr[$key]['totalvalorventanetoopgratuitas'] =trim($v['totalvalorventanetoopgratuitas']);							
-				$arr[$key]['totaldescuentos'] =trim($v['totaldescuentos']); 
-				 
-				$arr[$key]['totaligv'] =trim($v['totaligv']); 
-				$arr[$key]['totalventa'] =trim($v['totalventa']); 
-
-				$arr[$key]['totaldetraccion'] =trim($v['totaldetraccion']); 
-				$arr[$key]['totalbonificacion'] =trim($v['totalbonificacion']); 
-				
-				$arr[$key]['numeroordenitem'] =trim($v['numeroordenitem']); 
-				$arr[$key]['codigoproducto'] =trim($v['codigoproducto']); 
-				$arr[$key]['descripcion'] =trim($v['descripcion']); 
-				$arr[$key]['unidadmedida'] =trim($v['unidadmedida']); 
-				$arr[$key]['cantidad'] =trim($v['cantidad']); 
-				$arr[$key]['importeunitariosinimpuesto'] =trim($v['importeunitariosinimpuesto']); 
-				$arr[$key]['importeunitarioconimpuesto'] =trim($v['importeunitarioconimpuesto']); 				
-				$arr[$key]['importedescuento'] =trim($v['importedescuento']); 
-				$arr[$key]['importetotalsinimpuesto'] =trim($v['importetotalsinimpuesto']); 
-			*/		
-				endforeach;
-
+			endforeach;
+			
 			if($_SESSION['SES_MarcoTrabajo'][0]['cod_rolseleccion']==2)//SOLO SI ES RECEPTOR SE ACTUALIZA LOS DATOS
 			{
 				$this->Retencion_model->Actualizar_VistaDocumento($prm_ruc_empremisor,$prm_tipo_documento,$prm_serie_numero);
@@ -788,7 +808,7 @@ class Retencion extends CI_Controller {
 			$result['data']="";
 		}
 		echo json_encode($result);
-	}	
+	}
 	
 	public function Listar_ProductosDocumento()
 	{
@@ -917,7 +937,6 @@ class Retencion extends CI_Controller {
 		}
 	}
 
-
 	public function Eliminar_Retenciontemporal()
 	{
 		$arr=NULL;
@@ -941,7 +960,6 @@ class Retencion extends CI_Controller {
 		}		
 		echo json_encode($result);
 	}
-
 
 	public function Guardar_Registroretenciones()
 	{
@@ -1001,68 +1019,249 @@ class Retencion extends CI_Controller {
 		echo json_encode($result);
 	}
 
-	public function Exportar_ExcelGeneral()
+	public function Crear_ArchivosDocumentoSeleccionado()
 	{
+		$result['status']=0;
 		if(!$this->Usuarioinicio_model->SessionExiste())
 		{
-			$this->load->view('usuario/login');
+			$result['status']=1000;
+			echo json_encode($result);
 			exit;
 		}
+		$prm_cod_documento=trim($this->input->post('param1'));
+		$prm_ruc_emisor=trim($this->input->post('param2'));
 
-
-		if (!isset($_GET['param1'])){	$prm_ruc_empr='';} else{$prm_ruc_empr=$_GET['param1'];}
-		if (!isset($_GET['param2'])){	$prm_documento_cliente='';} else{$prm_documento_cliente=$_GET['param2'];}
-		if (!isset($_GET['param3'])){	$prm_serie_numeroinicio='';} else{$prm_serie_numeroinicio=$_GET['param3'];}
-		if (!isset($_GET['param4'])){	$prm_serie_numerofinal='';} else{$prm_serie_numerofinal=$_GET['param4'];}
-		if (!isset($_GET['param5'])){	$prm_cod_estdoc=0;} else{$prm_cod_estdoc=$_GET['param5'];}
-		if (!isset($_GET['param6'])){	$prm_fec_emisiniciotmp='';} else{$prm_fec_emisiniciotmp=$_GET['param6'];}
-		if (!isset($_GET['param7'])){	$prm_fec_emisfinaltmp='';} else{$prm_fec_emisfinaltmp=$_GET['param7'];}	
-		//if (!isset($_GET['param8'])){	$prm_tipo_documentosunat='';} else{$prm_tipo_documentosunat=$_GET['param8'];}	
-		if (!isset($_GET['param9'])){	$prm_estado_documentosunat='';} else{$prm_estado_documentosunat=$_GET['param9'];}		
-		if (!isset($_GET['param10'])){	$prm_datosbuscar='';} else{$prm_datosbuscar=$_GET['param10'];}
-		if (!isset($_GET['param11'])){	$prm_razonsocialcliente='';} else{$prm_razonsocialcliente=$_GET['param11'];}
-		//if (!isset($_GET['param12'])){	$prm_tipomoneda='';} else{$prm_tipomoneda=$_GET['param12'];}
-		//se agrgo variable para RETENCIONES
-		$prm_estado_doc = 'RETENCIONES';
-		if ($prm_fec_emisiniciotmp=='')
+		
+		$carpetaemisor='6-'.$prm_ruc_emisor;		
+		$carpeta = ''; //keys/			
+		$rutadescargar=$this->Catalogos_model->Listar_RutaDocumentoDescargar();
+		if(!empty($rutadescargar))//SI NO ES NULO O VACIO
 		{
-			$prm_fec_emisinicio='';
+			$carpeta=$rutadescargar[0]['valorcadena'];
 		}
-		else
+		
+		$tipofirma='';
+		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
+		$Listar_EmpresaId=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);
+		if(!empty($Listar_EmpresaId))//SI NO ES NULO O VACIO
 		{
-			$prm_fec_emisiniciotmp=explode('/',$prm_fec_emisiniciotmp);
-			$prm_fec_emisinicio=($prm_fec_emisiniciotmp[2].'-'.$prm_fec_emisiniciotmp[1].'-'.$prm_fec_emisiniciotmp[0]);
+			$tipofirma=$Listar_EmpresaId[0]['tipo_conffirma'];
+		}		
+		$nombre_carpeta=$carpetaemisor.'/bloquedescargar';
+		$carpetadescarga = '././download/'.$nombre_carpeta;
+
+		$lista_documento=explode(',',$prm_cod_documento);	
+
+		if(!empty($lista_documento))
+		{	
+			$this->load->library('zip'); 			
+			if (!file_exists($carpetadescarga)) 
+			{
+				mkdir($carpetadescarga,0777, true);
+			}
+			else
+			{
+				$this->EliminarDirecctorio($carpetadescarga);
+				mkdir($carpetadescarga,0777, true);
+			}
+			$listadearchivos=NULL;
+			$contador=0;
+			
+			$cantidad=0;
+			$cantidadbucle=0;
+			
+			foreach($lista_documento as $key=>$v):
+				$nombrearchivopdf='';
+			if (strlen($v)>4)
+			{
+					if ($tipofirma==1)//BIZLIN
+					{
+						$nombrearchivopdf=$prm_ruc_emisor.'-'.$v;
+					}
+					else //LOCAL
+					{
+						$nombrearchivopdf='PDFLOCAL-'.$prm_ruc_emisor.'-'.$v;
+					}
+					$src=$carpeta.$carpetaemisor.'/'.$v.'/'.$nombrearchivopdf.'.pdf';
+					if (file_exists($src))  //El fichero $nombre_fichero existe
+					{
+						$this->zip->read_file($src);
+						$cantidad++;
+						$cantidadbucle++;
+					} 
+					//CASO CDR
+					$src=$carpeta.$carpetaemisor.'/'.$v.'/XML_CDR.xml';
+					if (file_exists($src))  //El fichero $nombre_fichero existe
+					{
+						$this->zip->read_file($src);
+						$cantidad++;
+						$cantidadbucle++;
+					} 
+					//CASO UBL
+					$src=$carpeta.$carpetaemisor.'/'.$v.'/XML_UBL.xml';
+					if (file_exists($src))  //El fichero $nombre_fichero existe
+					{
+						$this->zip->read_file($src);
+						$cantidad++;
+						$cantidadbucle++;
+					} 
+					
+					//CASO LOCAL_ CDR
+					$src=$carpeta.$carpetaemisor.'/'.$v.'/LOCAL_XML_CDR.xml';
+					if (file_exists($src))  //El fichero $nombre_fichero existe
+					{
+						$this->zip->read_file($src);
+						$cantidad++;
+						$cantidadbucle++;
+					} 
+					//CASO LOCAL_ UBL
+					$src=$carpeta.$carpetaemisor.'/'.$v.'/LOCAL_XML_UBL.xml';
+					if (file_exists($src))  //El fichero $nombre_fichero existe
+					{
+						$this->zip->read_file($src);
+						$cantidad++;
+						$cantidadbucle++;
+					}
+					
+					if ($cantidadbucle>0)
+					{
+						$nombrecarpetadoc=$prm_ruc_emisor.'-'.$v;
+						$listadearchivos[$contador]=$carpetadescarga.'/'.$nombrecarpetadoc;
+						$this->zip->archive($carpetadescarga.'/'.$nombrecarpetadoc.'.zip');
+						$this->zip->clear_data();
+						$contador++;
+
+						if($_SESSION['SES_MarcoTrabajo'][0]['cod_rolseleccion']==2)//SOLO SI ES RECEPTOR SE ACTUALIZA LOS DATOS
+						{
+							$codigo_documento=explode('-',$v);
+							$this->Comprobante_model->Actualizar_VistaDocumento($prm_ruc_emisor,$codigo_documento[0],($codigo_documento[1].'-'.$codigo_documento[2]));
+						}
+					}
+					$cantidadbucle=0;
+				}
+				endforeach;
+				if ($cantidad>0)
+				{
+					$result['status']=1;
+				}
+				else
+				{
+					$result['status']=2;
+				}
+			}
+			echo json_encode($result);
 		}
 
-		//$prm_fec_emisfinaltmp=trim($this->input->post('txt_FechaEmisionFinal'));
-		if ($prm_fec_emisfinaltmp=='')
+		public function Descargar_DocumentoSeleccionado()
 		{
-			$prm_fec_emisfinal='';
-		}
-		else
+			if(!$this->Usuarioinicio_model->SessionExiste())
+			{
+				$this->load->view('usuario/login');
+				exit;
+			}
+			if (!isset($_GET['param1'])){	$prm_cod_documento='';} else{$prm_cod_documento=$_GET['param1'];}
+
+			$prm_cod_documento = basename($_GET['param1']);		
+			$prm_ruc_emisor = basename($_GET['param2']);		
+
+			$carpetaemisor='6-'.$prm_ruc_emisor;		
+		$carpeta = ''; //keys/			
+		$rutadescargar=$this->Catalogos_model->Listar_RutaDocumentoDescargar();
+		if(!empty($rutadescargar))//SI NO ES NULO O VACIO
 		{
-			$prm_fec_emisfinaltmp=explode('/',$prm_fec_emisfinaltmp);
-			$prm_fec_emisfinal=$prm_fec_emisfinaltmp[2].'-'.$prm_fec_emisfinaltmp[1].'-'.$prm_fec_emisfinaltmp[0];
+			$carpeta=$rutadescargar[0]['valorcadena'];
+		}		
+
+		$tipofirma='';
+		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
+		$Listar_EmpresaId=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);
+		if(!empty($Listar_EmpresaId))//SI NO ES NULO O VACIO
+		{
+			$tipofirma=$Listar_EmpresaId[0]['tipo_conffirma'];
+		}		
+		$nombre_carpeta=$carpetaemisor.'/bloquedescargar';
+		$carpetadescarga = '././download/'.$nombre_carpeta;
+		$lista_documento=explode(',',$prm_cod_documento);
+
+		if(!empty($lista_documento))
+		{	
+			$this->load->library('zip'); 
+			$listadearchivos=NULL;
+			$contador=0;
+			
+			foreach($lista_documento as $key=>$v):
+				if (strlen($v)>4)
+				{
+					$nombrecarpetadoc=$prm_ruc_emisor.'-'.$v;
+					$listadearchivos[$contador]=$carpetadescarga.'/'.$nombrecarpetadoc;
+					$contador++;
+				}
+				endforeach;
+
+				foreach($listadearchivos as $key1=>$v1):
+					$this->zip->read_file($v1.'.zip');				
+				endforeach;
+
+				$fecha_actual=((date("Y-m-d H-i-s")).'.'.substr(microtime(),0,5)*1000);
+				$this->zip->download($prm_ruc_emisor.'-'.$fecha_actual.'.zip'); 
+			}
 		}
 
-		if (substr($prm_documento_cliente,0,1)=='E')
+		public function Exportar_ExcelGeneral()
 		{
-			$prm_documento_cliente='-';
-		}
+			if(!$this->Usuarioinicio_model->SessionExiste())
+			{
+				$this->load->view('usuario/login');
+				exit;
+			}
+			$Contador=0;
 
+			if (!isset($_GET['param1'])){	$prm_ruc_empr='';} 				else{$prm_ruc_empr=$_GET['param1'];}
+			if (!isset($_GET['param2'])){	$prm_documento_cliente='';} 	else{$prm_documento_cliente=$_GET['param2'];}
+			if (!isset($_GET['param3'])){	$prm_serie_numeroinicio='';} 	else{$prm_serie_numeroinicio=$_GET['param3'];}
+			if (!isset($_GET['param4'])){	$prm_serie_numerofinal='';} 	else{$prm_serie_numerofinal=$_GET['param4'];}
+			if (!isset($_GET['param5'])){	$prm_cod_estdoc=0;} 			else{$prm_cod_estdoc=$_GET['param5'];}
+			if (!isset($_GET['param6'])){	$prm_fec_emisiniciotmp='';} 	else{$prm_fec_emisiniciotmp=$_GET['param6'];}
+			if (!isset($_GET['param7'])){	$prm_fec_emisfinaltmp='';} 		else{$prm_fec_emisfinaltmp=$_GET['param7'];}	
+		//if (!isset($_GET['param8'])){	$prm_tipo_documentosunat='';} 	else{$prm_tipo_documentosunat=$_GET['param8'];}	
+			if (!isset($_GET['param9'])){	$prm_estado_documentosunat='';} else{$prm_estado_documentosunat=$_GET['param8'];}		
+			if (!isset($_GET['param10'])){	$prm_datosbuscar='';} 			else{$prm_datosbuscar=$_GET['param9'];}
+			if (!isset($_GET['param11'])){	$prm_razonsocialcliente='';} 	else{$prm_razonsocialcliente=$_GET['param10'];}
+		//if (!isset($_GET['param12'])){	$prm_tipomoneda='';} 		else{$prm_tipomoneda=$_GET['param12'];}
 
-		$arr=NULL;
-		/*
-		$consulta =$this->Retencion_model->Listar_Retenciones($prm_ruc_empr,$prm_documento_cliente,$prm_serie_numeroinicio,
-		$prm_serie_numerofinal,$prm_cod_estdoc,$prm_fec_emisinicio,$prm_fec_emisfinal,
-		$prm_tipo_documentosunat,$prm_estado_documentosunat,$prm_tipomoneda, $prm_razonsocialcliente);
-		*/
-		$consulta =$this->Retencion_model->Listar_Retenciones($prm_ruc_empr,$prm_documento_cliente,$prm_serie_numeroinicio,
-			$prm_serie_numerofinal,$prm_cod_estdoc,$prm_fec_emisinicio,$prm_fec_emisfinal,
-			$prm_estado_documentosunat, $prm_razonsocialcliente);
-		$estado_documento='';
-		$tipo_documentosunat='';
-		$estado_documentosunat='';
+			if ($prm_fec_emisiniciotmp=='')
+			{
+				$prm_fec_emisinicio='';
+			}else
+			{
+				$prm_fec_emisiniciotmp=explode('/',$prm_fec_emisiniciotmp);
+				$prm_fec_emisinicio=($prm_fec_emisiniciotmp[2].'-'.$prm_fec_emisiniciotmp[1].'-'.$prm_fec_emisiniciotmp[0]);
+			}
+
+			if ($prm_fec_emisfinaltmp=='')
+			{
+				$prm_fec_emisfinal='';
+			}else
+			{
+				$prm_fec_emisfinaltmp=explode('/',$prm_fec_emisfinaltmp);
+				$prm_fec_emisfinal=$prm_fec_emisfinaltmp[2].'-'.$prm_fec_emisfinaltmp[1].'-'.$prm_fec_emisfinaltmp[0];
+			}
+
+			if (substr($prm_documento_cliente,0,1)=='E')
+			{
+				$prm_documento_cliente='-';
+			}
+
+			$arr=NULL;
+
+			$consulta =$this->Retencion_model->Listar_Retenciones(
+				$prm_ruc_empr,				$prm_documento_cliente,	$prm_serie_numeroinicio,
+				$prm_serie_numerofinal,		$prm_cod_estdoc,		$prm_fec_emisinicio,
+				$prm_fec_emisfinal,			$prm_estado_documentosunat,$prm_razonsocialcliente);
+
+		//$estado_documento='';
+		//$tipo_documentosunat='';
+		//$estado_documentosunat='';
 
 		if(!empty($consulta))//SI NO ES NULO O VACIO
 		{
@@ -1071,159 +1270,102 @@ class Retencion extends CI_Controller {
 				{
 					if ($prm_documento_cliente=='-')
 					{
-						$posicion = strpos($prm_razonsocialcliente,$v['razonsocialadquiriente']);			 
+						$posicion = strpos($prm_razonsocialcliente,$v['razonsocialproveedor']);
 						if($posicion !== FALSE)	
 						{
-							$arr[$key]['razonsocialadquiriente'] =strtoupper(trim($v['razonsocialadquiriente'])); 
+							$Contador=$Contador+1;
+							$arr[$key]['nro_secuencia'] = $Contador;
+							$arr[$key]['razonsocialproveedor'] =strtoupper(trim($v['razonsocialproveedor'])); 
 							$arr[$key]['tipodocumento'] =trim($v['tipodocumento']); 
-							$arr[$key]['nomb_tipodocumento'] =trim($v['nomb_tipodocumento']);				
-							$arr[$key]['serienumero'] =trim($v['serienumero']);
-							$arr[$key]['tipomoneda'] =  trim(strtoupper($v['tipomoneda']));
-							$arr[$key]['totalventa'] =  number_format(trim($v['totalventa']),2,'.',','); 
+							$arr[$key]['serienumeroretencion'] =trim($v['serienumeroretencion']); 
+							$arr[$key]['importetotalpagado'] =  trim($v['importetotalpagado']);
+							$arr[$key]['tipomonedapagado'] =  trim(strtoupper($v['tipomonedapagado']));
+							$arr[$key]['importetotalretenido'] =  trim($v['importetotalretenido']);
+							$arr[$key]['tipomonedaretenido'] =  trim(strtoupper($v['tipomonedaretenido']));
 							$arr[$key]['fechaemision'] = trim($v['fechaemision']);				
 							$arr[$key]['bl_estadoregistro'] =  trim($v['bl_estadoregistro']);
-							$arr[$key]['estado_documento'] =  trim(strtoupper($v['estado_documento']));					
+							$arr[$key]['estado_documento'] =  trim(strtoupper($v['estadoregistro']));
 							$arr[$key]['estadosunat'] =  trim($v['estadosunat']);
 							$arr[$key]['nombreestadosunat']=strtoupper($this->Comprobante_model->Listar_EstadoDocumento($v['tipodocumento'],strtoupper($v['estadosunat'])));
 							$arr[$key]['numerodocumentoemisor'] =  trim($v['numerodocumentoemisor']);						
-							$arr[$key]['visualizado'] =  trim($v['visualizado']);	
-
-							if ( $v['mensajeresponse']=='1')
-							{
+							$arr[$key]['visualizado'] =  trim($v['visualizado']);
+							if ( $v['mensajeresponse']=='1'){
 								$arr[$key]['obssunat'] ='Pendiente de envio - Programado';
-							}
-							else
-							{
+							}else{
 								if ($v['bl_estadoregistro']=='E') //ERROR LOCAL
-								{
-									//TRAER LOS DATOS DEL ERROR
-									$Listar_ErrorDocumento=$this->Comprobante_model->Listar_ErrorDocumento($prm_ruc_empr,$v['tipodocumentoemisor'],$v['tipodocumento'],$v['serienumero']);
-									
+								{	//TRAER LOS DATOS DEL ERROR
+									$Listar_ErrorDocumento=$this->Retencion_model->Listar_ErrorDocumento($prm_ruc_empr,$v['tipodocumentoemisor'],$v['tipodocumento'],$v['serieNumeroRetencion']);
 									if(!empty($Listar_ErrorDocumento))//SI NO ES NULO O VACIO
 									{
 										$arr[$key]['obssunat'] =  $Listar_ErrorDocumento[0]['descripcionerror'];
-									}
-									else
-									{
+									}else{
 										$arr[$key]['obssunat'] =  '';
-									}
-
-								}
-								else
-								{
+									}						
+								}else{
 									if (empty($v['bl_mensaje']) or trim($v['bl_mensaje']==''))
 									{
 										if (empty($v['bl_mensajesunat']) or trim($v['bl_mensajesunat']==''))
 										{
 											$arr[$key]['obssunat']='';
-										}
-										else
-										{
+										}else{
 											$arr[$key]['obssunat']=$v['bl_mensajesunat'];
 										}
-									}
-									else
-									{
+									}else{
 										$arr[$key]['obssunat']=$v['bl_mensaje'];
 									}
 								}
 							}
-
-							$arr[$key]['inhabilitado'] =  trim($v['inhabilitado']);	
-
-							if ($v['bl_estadoregistro']=='L')
-							{
-								$arr[$key]['cant_reintento'] =  trim($v['reintento']);
-							}
-							else
-							{
-								$arr[$key]['cant_reintento'] =  trim($v['bl_reintento']);
-							}	
-
-							$estado_documento=trim(strtoupper($v['estado_documento']));
-							$tipo_documentosunat=trim(strtoupper($prm_estado_doc));
-							$estado_documentosunat=$arr[$key]['nombreestadosunat'];
-						}
-					}
-					else
+						}//fin posicion
+					}else//si documento cliente es distinto de -
 					{
-						$arr[$key]['razonsocialadquiriente'] =strtoupper(trim($v['razonsocialproveedor'])); 
+						$Contador=$Contador+1;
+						$arr[$key]['nro_secuencia'] = $Contador;
+						$arr[$key]['razonsocialproveedor'] =strtoupper(trim($v['razonsocialproveedor'])); 
 						$arr[$key]['tipodocumento'] =trim($v['tipodocumento']); 
-						$arr[$key]['nomb_tipodocumento'] =trim($prm_estado_doc);				
-						$arr[$key]['serienumero'] =trim($v['serienumeroretencion']);
-						$arr[$key]['tipomoneda'] =  trim(strtoupper($v['tipomonedapagado']));
-						$arr[$key]['totalventa'] =  number_format(trim($v['importetotalretenido']),2,'.',','); 
+						$arr[$key]['serienumeroretencion'] =trim($v['serienumeroretencion']); 
+						$arr[$key]['importetotalpagado'] =  trim($v['importetotalpagado']);
+						$arr[$key]['tipomonedapagado'] =  trim(strtoupper($v['tipomonedapagado']));
+						$arr[$key]['importetotalretenido'] =  trim($v['importetotalretenido']);
+						$arr[$key]['tipomonedaretenido'] =  trim(strtoupper($v['tipomonedaretenido']));
 						$arr[$key]['fechaemision'] = trim($v['fechaemision']);				
 						$arr[$key]['bl_estadoregistro'] =  trim($v['bl_estadoregistro']);
-						$arr[$key]['estado_documento'] =  trim(strtoupper($v['estadoregistro']));					
+						$arr[$key]['estado_documento'] =  trim(strtoupper($v['estadoregistro']));
 						$arr[$key]['estadosunat'] =  trim($v['estadosunat']);
 						$arr[$key]['nombreestadosunat']=strtoupper($this->Comprobante_model->Listar_EstadoDocumento($v['tipodocumento'],strtoupper($v['estadosunat'])));
 						$arr[$key]['numerodocumentoemisor'] =  trim($v['numerodocumentoemisor']);						
-						$arr[$key]['visualizado'] =  trim($v['visualizado']);	
-
-						if ( $v['mensajeresponse']=='1')
-						{
+						$arr[$key]['visualizado'] =  trim($v['visualizado']);
+						if ( $v['mensajeresponse']=='1'){
 							$arr[$key]['obssunat'] ='Pendiente de envio - Programado';
-						}
-						else
-						{
+						}else{
 							if ($v['bl_estadoregistro']=='E') //ERROR LOCAL
-							{
-								//TRAER LOS DATOS DEL ERROR
-								$Listar_ErrorDocumento=$this->Comprobante_model->Listar_ErrorDocumento($prm_ruc_empr,$v['tipodocumentoemisor'],$v['tipodocumento'],$v['serienumero']);
+							{	//TRAER LOS DATOS DEL ERROR
+								$Listar_ErrorDocumento=$this->Retencion_model->Listar_ErrorDocumento($prm_ruc_empr,$v['tipodocumentoemisor'],$v['tipodocumento'],$v['serienumeroretencion']);
 								if(!empty($Listar_ErrorDocumento))//SI NO ES NULO O VACIO
 								{
 									$arr[$key]['obssunat'] =  $Listar_ErrorDocumento[0]['descripcionerror'];
-								}
-								else
-								{
+								}else{
 									$arr[$key]['obssunat'] =  '';
-								}
-
-							}
-							else
-							{
-
+								}						
+							}else{
 								if (empty($v['bl_mensaje']) or trim($v['bl_mensaje']==''))
 								{
-
 									if (empty($v['bl_mensajesunat']) or trim($v['bl_mensajesunat']==''))
 									{
 										$arr[$key]['obssunat']='';
-									}
-									else
-									{
+									}else{
 										$arr[$key]['obssunat']=$v['bl_mensajesunat'];
 									}
-								}
-								else
-								{
+								}else{
 									$arr[$key]['obssunat']=$v['bl_mensaje'];
 								}
 							}
 						}
-
-						//$arr[$key]['inhabilitado'] =  trim($v['inhabilitado']);	
-
-						if ($v['bl_estadoregistro']=='L')
-						{
-							$arr[$key]['cant_reintento'] =  trim($v['reintento']);
-						}
-						else
-						{
-							$arr[$key]['cant_reintento'] =  trim($v['bl_reintento']);
-						}
-
-						$estado_documento=trim(strtoupper($v['estadoregistro']));
-						$tipo_documentosunat=trim(strtoupper($prm_estado_doc));
-						$estado_documentosunat=$arr[$key]['nombreestadosunat'];
 					}
-				}
-				else
-				{	
+				}else //SIGNIFICA QUE SI SELECCIONO UN TIPO DE ESTADO SUNAT
+				{
 					if ($prm_documento_cliente=='-')
 					{
-						$posicion = strpos($prm_razonsocialcliente,$v['razonsocialproveedor']);			 
+						$posicion = strpos($prm_razonsocialcliente,$v['razonsocialproveedor']);
 						if($posicion !== FALSE)	
 						{
 							$estadodocsunat=$v['estadosunat'];
@@ -1232,127 +1374,99 @@ class Retencion extends CI_Controller {
 							{
 								$estadodocsunat=substr($estadodocsunat, -5); 
 							}
-							$posicion = strpos($estadodocsunat,$prm_estado_documentosunat);			 
+							$posicion = strpos($estadodocsunat,$prm_estado_documentosunat);
 							if($posicion !== FALSE)	
 							{
-								$arr[$key]['razonsocialadquiriente'] =strtoupper(trim($v['razonsocialproveedor'])); 
+								$Contador=$Contador+1;
+								$arr[$key]['nro_secuencia'] = $Contador;
+								$arr[$key]['razonsocialproveedor'] =strtoupper(trim($v['razonsocialproveedor'])); 
 								$arr[$key]['tipodocumento'] =trim($v['tipodocumento']); 
-								$arr[$key]['nomb_tipodocumento'] =trim($prm_estado_doc);				
-								$arr[$key]['serienumero'] =trim($v['serienumero']);
-								$arr[$key]['tipomoneda'] =  trim($v['tipomoneda']);
-								$arr[$key]['totalventa'] = number_format(trim($v['totalventa']),2,'.',','); 
-								$arr[$key]['fechaemision'] = trim($v['fechaemision']);	
+								$arr[$key]['serienumeroretencion'] =trim($v['serienumeroretencion']); 
+								$arr[$key]['importetotalpagado'] =  trim($v['importetotalpagado']);
+								$arr[$key]['tipomonedapagado'] =  trim(strtoupper($v['tipomonedapagado']));
+								$arr[$key]['importetotalretenido'] =  trim($v['importetotalretenido']);
+								$arr[$key]['tipomonedaretenido'] =  trim(strtoupper($v['tipomonedaretenido']));
+								$arr[$key]['fechaemision'] = trim($v['fechaemision']);				
 								$arr[$key]['bl_estadoregistro'] =  trim($v['bl_estadoregistro']);
 								$arr[$key]['estado_documento'] =  trim(strtoupper($v['estadoregistro']));
-								$arr[$key]['estadosunat'] =  trim($v['estadosunat']);		
+								$arr[$key]['estadosunat'] =  trim($v['estadosunat']);
 								$arr[$key]['nombreestadosunat']=strtoupper($this->Comprobante_model->Listar_EstadoDocumento($v['tipodocumento'],strtoupper($v['estadosunat'])));
-								$arr[$key]['numerodocumentoemisor'] =  trim($v['numerodocumentoemisor']);		
+								$arr[$key]['numerodocumentoemisor'] =  trim($v['numerodocumentoemisor']);						
 								$arr[$key]['visualizado'] =  trim($v['visualizado']);
-
-								if ( $v['mensajeresponse']=='1')
-								{
+								if ( $v['mensajeresponse']=='1'){
 									$arr[$key]['obssunat'] ='Pendiente de envio - Programado';
-								}
-								else
-								{					
+								}else{
 									if (empty($v['bl_mensaje']) or trim($v['bl_mensaje']==''))
 									{
 										if (empty($v['bl_mensajesunat']) or trim($v['bl_mensajesunat']==''))
 										{
 											$arr[$key]['obssunat']='';
-										}
-										else
-										{
+										}else{
 											$arr[$key]['obssunat']=$v['bl_mensajesunat'];
 										}
-									}
-									else
-									{
+									}else{
 										$arr[$key]['obssunat']=$v['bl_mensaje'];
 									}
 								}
-
-									//$arr[$key]['inhabilitado'] =  trim($v['inhabilitado']);
 								if ($v['bl_estadoregistro']=='L')
 								{
 									$arr[$key]['cant_reintento'] =  trim($v['reintento']);
-								}
-								else
-								{
+								}else{
 									$arr[$key]['cant_reintento'] =  trim($v['bl_reintento']);
 								}
-
-								$estado_documento=trim(strtoupper($v['estadoregistro']));
-								$tipo_documentosunat=trim(strtoupper($prm_estado_doc));
-								$estado_documentosunat=$arr[$key]['nombreestadosunat'];
-							}							
-						}
-					}
-					else
+							}
+						}//fin posicion razonsocialproveedor
+					}else
 					{
-
 						$estadodocsunat=$v['estadosunat'];
-						$posicion = strpos($estadodocsunat,'/');		 
+						$posicion = strpos($estadodocsunat,'/');			 
 						if($posicion !== FALSE)	
 						{
 							$estadodocsunat=substr($estadodocsunat, -5); 
 						}
-						$posicion = strpos($estadodocsunat,$prm_estado_documentosunat);	
+						$posicion = strpos($estadodocsunat,$prm_estado_documentosunat);
 						if($posicion !== FALSE)	
 						{
-							$arr[$key]['razonsocialadquiriente'] =strtoupper(trim($v['razonsocialproveedor'])); 
+							$Contador=$Contador+1;
+							$arr[$key]['nro_secuencia'] = $Contador;
+							$arr[$key]['razonsocialproveedor'] =strtoupper(trim($v['razonsocialproveedor'])); 
 							$arr[$key]['tipodocumento'] =trim($v['tipodocumento']); 
-							$arr[$key]['nomb_tipodocumento'] =trim($prm_estado_doc);			
-							$arr[$key]['serienumero'] =trim($v['serienumeroretencion']);
-							$arr[$key]['tipomoneda'] =  trim($v['tipomonedapagado']);
-							$arr[$key]['totalventa'] =  number_format(trim($v['importetotalretenido']),2,'.',','); 
+							$arr[$key]['serienumeroretencion'] =trim($v['serienumeroretencion']); 
+							$arr[$key]['importetotalpagado'] =  trim($v['importetotalpagado']);
+							$arr[$key]['tipomonedapagado'] =  trim(strtoupper($v['tipomonedapagado']));
+							$arr[$key]['importetotalretenido'] =  trim($v['importetotalretenido']);
+							$arr[$key]['tipomonedaretenido'] =  trim(strtoupper($v['tipomonedaretenido']));
 							$arr[$key]['fechaemision'] = trim($v['fechaemision']);				
 							$arr[$key]['bl_estadoregistro'] =  trim($v['bl_estadoregistro']);
-							$arr[$key]['estado_documento'] =  trim(strtoupper($v['estadoregistro']));				
+							$arr[$key]['estado_documento'] =  trim(strtoupper($v['estadoregistro']));
 							$arr[$key]['estadosunat'] =  trim($v['estadosunat']);
 							$arr[$key]['nombreestadosunat']=strtoupper($this->Comprobante_model->Listar_EstadoDocumento($v['tipodocumento'],strtoupper($v['estadosunat'])));
 							$arr[$key]['numerodocumentoemisor'] =  trim($v['numerodocumentoemisor']);						
-							$arr[$key]['visualizado'] =  trim($v['visualizado']);	
-
-							if ( $v['mensajeresponse']=='1')
-							{
+							$arr[$key]['visualizado'] =  trim($v['visualizado']);
+							if ( $v['mensajeresponse']=='1'){
 								$arr[$key]['obssunat'] ='Pendiente de envio - Programado';
-							}
-							else
-							{					
+							}else{
 								if (empty($v['bl_mensaje']) or trim($v['bl_mensaje']==''))
 								{
 									if (empty($v['bl_mensajesunat']) or trim($v['bl_mensajesunat']==''))
 									{
 										$arr[$key]['obssunat']='';
-									}
-									else
-									{
+									}else{
 										$arr[$key]['obssunat']=$v['bl_mensajesunat'];
 									}
-								}
-								else
-								{
+								}else{
 									$arr[$key]['obssunat']=$v['bl_mensaje'];
 								}
 							}
-
-								//$arr[$key]['inhabilitado'] =  trim($v['inhabilitado']);
 							if ($v['bl_estadoregistro']=='L')
 							{
 								$arr[$key]['cant_reintento'] =  trim($v['reintento']);
-							}
-							else
-							{
+							}else{
 								$arr[$key]['cant_reintento'] =  trim($v['bl_reintento']);
 							}
-
-							$estado_documento=trim(strtoupper($v['estadoregistro']));
-							$tipo_documentosunat=trim(strtoupper($prm_estado_doc));
-							$estado_documentosunat=$arr[$key]['nombreestadosunat'];
 						}
 					}
-				}						
+				}
 				endforeach;
 			}
 
@@ -1362,28 +1476,167 @@ class Retencion extends CI_Controller {
 			$prm['param3']=$prm_serie_numeroinicio;
 			$prm['param4']=$prm_serie_numerofinal;
 			if ($prm_cod_estdoc!='0'){ $prm['param5']=$estado_documento;}else{$prm['param5']='';}
-				//if ($prm_tipo_documentosunat!='0'){$prm['param11']=$tipo_documentosunat;} else{$prm['param11']='';}		
+		//if ($prm_tipo_documentosunat!='0'){$prm['param11']=$tipo_documentosunat;} else{$prm['param11']='';}		
 			if ($prm_estado_documentosunat!='0'){$prm['param12']=$estado_documentosunat;}else{$prm['param12']='';}
 
 			$prm['param6']=$prm_fec_emisinicio;
 			$prm['param7']=$prm_fec_emisfinal;
-
 			$prm['param8']=date('d/m/Y h:i:s');
 			if ($prm_datosbuscar=='')
 			{
-				$prm['param9']='LISTADO GENERAL DE LAS RETENCIONES';
+				$prm['param9']='LISTADO GENERAL DE LOS COMPROBANTES';
 			}
 			else
 			{
-				$prm['param9']='LISTADO SELECCIONADO DE LAS RETENCIONES';
+				$prm['param9']='LISTADO SELECCIONADO DE LOS COMPROBANTES';
 			}		
 			$prm['param10']=$prm_datosbuscar;
 			$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
 			$prm['datos_empresa']=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);	
+
 			$this->load->view('reportes/retenciones/retenciones_listadogeneral',$prm);		
 		}
 
+		function EliminarDirecctorio($carpeta)
+		{
+			foreach(glob($carpeta . "/*") as $archivos_carpeta)
+			{
+			//echo $archivos_carpeta;
+
+				if (is_dir($archivos_carpeta))
+				{
+					EliminarDirecctorio($archivos_carpeta);
+				}
+				else
+				{
+					unlink($archivos_carpeta);
+				}
+			}
+			rmdir($carpeta);
+		}
+
+		public function existe_comprobante()
+		{
+			$arr=NULL;
+			$Contador=0;
+			$result['status']=0;
+
+			$prm_tipodedocumento=trim($this->input->post('cmb_tipodedocumento'));
+			$prm_serienumero=trim($this->input->post('txt_serienumero'));
+			$prm_montototal=trim($this->input->post('txt_montototal'));		
+			$prm_montototal=number_format(trim($prm_montototal), 2, '.', '');
+			$prm_montototaltmp=explode('.',$prm_montototal);
+
+			if (count($prm_montototaltmp)>1)
+			{
+				if (strlen($prm_montototaltmp['1'])==1)
+				{
+					$prm_montototal=$prm_montototaltmp['0'].'.'.$prm_montototaltmp['1'].'0';
+				}else{	
+					$prm_montototal=$prm_montototaltmp['0'].'.'.$prm_montototaltmp['1'];
+				}
+			}else{
+				$prm_montototal=$prm_montototaltmp['0'].'.00';
+			}
+
+			$prm_fechaemisiontmp=explode('/',trim($this->input->post('txt_fechaemision')));
+			$prm_fechaemision=$prm_fechaemisiontmp[2].'-'.$prm_fechaemisiontmp[1].'-'.$prm_fechaemisiontmp[0];		
+			$prm_rucproveedor=trim($this->input->post('text_rucproveedor'));
+
+			$consulta =$this->Retencion_model->existe_comprobante($prm_tipodedocumento,$prm_serienumero,$prm_montototal,$prm_fechaemision,$prm_rucproveedor);
+
+		if(!empty($consulta))//SI NO ES NULO O VACIO
+		{
+			$result['status']=$consulta[0]['cantidad'];
+		}
+		echo json_encode($result);
 	}
+	
+	public function Listar_DetalleDocumento_Anonimo()
+	{
+		$arr=NULL;
+		$Contador=0;
+		$result['status']=0;
+		
+		$prm_ruc_empremisor=trim($this->input->post('txt_RucEmpresa'));
+		$prm_datosseleccionados=trim($this->input->post('txt_datosseleccionados'));
+		
+		$prm_datosseleccionados=(str_replace(",","",$prm_datosseleccionados));		
+		$datos_seleccionados=explode('-',$prm_datosseleccionados);
+		
+		$prm_tipo_documento=$datos_seleccionados[0];
+		$prm_serie_numero=$datos_seleccionados[1].'-'.$datos_seleccionados[2];
+
+		$consulta =$this->Retencion_model->Listar_DetalleDocumento($prm_ruc_empremisor,$prm_tipo_documento,$prm_serie_numero);
+		
+		if(!empty($consulta))//SI NO ES NULO O VACIO
+		{
+			foreach($consulta as $key=>$v):
+				$Contador=$Contador+1;
+			$arr[$key]['razonsocialemisor'] =strtoupper(trim($v['razonsocialemisor'])); 
+			$arr[$key]['nombrecomercialemisor'] =trim($v['nombrecomercialemisor']); 
+			$arr[$key]['direccionemisor'] =trim($v['direccionemisor']);
+			if (trim($v['urbanizacionemisor'])<>'-')
+			{
+				$arr[$key]['urbanizacionemisor'] =' - '.trim($v['urbanizacionemisor']); 
+			}else{
+				$arr[$key]['urbanizacionemisor'] =''; 
+			}
+			$arr[$key]['distritoemisor'] =trim($v['distritoemisor']); 
+			$arr[$key]['provinciaemisor'] =trim($v['provinciaemisor']); 
+			$arr[$key]['departamentoemisor'] =trim($v['departamentoemisor']); 
+			$arr[$key]['numerodocumentoemisor'] =trim($v['numerodocumentoemisor']); 
+			$arr[$key]['tipodocumentoemisor'] =trim($v['tipodocumentoemisor']); 
+			$arr[$key]['nombre_tipodocumentoemisor'] =trim($v['nombre_tipodocumentoemisor']); 
+
+			$arr[$key]['serienumero'] =trim($v['serienumeroretencion']); 
+			$arr[$key]['tipodocumento'] =trim($v['tipodocumento']); 
+			$arr[$key]['nombre_tipodocumento'] =trim($v['nombre_tipodocumento']);
+
+			$arr[$key]['fechaemision'] = trim($v['fechaemision']);		
+			$arr[$key]['numerodocumentoadquiriente'] =trim($v['numerodocumentoproveedor']); 
+			$arr[$key]['razonsocialadquiriente'] =trim($v['razonsocialproveedor']); 	
+			$arr[$key]['direccioncliente'] =trim($v['direccionproveedor']); 
+			$arr[$key]['tasaretencion'] =trim($v['tasaretencion']); 
+
+			$arr[$key]['importetotalretenido'] =trim($v['importetotalretenido']); 
+			$arr[$key]['tipomonedaretenido'] =trim($v['tipomonedaretenido']); 
+			$arr[$key]['importetotalpagado'] =trim($v['importetotalpagado']);
+			$arr[$key]['tipomonedapagado'] =trim($v['tipomonedapagado']); 
+
+				//detalle
+			$arr[$key]['numeroordenitem'] =trim($v['numeroordenitem']); 
+			$arr[$key]['tipodocumentorelacionado'] =trim($v['tipodocumentorelacionado']); 
+			$arr[$key]['nomb_tipodocumento'] =trim($v['nomb_tipodocumento']); 
+
+			$arr[$key]['numerodocumentorelacionado'] =trim($v['numerodocumentorelacionado']); 
+			$arr[$key]['fechaemisiondocumentorelaciona'] =trim($v['fechaemisiondocumentorelaciona']); 
+			$arr[$key]['fechapago'] =trim($v['fechapago']); 
+			$arr[$key]['numeropago'] =trim($v['numeropago']); 
+			$arr[$key]['tipomonedadocumentorelacionado'] =trim($v['tipomonedadocumentorelacionado']); 
+			$arr[$key]['tipomonedarelacionado'] =trim($v['tipomonedarelacionado']); 				
+			$arr[$key]['importetotaldocumentorelaciona'] =trim($v['importetotaldocumentorelaciona']); 
+			$arr[$key]['importepagosinretencion'] =trim($v['importepagosinretencion']); 
+			$arr[$key]['importeretenido'] =trim($v['importeretenido']); 
+			$arr[$key]['importetotalpagarneto'] =trim($v['importetotalpagarneto']); 
+			$arr[$key]['bl_estadoregistro'] =trim($v['bl_estadoregistro']); 
+			$arr[$key]['estadoregistro'] =trim($v['estadoregistro']); 
+
+			endforeach;
+			
+		}
+		if(sizeof($arr)>0)
+		{
+			$result['status']=1;
+			$result['data']=$arr;
+		}else{
+			$result['status']=0;
+			$result['data']="";
+		}
+		echo json_encode($result);
+	}
+	
+}
 
 
 

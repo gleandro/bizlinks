@@ -1,5 +1,5 @@
-<?php
-@session_start();
+<?php 
+//@session_start();
 class Retencion_model extends CI_Model
 {
 	function __construct()
@@ -47,7 +47,7 @@ class Retencion_model extends CI_Model
 			}
 			if ($prm_serie_numeroinicio!='' && $prm_serie_numerofinal!='')	
 			{
-				$query=$query." and a.serieNumeroRetencion>='".$prm_serie_numeroinicio."' and a.serieNumeroRetencion<='".$prm_serie_numerofinal."' ";
+				$query=$query." and a.serienumero>='".$prm_serie_numeroinicio."' and a.serienumero<='".$prm_serie_numerofinal."' ";
 			}
 			if ($prm_cod_estdoc!='0')	
 			{
@@ -66,7 +66,6 @@ class Retencion_model extends CI_Model
 				$query="";
 			}
 		}
-		//print_r($query);
 		$consulta =  $this->db_client->query($query);		
 		return $consulta->result_array();
 	}
@@ -118,20 +117,27 @@ class Retencion_model extends CI_Model
 		a.tipodocumento, 'COMPROBANTE DE RETENCION' nombre_tipodocumento,
 		a.serienumeroretencion,	a.numerodocumentoproveedor, a.razonsocialproveedor, 
 		a.direccionproveedor, a.fechaemision, a.tasaretencion, 
-		a.importetotalpagado, a.tipomonedatotalpagado, 
+		a.importetotalpagado, a.tipomonedatotalpagado,
 		(select b.nombre from sgr_multitabla b where b.grupo_nombre='TIPO_MONEDA' and b.activo=1 
 		and b.grupo_id=5 and b.valorcadena=a.tipomonedatotalpagado) tipomonedapagado,
 		a.importetotalretenido, a.tipomonedatotalretenido, 
 		(select b.nombre from sgr_multitabla b where b.grupo_nombre='TIPO_MONEDA' and b.activo=1 
 		and b.grupo_id=5 and b.valorcadena=a.tipomonedatotalretenido) tipomonedaretenido,
-		a.fechaemision, a.bl_estadoregistro, 
+		b.numeroordenitem, b.tipodocumentorelacionado,  
+		(select c.no_corto 
+		from tm_tabla_multiple c where c.no_tabla='TIPO_DOCUMENTO' and c.in_habilitado=1 
+		and c.co_item_tabla in('01','03','07','08')
+		and c.co_item_tabla=b.tipodocumentorelacionado) nomb_tipodocumento,	
+		b.numerodocumentorelacionado, b.fechaemisiondocumentorelaciona, 
+		b.fechapago, b.numeropago, b.tipomonedadocumentorelacionado, 
+		(select c.nombre from sgr_multitabla c where c.grupo_nombre='TIPO_MONEDA' and c.activo=1 
+		and c.grupo_id=5 and c.valorcadena=b.tipomonedadocumentorelacionado) tipomonedarelacionado,
+		b.importetotaldocumentorelaciona, 
+		b.importepagosinretencion, b.importeretenido, b.importetotalpagarneto,
+
+		a.bl_estadoregistro, 
 		(select b.no_corto from tm_tabla_multiple b where b.no_tabla='ESTADO_DOCUMENTO_PORTAL' 
-		and b.in_habilitado=1 and b.co_item_tabla=a.bl_estadoregistro) estadoregistro,
-		a.bl_reintento, 
-		(select c.no_corto from tm_tabla_multiple c where c.no_tabla='TIPO_DOCUMENTO' and c.in_habilitado =1 and c.co_item_tabla=b.tipoDocumentoRelacionado) tipo_doc ,
-		b.tipodocumentorelacionado , b.numerodocumentorelacionado, 
-		b.fechaemisiondocumentorelaciona, b.fechapago, b.numeropago, b.tipomonedadocumentorelacionado,
-		b.importetotaldocumentorelaciona, b.importepagosinretencion, b.importeretenido, b.importetotalpagarneto
+		and b.in_habilitado=1 and b.co_item_tabla=a.bl_estadoregistro) estadoregistro
 		from spe_retention a
 		inner join spe_retention_item b on (a.tipodocumentoemisor=b.tipodocumentoemisor 
 		and a.numerodocumentoemisor=b.numerodocumentoemisor
@@ -139,28 +145,34 @@ class Retencion_model extends CI_Model
 		where a.numerodocumentoemisor='".$prm_ruc_empremisor."' and a.tipodocumento='".$prm_tipo_documento."' 
 		and a.serienumeroretencion='".$prm_serie_numero."' and a.tipoDocumento='20'
 		order by a.tipodocumento,a.serienumeroretencion, b.numeroOrdenItem;";
+		//print_r($query);
+		//return;
 		$consulta =  $this->db_client->query($query);		
 		return $consulta->result_array();
 	}
 	
-	/*
-	function Buscar_DetalleCaracteristica($prm_tipodocumentoemisor,$prm_numerodocumentoemisor,$prm_tipodedocumento,$prm_serienumero,$prm_clave)
+	function existe_comprobante($prm_tipodedocumento,$prm_serienumero,$prm_montototal,$prm_fechaemision,$prm_rucproveedor)
 	{
 		$prm_conect_db='ncserver';
 		$this->db_client = $this->load->database($prm_conect_db, true);
 
 		$query="";
-		$query="select valor from spe_einvoiceheader_add 
-			where 
-				tipodocumentoemisor='".$prm_tipodocumentoemisor."'
-				and numerodocumentoemisor='".$prm_numerodocumentoemisor."'
-				and tipodocumento= '".$prm_tipodedocumento."'
-				and serienumero= '".$prm_serienumero."' 
-				and clave= '".$prm_clave."' ";
+		$query="select count(a.serienumeroretencion) cantidad
+		from spe_retention a 
+		inner join spe_retention_response b on a.tipodocumentoemisor=b.tipodocumentoemisor
+		and a.numerodocumentoemisor=b.numerodocumentoemisor
+		and a.serienumeroretencion=b.serienumeroretencion
+		and a.tipoDocumento=b.tipoDocumento
+		where a.serienumeroretencion='".$prm_serienumero."'
+		and a.tipodocumento='".$prm_tipodedocumento."'
+		and a.importetotalretenido='".$prm_montototal."'
+		and a.fechaemision='".$prm_fechaemision."'
+		and a.numeroDocumentoEmisor='".$prm_rucproveedor."'
+		and b.bl_estadoproceso<>'SIGNED';";
+
 		$consulta =  $this->db_client->query($query);		
 		return $consulta->result_array();
-	}*/
-
+	}
 
 	function Guardar_Registroretenciones($prm_cod_usu,$prm_cod_empr,$prm_cod_doc,$prm_tipo_doc,$prm_num_doc,$prm_fec_emision,$prm_fec_pago,$prm_num_pago,$prm_moneda_origen,$prm_imp_origen,$prm_imp_pago_sin_ret,$prm_imp_retenido,$prm_imp_total_pagar)
 	{
@@ -216,7 +228,6 @@ class Retencion_model extends CI_Model
 		return $result;
 	}
 
-
 	function Listar_RetencionesDocumento($prm_cod_usu,$prm_cod_empr)
 	{
 
@@ -263,6 +274,7 @@ class Retencion_model extends CI_Model
 		$result['result']=1;			
 		return $result;
 	}
+
 
 	function Eliminar_RetenciontemporalRegistros($prm_cod_empr,$prm_cod_usu)
 	{
@@ -677,4 +689,5 @@ class Retencion_model extends CI_Model
 
 		return $result;
 	}	
+
 }
