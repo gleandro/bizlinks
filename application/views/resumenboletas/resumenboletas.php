@@ -24,7 +24,7 @@
 	<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/plugins/jquery.ui.datepicker-es.js"></script>
 	<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/flexigrid/flexigrid/flexigrid.js"></script>
 
-	<script type="text/javascript">var urlexportardatos="<?php echo base_url();?>"</script>
+	<script>var urlexportardatos="<?php echo base_url();?>"</script>
 
 	<script type="text/javascript">
 
