@@ -106,7 +106,6 @@
 			Tipo_Afectacion();
 			Datos_Emisor();
 			ncsistema.Buscar_Clientes();
-			OcultarOtrosCargos();
 			Listar_SeriesDocumentos('20','','','');
 
 		})
@@ -1252,12 +1251,12 @@ function Seleccionar_DatoAdicional(key)
 				
 				dialogAdicional = $("#dialog-form-adicional").dialog({
 					autoOpen: false,
-					height: 300,
-					width: 300,
+					height: 340,
+					width: 550,
 					modal: true,
 					buttons: 
 					{
-						"Registrar Adicional": Registrar_DatosAdicionales,
+						"Aceptar": Registrar_DatosAdicionales,
 						"Cancelar": function() 
 						{
 							dialogAdicional.dialog( "close" );
@@ -3114,20 +3113,6 @@ function Calcular_Montos()
 				}
 			}
 			
-			function OcultarOtrosCargos()
-			{
-				var txt_config_valorprecio=$.trim($('#txt_config_valorprecio').val());
-				if (txt_config_valorprecio==0)
-				{
-					alert("algo esta mal xD");
-					//OcultarFilaTabla('row_cargos',1);
-				}else
-				{
-					alert("algo esta mal xD");
-					//OcultarFilaTabla('row_cargos',0);
-				}
-			}
-			
 			function OcultarOtrosCargos_Checked(valor)
 			{
 				var txt_config_valorprecio=$.trim($('#txt_config_valorprecio').val());
@@ -3499,43 +3484,29 @@ function OcultarFilaPassword(id,opcion)
 						</tr>
 					</table>
 				</div>
-				<!--
-				<div id="div_datosadicionales" style="width:100%; float:left; margin-top:2px;">
-					<div style="text-align:left;width:65%" >							
-						<button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
-						style="width:160px; height:30px" id="create-aditional" title="" >
-						<span class="ui-button-icon-left ui-icon ui-icon-document"></span>Ingresar adicional</button>	
-						<button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
-						style="width:160px; height:30px" id="delete-aditional" title="" >
-						<span class="ui-button-icon-left ui-icon ui-icon-document"></span>Eliminar adicional</button>	
-					</div>
-					<div id="div_ListadoAdicional" style="width:45%;border:solid 0px;float:left;text-align:center;margin-top:1px">
-					</div>
+				<div id="div_footer" style="width:100%; float:left; margin-top:2px; border: 1px solid #a6c9e2; border-radius:5px;">
+					<table border="0" width="100%" class="tablaFormulario">
+						<tr>
+							<td style="text-align:left;width:10%">
+								<button style="width:155; height:32px" id="btn_RegistrarDatosdelDocumentoGuardar" title=""
+								class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
+								onClick="ncsistema.Guardar_Einvoiceheader(0)">
+								<span class="ui-button-icon-left ui-icon ui-icon-disk"></span>
+								<span class="ui-button-text">Guardar</span></button>
+							</td>
+							<td style="text-align:left;width:90%">
+								<button style="width:155px; height:32px" id="btn_RegistrarDatosdelDocumento" title="" 
+								class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"
+								onClick="ncsistema.Guardar_Einvoiceheader(1)">
+								<span class="ui-button-icon-left ui-icon ui-icon-transfer-e-w"></span>
+								<span class="ui-button-text"><div id="div_nombrebotonguardar">Enviar y Declarar</div></span></button>
+							</td>
+						</tr>
+					</table>
 				</div>
-			-->
-			<div id="div_footer" style="width:100%; float:left; margin-top:2px; border: 1px solid #a6c9e2; border-radius:5px;">
-				<table border="0" width="100%" class="tablaFormulario">
-					<tr>
-						<td style="text-align:left;width:10%">
-							<button style="width:155; height:32px" id="btn_RegistrarDatosdelDocumentoGuardar" title=""
-							class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
-							onClick="ncsistema.Guardar_Einvoiceheader(0)">
-							<span class="ui-button-icon-left ui-icon ui-icon-disk"></span>
-							<span class="ui-button-text">Guardar</span></button>
-						</td>
-						<td style="text-align:left;width:90%">
-							<button style="width:155px; height:32px" id="btn_RegistrarDatosdelDocumento" title="" 
-							class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"
-							onClick="ncsistema.Guardar_Einvoiceheader(1)">
-							<span class="ui-button-icon-left ui-icon ui-icon-transfer-e-w"></span>
-							<span class="ui-button-text"><div id="div_nombrebotonguardar">Enviar y Declarar</div></span></button>
-						</td>
-					</tr>
-				</table>
 			</div>
-		</div>
 
-	</div>
+		</div>
 		<!--
 		<div>
 			<?php $this->load->view('inicio/footer'); ?> 
@@ -4053,29 +4024,19 @@ function OcultarFilaPassword(id,opcion)
 	</form>
 </div>
 
-<div id="dialog-form-adicional" title="Campos Adicionales" style="width:100%; margin:5px; border: 1px solid #a6c9e2; border-radius:5px; ">
-	<form>
-		<table width="100%" border="0px">				
-			<tr>
-				<td style="width:50%;font-weight:bold">
-					Debe selecionar un campo adicional:
-				</td >
-			</tr>
-			<tr>
-				<td style="width:50%;" colspan="4">
-					<select id="cmb_Adicionales" style="" onChange="" >
-						<option value="0">[SELECCIONAR]</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td style="font-weight:bold" colspan="5">
-					<textarea style="width: 100%;height: 120px;"></textarea>
-				</td>
-			</tr>
-		</table>
-	</form>
-</div>
+		<div id="dialog-form-adicional" title="Datos Adicionales">
+		 	<form>
+			<table width="100%" border="0px">				
+				<tr>
+					<td style="font-weight:bold" colspan="5">
+						<div id="div_Busqueda_DatosAdicionales" style="width:100%;border:solid 0px;float:left;
+							text-align:center;margin-top:10px">
+						</div>
+					</td>
+				</tr>
+			</table>
+		  </form>
+		</div>
 
 <script>
 	Listar_DatosDocumentoModificar();

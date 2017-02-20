@@ -411,6 +411,7 @@
 			{
 				$('#txt_id').val('0');
 				$('#txt_codigo').val('');
+				$('#txt_codigo').attr('disabled', true);
 				$('#txt_nombrecorto').val('');
 				$('#txt_nombrelargo').val('');
 				$('#txt_valorentero').val('');	
@@ -570,6 +571,7 @@
 			function VerDatos_Validar()
 			{
 				//var txt_id=$('#txt_id').val();
+				var txt_config_valorprecio=$.trim($('#txt_config_valorprecio').val());
 				var txt_codigo=$('#txt_codigo').val();
 				if ($.trim(txt_codigo)==''){
 					return;
@@ -588,6 +590,7 @@
 					{
 						if(parseInt(result.status)==1)
 						{
+							$('#txt_codigo').attr('disabled', true);
 							$.each(result.data,function(key,rs)
 							{
 								if (rs.est_reg=='0')

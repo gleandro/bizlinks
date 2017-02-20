@@ -279,6 +279,7 @@
 			function Limpiar_DatosAdicional()
 			{
 				$('#txt_Codigo').val('');
+				$('#txt_Codigo').attr('disabled',false);
 				$('#txt_Orden').val('');
 				$('#txt_Observacion').val('');
 				$('#txt_id').val('0')
@@ -347,6 +348,7 @@
 					{
 						if(parseInt(result.status)==1)
 						{
+							$('#txt_Codigo').attr('disabled','disabled');
 							$.each(result.data,function(key,rs)
 							{
 								$.trim($('#txt_Codigo').val(rs.codigo));
