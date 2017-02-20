@@ -309,7 +309,7 @@ class producto extends CI_Controller {
 		$prm_codigo=trim($this->input->post('txt_codigo'));
 		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
 		$consulta =$this->producto_model->Valida_Producto($prm_codigo, $prm_cod_empr);
-		
+
 		if(!empty($consulta))//SI NO ES NULO O VACIO
 		{
 			//id
