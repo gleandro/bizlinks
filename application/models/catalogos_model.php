@@ -103,9 +103,8 @@ class Catalogos_model extends CI_Model
 		and a.cod_empr=".$prm_cod_empr."
 		and b.cod_usu=".$prm_cod_usu."
 		and b.est_reg=1	;";
-
 		$consulta=$this->db->query($query);
-		//return;
+
 		return $consulta->result_array();	
 	}
 	

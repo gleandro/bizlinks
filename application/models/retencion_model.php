@@ -304,7 +304,8 @@ class Retencion_model extends CI_Model
 		$prm_tipodocumento,
 		$prm_razonsocialemisor,
 		$prm_nombrecomercialemisor,
-		$prm_numerodocumento,
+		$prm_seriedocumento,
+		$prm_correlativodocumento,
 		$prm_fechaemision,
 		$prm_ubigeoemisor,
 		$prm_direccionemisor,
@@ -329,7 +330,6 @@ class Retencion_model extends CI_Model
 		$datosproveedor,
 		$prm_observacion,
 		$prm_tipo_registro,
-		$prm_documentomodificar,
 		$prm_moneda
 		)
 	{
@@ -351,72 +351,23 @@ class Retencion_model extends CI_Model
 			//$valorigv_original=$valorigv;
 			//$valorigv=round(($valorigv/100),2);
 
-		if ($prm_documentomodificar!='')
-		{
-			$query="delete from spe_einvoiceheader 
-			where 
-			tipodocumentoemisor='".$prm_tipodocumentoemisor."' 
-			and numerodocumentoemisor= '".$prm_numerodocumentoemisor."' 
-			and tipodocumento= '".$prm_tipodocumento."' 
-			and serienumero='".$prm_numerodocumento."' ;";		
-			$consulta=$this->db_client->query($query);		
-			if ($this->db_client->trans_status() === FALSE)
-			{
-				$this->db_client->trans_rollback();
-				$result['result']=0;
-				$result['numero']=-10;
-				return $result;
-			}
-			
-			$query="delete from spe_einvoicedetail 
-			where 
-			tipodocumentoemisor='".$prm_tipodocumentoemisor."' 
-			and numerodocumentoemisor= '".$prm_numerodocumentoemisor."' 
-			and tipodocumento= '".$prm_tipodocumento."' 
-			and serienumero='".$prm_numerodocumento."' ;";
-			$consulta=$this->db_client->query($query);		
-			if ($this->db_client->trans_status() === FALSE)
-			{
-				$this->db_client->trans_rollback();
-				$result['result']=0;
-				$result['numero']=-11;
-				return $result;
-			}
-			
-			$query="delete from spe_einvoiceheader_add 
-			where 
-			tipodocumentoemisor='".$prm_tipodocumentoemisor."' 
-			and numerodocumentoemisor= '".$prm_numerodocumentoemisor."' 
-			and tipodocumento= '".$prm_tipodocumento."' 
-			and serienumero='".$prm_numerodocumento."' ;";	
-			$consulta=$this->db_client->query($query);		
-			if ($this->db_client->trans_status() === FALSE)
-			{
-				$this->db_client->trans_rollback();
-				$result['result']=0;
-				$result['numero']=-12;
-				return $result;
-			}
-		}//end if
-		/*
-		if ($prm_documentomodificar=='')// NUEVO REGISTRO
-		{
-			$query="select (num_doc) num_documento from sgr_configuracionseries where cod_empr='".$prm_cod_empr."' 
-			and tip_doc='".$prm_tipodocumento."' and ser_doc='".$prm_seriedocumento."';";	
 
-			$consulta=$this->db_client->query($query);		
-			if ($this->db_client->trans_status() === FALSE)
-			{
-				$this->db_client->trans_rollback();
-				$result['result']=0;
-				$result['numero']=-13;
-				return $result;
-			}
-			$numerodocumento=$consulta->result_array();
-			$prm_numerodocumento=0;
+		$query="select (num_doc) num_documento from sgr_configuracionseries where cod_empr='".$prm_cod_empr."' 
+		and tip_doc='".$prm_tipodocumento."' and ser_doc='".$prm_seriedocumento."';";	
+
+		$consulta=$this->db_client->query($query);		
+		if ($this->db_client->trans_status() === FALSE)
+		{
+			$this->db_client->trans_rollback();
+			$result['result']=0;
+			$result['numero']=-13;
+			return $result;
+		}
+		$numerodocumento=$consulta->result_array();
+		$prm_correlativodocumento=0;
 			if(!empty($numerodocumento))//SI NO ES NULO O VACIO
 			{
-				$prm_numerodocumento=str_pad($numerodocumento[0]['num_documento'],8, "0", STR_PAD_LEFT);
+				$prm_correlativodocumento=str_pad($numerodocumento[0]['num_documento'],8, "0", STR_PAD_LEFT);
 			}else
 			{
 				$this->db_client->trans_rollback();
@@ -426,12 +377,12 @@ class Retencion_model extends CI_Model
 			}
 			
 			//VALIDAMOS QUE EL NUMERO EN EJECUCION YA EXISTE REGISTRADO, SIEMPRE EN CUANDO SE INGRESO DE OTRA FUENTE O MANUAL
-			$query="select serienumero from spe_einvoiceheader 
+			$query="select serieNumeroRetencion from spe_retention 
 			where 
 			tipodocumentoemisor='".$prm_tipodocumentoemisor."' 
 			and numerodocumentoemisor= '".$prm_numerodocumentoemisor."' 
 			and tipodocumento= '".$prm_tipodocumento."' 
-			and serienumero='".$prm_seriedocumento.'-'.$prm_numerodocumento."' ;";		
+			and serieNumeroRetencion='".$prm_seriedocumento.'-'.$prm_correlativodocumento."' ;";		
 			
 			$consulta=$this->db_client->query($query);		
 			if ($this->db_client->trans_status() === FALSE)
@@ -445,160 +396,160 @@ class Retencion_model extends CI_Model
 			{
 				$this->db_client->trans_rollback();
 				$result['result']=2;
-				$result['numero']=$prm_numerodocumento;
+				$result['numero']=$prm_seriedocumento.'-'.$prm_correlativodocumento;
 				return $result;
 			}
-		}
-		
-		//Requerimiento 4 de la Versión 2: PARAMETRO DE MODELO TICKET
-		//Si es valor 3: es un modelo ticket
-		$valor_Aditional=0;
-		$get_Aditional = $this->db_client->query("select aditional from bl_configuration
-			where id_emisor='".$prm_tipodocumentoemisor."-".$prm_numerodocumentoemisor."';");	
-		$res_get_Aditional=$get_Aditional->result_array();
-		
-		if(!empty($res_get_Aditional))//SI NO ES NULO O VACIO
-		{
-			$valor_Aditional=substr(($res_get_Aditional[0]['aditional']), 10, 1);
-		}
-		*/
-		$query_colum='';
-		$query_valores='';
-		
 
-		//INICIO DE INSERCCION CABECERA SPE_EINVOICEHEADER
-		$query_colum="insert into SPE_RETENTION(tipoDocumentoEmisor,";	$query_valores=" values('".$prm_tipodocumentoemisor."',";
-		$query_colum=$query_colum."numeroDocumentoEmisor,";				$query_valores=$query_valores."'".$prm_numerodocumentoemisor."',";
-		$query_colum=$query_colum."serieNumeroRetencion,";			$query_valores=$query_valores."'".$prm_numerodocumento."',";
-		$query_colum=$query_colum."tipoDocumento,";			$query_valores=$query_valores."'".$prm_tipodocumento."',";
-		$query_colum=$query_colum."bl_estadoRegistro,";					$query_valores=$query_valores."'".$prm_blestadoregistro."',";
-		$query_colum=$query_colum."correoEmisor,";				$query_valores=$query_valores."'".$prm_correoemisor."',";
-		$query_colum=$query_colum."correoAdquiriente,";				$query_valores=$query_valores."'".$prm_correoadquiriente."',";
-		$query_colum=$query_colum."fechaEmision,";					$query_valores=$query_valores."'".$prm_fechaemision."',";
-		
-		if ($prm_nombrecomercialemisor!=''){
-			$query_colum=$query_colum."nombreComercialEmisor,";		$query_valores=$query_valores."'".$prm_nombrecomercialemisor."',";
-		}
-		if ($prm_ubigeoemisor!=''){
-			$query_colum=$query_colum."ubigeoEmisor,";				$query_valores=$query_valores."'".$prm_ubigeoemisor."',";
-		}
-		if ($prm_direccionemisor!=''){
-			$query_colum=$query_colum."direccionEmisor,";			$query_valores=$query_valores."'".$prm_direccionemisor."',";
-		}
-		if ($prm_urbanizacion!=''){
-			$query_colum=$query_colum."urbanizacionEmisor,";				$query_valores=$query_valores."'".$prm_urbanizacion."',";
-		}
-		if ($prm_provinciaemisor!=''){
-			$query_colum=$query_colum."provinciaEmisor,";			$query_valores=$query_valores."'".$prm_provinciaemisor."',";
-		}
-		if ($prm_departamentoemisor!=''){
-			$query_colum=$query_colum."departamentoEmisor,";		$query_valores=$query_valores."'".$prm_departamentoemisor."',";
-		}
-		if ($prm_distritoemisor!=''){
-			$query_colum=$query_colum."distritoEmisor,";			$query_valores=$query_valores."'".$prm_distritoemisor."',";
-		}
-		if ($prm_paisemisor!=''){
-			$query_colum=$query_colum."codigoPaisEmisor,";				$query_valores=$query_valores."'".$prm_paisemisor."',";
-		}
+			/*
+			//Requerimiento 4 de la Versión 2: PARAMETRO DE MODELO TICKET
+			//Si es valor 3: es un modelo ticket
+			$valor_Aditional=0;
+			$get_Aditional = $this->db_client->query("select aditional from bl_configuration
+				where id_emisor='".$prm_tipodocumentoemisor."-".$prm_numerodocumentoemisor."';");	
+			$res_get_Aditional=$get_Aditional->result_array();
 
-		if ($prm_razonsocialemisor!=''){
-			if ($prm_razonsocialemisor=='GENERICO')
-				$prm_razonsocialemisor='-';
-			$query_colum=$query_colum."razonSocialEmisor,";	$query_valores=$query_valores."'".$prm_razonsocialemisor."',";
-		}
-		if ($prm_numerodocumentoproveedor!=''){
-			$query_colum=$query_colum."numeroDocumentoProveedor,";$query_valores=$query_valores."'".$prm_numerodocumentoproveedor."',";
-		}
-		if ($prm_tipodocumentoproveedor!=''){
-			$query_colum=$query_colum."tipoDocumentoProveedor,";	$query_valores=$query_valores."'".$prm_tipodocumentoproveedor."',";
-		}
-		if ($prm_nombrecomercialproveedor!=''){
-			$query_colum=$query_colum."nombreComercialProveedor,";	$query_valores=$query_valores."'".$prm_nombrecomercialproveedor."',";
-		}
-		if ($prm_ubigeoproveedor!=''){
-			$query_colum=$query_colum."ubigeoProveedor,";				$query_valores=$query_valores."'".$prm_ubigeoproveedor."',";
-		}
-		if ($prm_direccionproveedor!=''){
-			$query_colum=$query_colum."direccionProveedor,";			$query_valores=$query_valores."'".$prm_direccionproveedor."',";
-		}
-		if ($prm_urbanizacionproveedor!=''){
-			$query_colum=$query_colum."urbanizacionProveedor,";				$query_valores=$query_valores."'".$prm_urbanizacionproveedor."',";
-		}
-		if ($prm_provinciaproveedor!=''){
-			$query_colum=$query_colum."provinciaProveedor,";			$query_valores=$query_valores."'".$prm_provinciaproveedor."',";
-		}
-		if ($prm_departamentoproveedor!=''){
-			$query_colum=$query_colum."departamentoProveedor,";		$query_valores=$query_valores."'".$prm_departamentoproveedor."',";
-		}
-		if ($prm_distritoproveedor!=''){
-			$query_colum=$query_colum."distritoProveedor,";			$query_valores=$query_valores."'".$prm_distritoproveedor."',";
-		}
-		if ($prm_codigopaisproveedor!=''){
-			$query_colum=$query_colum."codigoPaisProveedor,";				$query_valores=$query_valores."'".$prm_codigopaisproveedor."',";
-		}
-		if ($prm_razonsocialproveedor!=''){
-			if ($prm_razonsocialproveedor=='GENERICO')
-				$prm_razonsocialproveedor='-';
-			$query_colum=$query_colum."razonSocialProveedor,";	$query_valores=$query_valores."'".$prm_razonsocialproveedor."',";
-		}
+			if(!empty($res_get_Aditional))//SI NO ES NULO O VACIO
+			{
+				$valor_Aditional=substr(($res_get_Aditional[0]['aditional']), 10, 1);
+			}
+			*/		
+			$query_colum='';
+			$query_valores='';
 
-		$query_colum=$query_colum."regimenRetencion,";	 $query_valores=$query_valores."'01',";
-		$query_colum=$query_colum."tasaRetencion,";	 $query_valores=$query_valores."'3.00',";
 
-		if ($prm_observacion!=''){
-			$query_colum=$query_colum."observaciones,";	 $query_valores=$query_valores."'".$prm_observacion."',";
-		}
-		if ($prm_total_retenido!=''){
-			$query_colum=$query_colum."importeTotalRetenido,";	 $query_valores=$query_valores."'".$prm_total_retenido."',";
-		}
-		if ($prm_total_pagar!=''){
-			$query_colum=$query_colum."importeTotalPagado,";					$query_valores=$query_valores."'".$prm_total_pagar."',";
-		}
-		if ($prm_moneda!=''){
-			$query_colum=$query_colum."tipoMonedaTotalPagado,";					$query_valores=$query_valores."'".$prm_moneda."',";
-			$query_colum=$query_colum."tipoMonedaTotalRetenido,";					$query_valores=$query_valores."'".$prm_moneda."',";
-		}
+			//INICIO DE INSERCCION CABECERA SPE_EINVOICEHEADER
+			$query_colum="insert into SPE_RETENTION(tipoDocumentoEmisor,";	$query_valores=" values('".$prm_tipodocumentoemisor."',";
+			$query_colum=$query_colum."numeroDocumentoEmisor,";				$query_valores=$query_valores."'".$prm_numerodocumentoemisor."',";
+			$query_colum=$query_colum."serieNumeroRetencion,";			$query_valores=$query_valores."'".$prm_seriedocumento.'-'.$prm_correlativodocumento."',";
+			$query_colum=$query_colum."tipoDocumento,";			$query_valores=$query_valores."'".$prm_tipodocumento."',";
+			$query_colum=$query_colum."bl_estadoRegistro,";					$query_valores=$query_valores."'".$prm_blestadoregistro."',";
+			$query_colum=$query_colum."correoEmisor,";				$query_valores=$query_valores."'".$prm_correoemisor."',";
+			$query_colum=$query_colum."correoAdquiriente,";				$query_valores=$query_valores."'".$prm_correoadquiriente."',";
+			$query_colum=$query_colum."fechaEmision,";					$query_valores=$query_valores."'".$prm_fechaemision."',";
 
-		$query_colum=$query_colum."bl_origen)";							$query_valores=$query_valores."'P');";
+			if ($prm_nombrecomercialemisor!=''){
+				$query_colum=$query_colum."nombreComercialEmisor,";		$query_valores=$query_valores."'".$prm_nombrecomercialemisor."',";
+			}
+			if ($prm_ubigeoemisor!=''){
+				$query_colum=$query_colum."ubigeoEmisor,";				$query_valores=$query_valores."'".$prm_ubigeoemisor."',";
+			}
+			if ($prm_direccionemisor!=''){
+				$query_colum=$query_colum."direccionEmisor,";			$query_valores=$query_valores."'".$prm_direccionemisor."',";
+			}
+			if ($prm_urbanizacion!=''){
+				$query_colum=$query_colum."urbanizacionEmisor,";				$query_valores=$query_valores."'".$prm_urbanizacion."',";
+			}
+			if ($prm_provinciaemisor!=''){
+				$query_colum=$query_colum."provinciaEmisor,";			$query_valores=$query_valores."'".$prm_provinciaemisor."',";
+			}
+			if ($prm_departamentoemisor!=''){
+				$query_colum=$query_colum."departamentoEmisor,";		$query_valores=$query_valores."'".$prm_departamentoemisor."',";
+			}
+			if ($prm_distritoemisor!=''){
+				$query_colum=$query_colum."distritoEmisor,";			$query_valores=$query_valores."'".$prm_distritoemisor."',";
+			}
+			if ($prm_paisemisor!=''){
+				$query_colum=$query_colum."codigoPaisEmisor,";				$query_valores=$query_valores."'".$prm_paisemisor."',";
+			}
 
-		$query=$query_colum.$query_valores;
+			if ($prm_razonsocialemisor!=''){
+				if ($prm_razonsocialemisor=='GENERICO')
+					$prm_razonsocialemisor='-';
+				$query_colum=$query_colum."razonSocialEmisor,";	$query_valores=$query_valores."'".$prm_razonsocialemisor."',";
+			}
+			if ($prm_numerodocumentoproveedor!=''){
+				$query_colum=$query_colum."numeroDocumentoProveedor,";$query_valores=$query_valores."'".$prm_numerodocumentoproveedor."',";
+			}
+			if ($prm_tipodocumentoproveedor!=''){
+				$query_colum=$query_colum."tipoDocumentoProveedor,";	$query_valores=$query_valores."'".$prm_tipodocumentoproveedor."',";
+			}
+			if ($prm_nombrecomercialproveedor!=''){
+				$query_colum=$query_colum."nombreComercialProveedor,";	$query_valores=$query_valores."'".$prm_nombrecomercialproveedor."',";
+			}
+			if ($prm_ubigeoproveedor!=''){
+				$query_colum=$query_colum."ubigeoProveedor,";				$query_valores=$query_valores."'".$prm_ubigeoproveedor."',";
+			}
+			if ($prm_direccionproveedor!=''){
+				$query_colum=$query_colum."direccionProveedor,";			$query_valores=$query_valores."'".$prm_direccionproveedor."',";
+			}
+			if ($prm_urbanizacionproveedor!=''){
+				$query_colum=$query_colum."urbanizacionProveedor,";				$query_valores=$query_valores."'".$prm_urbanizacionproveedor."',";
+			}
+			if ($prm_provinciaproveedor!=''){
+				$query_colum=$query_colum."provinciaProveedor,";			$query_valores=$query_valores."'".$prm_provinciaproveedor."',";
+			}
+			if ($prm_departamentoproveedor!=''){
+				$query_colum=$query_colum."departamentoProveedor,";		$query_valores=$query_valores."'".$prm_departamentoproveedor."',";
+			}
+			if ($prm_distritoproveedor!=''){
+				$query_colum=$query_colum."distritoProveedor,";			$query_valores=$query_valores."'".$prm_distritoproveedor."',";
+			}
+			if ($prm_codigopaisproveedor!=''){
+				$query_colum=$query_colum."codigoPaisProveedor,";				$query_valores=$query_valores."'".$prm_codigopaisproveedor."',";
+			}
+			if ($prm_razonsocialproveedor!=''){
+				if ($prm_razonsocialproveedor=='GENERICO')
+					$prm_razonsocialproveedor='-';
+				$query_colum=$query_colum."razonSocialProveedor,";	$query_valores=$query_valores."'".$prm_razonsocialproveedor."',";
+			}
 
-		$this->db_client->query($query);
-		if ($this->db_client->trans_status() === FALSE)
-		{
-			$this->db_client->trans_rollback();
-			$result['result']=0;
-			$result['numero']=-2;
-			return $result;
-		}
+			$query_colum=$query_colum."regimenRetencion,";	 $query_valores=$query_valores."'01',";
+			$query_colum=$query_colum."tasaRetencion,";	 $query_valores=$query_valores."'3.00',";
+
+			if ($prm_observacion!=''){
+				$query_colum=$query_colum."observaciones,";	 $query_valores=$query_valores."'".$prm_observacion."',";
+			}
+			if ($prm_total_retenido!=''){
+				$query_colum=$query_colum."importeTotalRetenido,";	 $query_valores=$query_valores."'".$prm_total_retenido."',";
+			}
+			if ($prm_total_pagar!=''){
+				$query_colum=$query_colum."importeTotalPagado,";					$query_valores=$query_valores."'".$prm_total_pagar."',";
+			}
+			if ($prm_moneda!=''){
+				$query_colum=$query_colum."tipoMonedaTotalPagado,";					$query_valores=$query_valores."'".$prm_moneda."',";
+				$query_colum=$query_colum."tipoMonedaTotalRetenido,";					$query_valores=$query_valores."'".$prm_moneda."',";
+			}
+
+			$query_colum=$query_colum."bl_origen)";							$query_valores=$query_valores."'P');";
+
+			$query=$query_colum.$query_valores;
+
+			$this->db_client->query($query);
+			if ($this->db_client->trans_status() === FALSE)
+			{
+				$this->db_client->trans_rollback();
+				$result['result']=0;
+				$result['numero']=-2;
+				return $result;
+			}
 		//FIN INSERCCION SPE_EINVOICEHEADER: Inicia en linea 332
 
 		//INICIO PARA INSERCCION DEL DETALLE DEL COMPROBANTE: SPE_EINVOICEDETAIL
-		$consulta = $this->db_client->query("select 
-			tmp_ret,
-			cod_usu,
-			cod_empr,
-			cod_doc,
-			tipo_doc,
-			num_doc,
-			fec_emision,
-			fec_pago,
-			num_pago,
-			moneda_origen,
-			imp_origen,
-			imp_pago_sin_ret,
-			imp_retenido,
-			imp_total_pagar
-			from sgr_registroretenciones_temp where cod_empr='".$prm_cod_empr."' and cod_usu='".$prm_cod_usu."';");				
+			$consulta = $this->db_client->query("select 
+				tmp_ret,
+				cod_usu,
+				cod_empr,
+				cod_doc,
+				tipo_doc,
+				num_doc,
+				fec_emision,
+				fec_pago,
+				num_pago,
+				moneda_origen,
+				imp_origen,
+				imp_pago_sin_ret,
+				imp_retenido,
+				imp_total_pagar
+				from sgr_registroretenciones_temp where cod_empr='".$prm_cod_empr."' and cod_usu='".$prm_cod_usu."';");				
 
-		if ($this->db_client->trans_status() === FALSE)
-		{
-			$this->db_client->trans_rollback();
-			$result['result']=0;
-			$result['numero']=-4;
-			return $result;
-		}
-		$detalledocumento=$consulta->result_array();
+			if ($this->db_client->trans_status() === FALSE)
+			{
+				$this->db_client->trans_rollback();
+				$result['result']=0;
+				$result['numero']=-4;
+				return $result;
+			}
+			$detalledocumento=$consulta->result_array();
 		//Valida si existe detalle
 		if(count($detalledocumento)<1)//SI NO HAY NINGUN REGISTRO
 		{
@@ -617,7 +568,7 @@ class Retencion_model extends CI_Model
 				//INICIO INSERCCION DETALLE: SPE_EINVOICEDETAIL
 		$query_colum="insert into SPE_RETENTION_ITEM(tipoDocumentoEmisor,";	$query_valores=" values('".$prm_tipodocumentoemisor."',";
 		$query_colum=$query_colum."numeroDocumentoEmisor,";					$query_valores=$query_valores."'".$prm_numerodocumentoemisor."',";			
-		$query_colum=$query_colum."serieNumeroRetencion,";					$query_valores=$query_valores."'".$prm_numerodocumento."',";	
+		$query_colum=$query_colum."serieNumeroRetencion,";					$query_valores=$query_valores."'".$prm_seriedocumento.'-'.$prm_correlativodocumento."',";	
 		$query_colum=$query_colum."tipoDocumento,";							$query_valores=$query_valores."'20',";			
 		$query_colum=$query_colum."numeroordenitem,";						$query_valores=$query_valores."'".$contador."',";			
 		$query_colum=$query_colum."tipoDocumentoRelacionado,";				$query_valores=$query_valores."'".trim($v['cod_doc'])."',";			
@@ -668,24 +619,22 @@ class Retencion_model extends CI_Model
 			$result['numero']=-6;
 			return $result;
 		}
-		/*
-		if ($prm_documentomodificar=='')//SI NO HAY DOCUMENTO A MODIFICAR ENTONCES SE ESTA REGISTRANDO UNO NUEVO
+		
+
+		$query="update sgr_configuracionseries set num_doc=num_doc+1  
+		where cod_empr='".$prm_cod_empr."' and tip_doc='".$prm_tipodocumento."' and ser_doc='".$prm_seriedocumento."';";
+		$this->db_client->query($query);		
+		if ($this->db_client->trans_status() === FALSE)
 		{
-			$query="update sgr_configuracionseries set num_doc=num_doc+1  
-			where cod_empr='".$prm_cod_empr."' and tip_doc='".$prm_tipodocumento."' and ser_doc='".$prm_seriedocumento."';";
-			$this->db_client->query($query);		
-			if ($this->db_client->trans_status() === FALSE)
-			{
-				$this->db_client->trans_rollback();
-				$result['result']=0;
-				$result['numero']=-7;
-				return $result;
-			}
+			$this->db_client->trans_rollback();
+			$result['result']=0;
+			$result['numero']=-7;
+			return $result;
 		}
-		*/
+		
 		$this->db_client->trans_commit();
 		$result['result']=1;
-		$result['numero']=$prm_numerodocumento;
+		$result['numero']=$prm_seriedocumento.'-'.$prm_correlativodocumento;
 
 		return $result;
 	}	

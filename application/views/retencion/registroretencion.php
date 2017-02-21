@@ -30,6 +30,8 @@
 		$(document).ready(function()
 		{
 			$.datepicker.setDefaults($.datepicker.regional["es"]);
+			$("#txt_numero_relacionado").mask("****-99999999");
+			$("#txt_tipo_cambio").mask("9.9999");			
 			$("#tabs").tabs();
 			ncsistema.Listar_ProductosDocumento();	
 			$('#txt_FechaEmision').datepicker({
@@ -68,8 +70,7 @@
 			});	
 			$('#txt_FechaPago').datepicker('setDate', 'today');	
 
-			$('#txt_fechaRetencion').datepicker({
-				showOn: 'button',					
+			$('#txt_fechaRetencion').datepicker({				
 				buttonImage: "<?php echo base_url()?>application/helpers/image/ico/calendar_icon.gif",
 				buttonImageOnly: true,
 				dateFormat: 'dd/mm/yy',
@@ -92,10 +93,66 @@
 			});	
 			$('#txt_fechaCambio').datepicker('setDate', 'today');	
 
-			$("#txt_importepago_sin_retencion").keyup(function(event) {
-				var txt_importepago_sin_retencion=  $(this).val();
-				var importe = (txt_importepago_sin_retencion /100)*3;
-				var txt_importetotal_pagar = txt_importepago_sin_retencion - importe;
+			$("#txt_FechaPago").change(function(event) {
+				var dato = $("#txt_FechaPago").val();
+				$("#txt_fechaRetencion").val(dato);
+			});
+
+			$("#txt_numero_relacionado").change(function(e) {
+
+				var upper = $("#txt_numero_relacionado").val().toUpperCase();
+				$("#txt_numero_relacionado").val(upper);
+				var codigo = $("#cmb_tipodocumentosunat").val();
+				var letra = $("#txt_numero_relacionado").val().substring(0,1)
+
+
+				if (codigo == "01") 
+				{
+					if (!$("#txt_numero_relacionado").val().match(/^[F0-9]{1}[A-Z0-9]{3}-[0-9]{8}$/) && $("#txt_numero_relacionado").val() != "")
+					{
+
+						alert("No esta ingresando el formato correcto para una Factura fisica o electronica.");
+						$("#txt_numero_relacionado").val("");
+
+					}
+				}
+				if (codigo == "07") 
+				{
+					if (!$("#txt_numero_relacionado").val().match(/^[F0-9]{1}[A-Z0-9]{3}-[0-9]{8}$/) && $("#txt_numero_relacionado").val() != "")
+					{
+
+						alert("No esta ingresando el formato correcto para una Nota de Credito fisica o electronica.");
+						$("#txt_numero_relacionado").val("");
+
+					}
+				}
+				if (codigo == "08") 
+				{
+					if (!$("#txt_numero_relacionado").val().match(/^[F0-9]{1}[A-Z0-9]{3}-[0-9]{8}$/) && $("#txt_numero_relacionado").val() != "")
+					{
+
+						alert("No esta ingresando el formato correcto para una Nota de Debito fisica o electronica.");
+						$("#txt_numero_relacionado").val("");
+
+					}
+				}
+
+			});
+
+			$("#txt_numero_relacionado").focus(function(event) { 
+				if($("#cmb_tipodocumentosunat").val() == 0){	$("#cmb_tipodocumentosunat").focus();	}	
+			});			
+
+			$("#txt_importepago_sin_retencion,#txt_tipo_cambio").keyup(function(event) {
+				var factor_cargo = 1;
+				var importe_retenido = 0;
+				if ($("#cmb_Monedas option:selected")[0].innerText == "US Dollar")
+				{
+					factor_cargo = $("#txt_tipo_cambio").val();
+				}
+				var txt_importepago_sin_retencion = $("#txt_importepago_sin_retencion").val() * factor_cargo;
+				var importe = ((txt_importepago_sin_retencion /100)*3).toFixed(2);
+				var txt_importetotal_pagar = (txt_importepago_sin_retencion - importe).toFixed(2);
 				$('#txt_importe_retenido').val(importe);
 				$('#txt_importetotal_pagar').val(txt_importetotal_pagar);
 			});
@@ -110,11 +167,11 @@
 
 		})
 
-		ncsistema=
-		{
-			
-			Buscar_Clientes:function ()
-			{
+ncsistema=
+{
+
+	Buscar_Clientes:function ()
+	{
 					//var lista_clientes = {};
 					$('#txt_razonsocialcliente').attr('readonly', false);
 					$('#txt_razonsocialcliente').autocomplete
@@ -213,7 +270,7 @@
 					newHtml+='<th width:10%>Moneda Origen</td>';	
 					newHtml+='<th width:10%>Importe Operacion/Origen</td>';	
 					newHtml+='<th width:10%>Importe de Pago sin Retencion</td>';
-					newHtml+='<th width:10%>Importe Retenido S/.</td>';	
+					newHtml+='<th width:10%>Importe Total Retenido S/.</td>';	
 					newHtml+='<th width:10%>Importe Total a Pagar S/.</td>';	
 						//$('#txt_valorigv').val()
 						newHtml+='</tr>';
@@ -237,10 +294,10 @@
 						newHtml+='<td style="text-align:right">'+(parseFloat(rs.imp_pago_sin_ret)).toFixed(2);+'</td>';
 						newHtml+='<td style="text-align:right">'+rs.imp_retenido+'</td>';
 						newHtml+='<td style="text-align:right">'+rs.imp_total_pagar+'</td>';
-							//$('#txt_tipdocemisor').val(rs.tip_docemisor);							
-							newHtml+='</tr>';	
-							contador++;					
-						});	
+						//$('#txt_tipdocemisor').val(rs.tip_docemisor);							
+						newHtml+='</tr>';	
+						contador++;					
+					});	
 					newHtml+='</tbody>';
 					newHtml+='</table>';
 
@@ -319,10 +376,10 @@
 						newHtml+='<td style="text-align:center"><a href="javascript:Eliminar_Retenciontemporal('+rs.tmp_prod+')" ><img align="center" src="<?php echo base_url();?>application/helpers/image/ico/nceliminar.png" title="Eliminar" width="15"  height="15" border="0" ></a></td>';
 						newHtml+='<td style="text-align:left">'+rs.cod_prod+'</td>';
 						newHtml+='<td style="text-align:left">'+rs.desc_prod+'</td>';		
-							//$('#txt_tipdocemisor').val(rs.tip_docemisor);							
-							newHtml+='</tr>';	
-							contador++;					
-						});	
+						//$('#txt_tipdocemisor').val(rs.tip_docemisor);							
+						newHtml+='</tr>';	
+						contador++;					
+					});	
 					newHtml+='</tbody>';
 					newHtml+='</table>';
 
@@ -581,19 +638,18 @@
 
 				Guardar_Einvoiceheader:function(tipo_registro)
 				{
-					var txt_documentomodificar=$.trim($('#txt_documentomodificar').val());
-					
 					var txt_RucEmpresa=$.trim($('#txt_RucEmpresa').val());
 					var cmb_tipodocumentosunat='20';// codigo retencion
 					var txt_RazonSocialEmpresa=$.trim($('#txt_RazonSocialEmpresa').val());
-					var txt_numerodocumentosunat=$.trim($("#cmb_seriedocumentosunat").val());
+					var txt_seriedocumento=$.trim($("#cmb_seriedocumentosunat").val());
+					var txt_correlativodocumento=$.trim($("#txt_correlativodocumento").val());
 					var txt_fecemisiondoc=$.trim($('#txt_FechaEmision').val());					
 					var txt_numerodoccliente=$.trim($('#txt_numerodoccliente').val());
 					var cmb_tipodocumentocliente='6';//RUC
 					var txt_razonsocialcliente=$.trim($('#txt_razonsocialcliente').val());					
 					var txt_correocliente=$.trim($('#txt_correocliente').val());
 					var txt_direccioncliente=$.trim($('#txt_direccioncliente').val());
-
+					var cantidadproduct=$.trim($('#numeroitem').val());
 					/*	
 
 					var cmb_monedadocumento=$.trim($('#cmb_monedadocumento').val());
@@ -614,7 +670,7 @@
 					
 					var txt_importetotal=$.trim($('#txt_importetotal').val());	
 					txt_importetotal=txt_importetotal.replace(",","");				
-					var cantidadproduct=$.trim($('#numeroitem').val());
+					
 					
 					var txt_operacionexportacion=$.trim($('#txt_operacionexportacion').val());
 					txt_operacionexportacion=txt_operacionexportacion.replace(",","");
@@ -702,7 +758,7 @@
 						return;
 					}
 
-					if (txt_numerodocumentosunat=='0')
+					if (txt_seriedocumento=='0')
 					{
 						$('#div_MensajeValidacionEmpresa').fadeIn(0);
 						$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Debe ingresar el número para el documento</div>');
@@ -762,8 +818,6 @@
 						return;
 					}
 
-					/*
-
 					if (cantidadproduct==0)
 					{
 						$('#div_MensajeValidacionEmpresa').fadeIn(0);
@@ -771,7 +825,7 @@
 						setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
 						return;
 					}
-
+					/*
 					if (parseFloat(txt_importetotal)>700)
 					{					
 						
@@ -855,7 +909,8 @@
 							txt_RucEmpresa:txt_RucEmpresa,
 							cmb_tipodocumentosunat:cmb_tipodocumentosunat,
 							txt_RazonSocialEmpresa:txt_RazonSocialEmpresa,
-							txt_numerodocumentosunat:txt_numerodocumentosunat,
+							txt_seriedocumento:txt_seriedocumento,
+							txt_correlativodocumento:txt_correlativodocumento,
 							txt_fecemisiondoc:txt_fecemisiondoc,			
 							txt_numerodocumentoproveedor:txt_numerodoccliente,
 							cmb_tipodocumentocliente:cmb_tipodocumentocliente,
@@ -889,7 +944,6 @@
 							//txt_motivodenotacredito,
 							
 							tipo_registro:tipo_registro,
-							txt_documentomodificar:txt_documentomodificar,
 							txt_moneda_final:txt_moneda_final,
 							
 							arr_adicional_Cantidad:datoadicional_Cantidad,
@@ -937,7 +991,7 @@
 								"07";"NOTA DE CREDITO"
 								"08";"NOTA DE DEBITO"
 								*/
-								Limpiar_DatosRegistroDocumento();
+								Limpiar_DatosRegistroDocumento(1);
 
 								if ($('#txt_modificarregistro').val()==1)
 								{
@@ -981,6 +1035,10 @@
 var datoadicional_Cantidad = 0;
 var datoadicional_Codigo = [];
 var datoadicional_Valor = [];
+var array_numpago = [];
+var n=0;
+
+
 function Registrar_DatosAdicionales()
 {
 	i=0; 
@@ -1111,11 +1169,10 @@ function Seleccionar_DatoAdicional(key)
 				}
 				
 			}
-			
+
 			
 			$(function() 
 			{
-
 
 				function Registrar_Producto() 
 				{
@@ -1138,6 +1195,10 @@ function Seleccionar_DatoAdicional(key)
 					
 					allFields.removeClass( "ui-state-error" );
 					
+					if (txt_codigo_documento == '01')
+					{
+
+					}
 
 					
 					if (txt_tipo_comprobante=="[SELECCIONAR]")
@@ -1214,7 +1275,7 @@ function Seleccionar_DatoAdicional(key)
 						beforeSend:function()
 						{
 							/*$('#div_MensajeValidacionEmpresa').fadeIn(0);
-							$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/procesando.gif" width="27" height="27"/></div><div style="font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Procesando, Espere por favor...</div>');*/
+							$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/procesando.gif" width="27" height="27"/></div><div style="">Procesando, Espere por favor...</div>');*/
 						},
 						success:function(result)
 						{
@@ -1239,6 +1300,24 @@ function Seleccionar_DatoAdicional(key)
 					});
 					$("#txt_moneda_final").val(txt_moneda_code);
 					//dialog.dialog( "close" );
+
+					if (txt_numero_pago == 1)
+					{
+						array_numpago[n]=[];
+						array_numpago[n]['serie']=txt_numero_relacionado;
+						array_numpago[n]['num_pago']=1;
+						n++;
+					}
+					else{
+						for (var i = 0; i < array_numpago.length; i++) {
+							if (array_numpago[i]['serie'] == txt_numero_relacionado)
+							{
+								array_numpago[i]['num_pago']=txt_numero_pago;
+							}
+						}
+					}
+					$("#txt_numero_pago").val(parseFloat(txt_numero_pago)+1);
+
 					return valid;
 				}
 				
@@ -1539,11 +1618,11 @@ function Seleccionar_DatoAdicional(key)
 			});
 
 function Moneda_Relacionado(moneda){
-
+	$("#txt_importepago_sin_retencion").keyup();
 	var texto_moneda = $("#cmb_Monedas option:selected")[0].innerText;
 
 	if (moneda == 'USD') {
-		$("#txt_moneda_pago").val(texto_moneda);
+		$("#txt_moneda_pago").val('Sol');
 		$("#txt_moneda_referencia").val(texto_moneda);
 		$("#txt_item_hidden").show();	
 		
@@ -1556,8 +1635,45 @@ function Moneda_Relacionado(moneda){
 		$("#txt_moneda_pago").val('');
 		$("#txt_item_hidden").hide();	
 	}
-	
+}
 
+function validaMonto(importe_pago_sin_ret)
+{
+	var importe_total_relacionado = parseFloat($("#txt_importe_total_relacionado").val());
+
+	if (isNaN(importe_total_relacionado))
+	{
+		$("#txt_importepago_sin_retencion").val('');
+		$("#txt_importe_retenido").val('0.00');
+		$("#txt_importetotal_pagar").val('0.00');
+		$("#txt_importe_total_relacionado").focus();
+	}
+
+	else if (importe_total_relacionado < importe_pago_sin_ret && !isNaN(importe_total_relacionado))
+	{
+		alert("El importe de pago sin retencion no puede ser mayor que el importe total del documento relacionado");		
+		$("#txt_importe_retenido").val('0.00');
+		$("#txt_importetotal_pagar").val('0.00');
+		$("#txt_importepago_sin_retencion").val('');
+		$("#txt_importepago_sin_retencion").focus();
+	}
+	
+}
+
+function Numero_Pago_Ret(serienumero)
+{
+	var existe = 'NO';
+	for (var i = 0; i < array_numpago.length; i++) {
+		if (array_numpago[i]['serie'] == serienumero)
+		{
+			existe = 'SI';
+			$("#txt_numero_pago").val(parseFloat(array_numpago[i]['num_pago'])+1);
+		}
+	}
+	if (existe == 'NO')
+	{
+		$("#txt_numero_pago").val('1');
+	}
 }
 
 function ver_datosemisor()
@@ -1885,19 +2001,48 @@ function Calcular_Montos()
 					$('#cmb_tipoafectacion').val('40');}
 				}
 
-				function Limpiar_DatosRegistroDocumento()
+				function Limpiar_DatosRegistroDocumento(codigo = 0)
 				{
 					$('#txt_FechaEmision').datepicker('setDate', 'today');	
 					$('#txt_FechaEmision_Relacionado').datepicker('setDate', 'today');	
 					$('#txt_FechaPago').datepicker('setDate', 'today');	
 					$('#txt_fechaRetencion').datepicker('setDate', 'today');
 					$('#txt_fechaCambio').datepicker('setDate', 'today');	
+
+					if (codigo == 1) 
+					{
+						$('#cmb_seriedocumentosunat').val('0');
+						$('#txt_correlativodocumento').val('-');
+						$('#txt_FechaEmision').datepicker('setDate', 'today');	
+						$('#txt_numerodoccliente').val('');
+						$('#txt_correocliente').val('');
+						$('#txt_observacion').val('');
+						$('#txt_razonsocialcliente').val('');
+						$('#txt_direccioncliente').val('');
+
+
+						$('#txt_clientenombrecomercial').val('');
+						$('#txt_clientecorreo').val('');
+						$('#txt_clientepais').val('');
+						$('#txt_clientepaiscodigo').val('');
+						$('#txt_clientedepartamento').val('');
+						$('#txt_clienteprovincia').val('');
+						$('#txt_clientedistrito').val('');
+
+						$('#txt_clienteubanizacion').val('');
+						$('#txt_clientedireccion').val('');
+					}
 				}
 
 				function Numero_Documento(cod_seriedoc)
 				{
+					if (cod_seriedoc == 0)
+					{
+						$('#txt_correlativodocumento').val("-");
+						return;
+					}
 					var cmb_tipodocumentosunat='20';
-					$.trim($('#txt_numerodocumentosunat').val('0'));
+					$('#txt_seriedocumento').val('0');
 					$.ajax({
 						url:'<?php echo base_url()?>catalogos/Listar_SeriesDocumentos',
 						type: 'post',
@@ -1918,7 +2063,7 @@ function Calcular_Montos()
 								{
 									if (rs.ser_doc==cod_seriedoc)
 									{
-										$.trim($('#txt_seriedocumento').val(rs.num_doc));
+										$('#txt_correlativodocumento').val(rs.num_doc);
 									}
 								});	
 								return;
@@ -1930,7 +2075,7 @@ function Calcular_Montos()
 							}
 							else
 							{
-								$.trim($('#txt_seriedocumento').val('-'));
+								$.trim($('#txt_correlativodocumento').val('-'));
 								return;
 							}
 						}
@@ -1957,7 +2102,7 @@ function Calcular_Montos()
 				$('#txt_numerodoccliente').val('');
 				Datos_ClienteBusqueda('');
 				
-				$('#txt_numerodocumentosunat').val('');
+				$('#txt_seriedocumento').val('');
 				
 				//$("#cbox_exportaciondocumento").prop('disabled', false);	
 				
@@ -2325,7 +2470,7 @@ function Calcular_Montos()
 						newHtml+='</select>';		
 						$('#div_seriedocumento').empty().append(newHtml);
 						
-						$('#txt_numerodocumentosunat').val('');
+						$('#txt_seriedocumento').val('');
 					}
 					
 				}
@@ -3126,170 +3271,11 @@ function Calcular_Montos()
 					//OcultarFilaTabla('row_cargos',valor);
 				}
 			}
-			
-			function Listar_DatosDocumentoModificar()
+
+			function OcultarFilaPassword(id,opcion) 
 			{
-				var txt_documentomodificar=$.trim($('#txt_documentomodificar').val());
-				var txt_rucempresa=$.trim($('#txt_RucEmpresa').val());
-				
-				
-				if (txt_documentomodificar!='')
-				{
-					$.ajax({
-						url:'<?php echo base_url()?>comprobante/Listar_DatosDocumentoModificar',
-						type: 'post',
-						dataType: 'json',
-						data:
-						{	
-							txt_rucempresa:txt_rucempresa,
-							txt_documentomodificar:txt_documentomodificar
-						},
-						beforeSend:function()
-						{
-						},
-						success:function(result)
-						{
-
-							if(result.status==1)
-							{
-
-								
-								$("#cmb_tipodocumentosunat").prop('disabled', true);
-								
-								$('#cmb_tipodocumentosunat').val(result.data['tipodocumento']);	
-								
-								//alert(result.data['tipodocumentoreferenciaprincip']);
-								//alert(result.data['codigoserienumeroafectado']);
-								//alert(result.data['tipodocumentoadquiriente']);
-								
-								var tipodocumentoreferenciaprincip=result.data['tipodocumentoreferenciaprincip']
-								if (tipodocumentoreferenciaprincip=='' &&  result.data['tipodocumento']=='08')
-								{
-									tipodocumentoreferenciaprincip='01';
-								}
-
-								Serie_Documento(result.data['tipodocumento'],result.data['seriedocumento'],tipodocumentoreferenciaprincip,result.data['codigoserienumeroafectado'],result.data['tipodocumentoadquiriente']);
-								//$('#cmb_seriedocumentosunat').val(result.data['seriedocumento']);	
-								$('#txt_numerodocumentosunat').val(result.data['numerodocumento']);
-								
-								if (result.data['tipodocumentoreferenciaprincip']!='')
-								{
-									$('#txt_numerodocumentoreferencia').val(result.data['numerodocumentoreferenciaprinc']);
-									$('#txt_motivodenotacredito').val(result.data['motivodocumento']);
-								}
-								
-								$('#txt_numerodoccliente').val(result.data['numerodocumentoadquiriente']);
-								$('#txt_razonsocialcliente').val(result.data['razonsocialadquiriente']);
-								$('#txt_correocliente').val(result.data['correoadquiriente']);
-								$('#txt_direccioncliente').val('');
-								$('#cmb_monedadocumento').val(result.data['tipomoneda']);
-								$('#txt_FechaEmision').val(result.data['fechaemision']);
-								
-								
-								//CASO DETRACCION
-								if (result.data['totaldetraccion']!='')
-								{
-									//$('#totaldetraccion').val((result.data['totaldetraccion']);
-									$('#txt_porcentajedetraccion').val(result.data['porcentajedetraccion']);
-									$('#txt_montodetraccion').val(result.data['totaldetraccion']);
-									$('#txt_montodetraccionreferencial').val(result.data['valorreferencialdetraccion']);
-									$('#txt_descripciondetraccion').val(result.data['descripciondetraccion']);
-									$('#txt_leyendadetraccion').val(result.data['textoleyenda_2']);
-									
-								}
-								
-								
-								//CASO PERCEPCION
-								if (result.data['porcentajepercepcion']!='')
-								{
-
-									$('#txt_porcentajepercepcion').val(result.data['porcentajepercepcion']);
-									$('#txt_baseimponiblepercepcion').val(result.data['baseimponiblepercepcion']);
-									$('#txt_totalpercepcion').val(result.data['totalpercepcion']);
-									$('#txt_totalventapercepcion').val(result.data['totalventaconpercepcion']);
-								}
-								if (result.data['descuentosglobales']!='')
-								{
-									$('#txt_descuentoglobal').val(result.data['descuentosglobales']);
-								}
-								else
-								{
-									$('#txt_descuentoglobal').val('');
-								}
-								
-								$('#txt_tipoderegistrodocumento').val(result.data['cod_tipregist'])
-								
-								//SE DEBE TRAER EL CODIGO DEL CLIENTE, SINO CAGAO
-								//Datos_ClienteBusqueda('');
-								Datos_ClienteBusquedaModificar(result.data['tipodocumentoadquiriente'],result.data['numerodocumentoadquiriente'],result.data['razonsocialadquiriente']);
-								
-								
-								ncsistema.Listar_ProductosDocumento();
-								
-								if (result.data['cod_tipregist']==2)
-								{
-									document.getElementsByName('cbox_exportaciondocumento')[0].checked=true;
-								}
-								else if (result.data['cod_tipregist']==3)
-								{
-									document.getElementsByName('cbox_opergratisdocumento')[0].checked=true;
-								}
-
-								if (result.data['codigoserienumeroafectado']=='03' &&  result.data['tipodocumento']=='08')
-								{
-									$('#div_tipodocumentoreferencia').empty().append('');
-									newHtml='';
-									newHtml+='<select id="cmb_tipodocumentoreferencia" style="width:95%;height:25px" >';
-									newHtml+='<option value="-">-</option>';
-									newHtml+='</select>';		
-									$('#div_tipodocumentoreferencia').empty().append(newHtml);
-									$("#cmb_tipodocumentoreferencia").prop('disabled', true);
-									
-									$("#txt_numerodocumentoreferencia").prop('disabled', true);
-									//$("#cmb_tiponotadecredito").prop('disabled', true);
-									
-								}
-
-								$('#txt_FechaEmision') .datepicker('option', 'minDate', result.data['primera_fecha']) .datepicker('refresh'); 
-								$('#txt_FechaEmision') .datepicker('option', 'maxDate', result.data['ultima_fecha']) .datepicker('refresh'); 
-								
-								$('#txt_modificarregistro').val(1);
-								
-								Tipo_Afectacion();	
-
-								return;
-							}
-							else if (result.status==1000)
-							{
-								document.location.href= '<?php echo base_url()?>usuario';
-								return;
-							}
-							else
-							{
-								/*
-								$('#txt_emisornombrecomercial').val(rs.nom_comercial);
-								$('#txt_emisorcorreo').val(rs.correo_usuario);
-								$('#txt_emisorpais').val(rs.nomb_pais);
-								$('#txt_emisorpaiscodigo').val(rs.cod_pais);
-								$('#txt_emisorubigeo').val(rs.cod_ubigeo);
-								$('#txt_emisordepartamento').val(rs.nomb_depa);
-								$('#txt_emisorprovincia').val(rs.nomb_prov);
-								$('#txt_emisordistrito').val(rs.nomb_dist);
-								$('#txt_emisorrubanizacion').val(rs.urbaniz_empresa);
-								$('#txt_emisordireccion').val(rs.direcc_empresa);
-								*/								
-								return;
-							}
-						}
-					});
-}
-
-}
-
-function OcultarFilaPassword(id,opcion) 
-{
-	if (!document.getElementById) return false;
-	fila = document.getElementById(id);
+				if (!document.getElementById) return false;
+				fila = document.getElementById(id);
 
 				if (opcion==0)//OCULTA LA FILA
 				{
@@ -3335,7 +3321,6 @@ function OcultarFilaPassword(id,opcion)
 			</ul>
 			<div id="tabs-1" style="width:95%;float:left">
 				<div id="div_datosempresa" style="width:100%; float:left; margin-top:10px; border: 1px solid #a6c9e2; border-radius:5px;">
-					<input type="hidden" id="txt_documentomodificar" value="<?php echo $documentomodificar;?>"  />
 					<input type="hidden" id="txt_tipoderegistrodocumento" value="0"  />					
 					<input type="hidden" id="txt_valorigv" value="<?php echo $valor_igv;?>"  />
 					<input type="hidden" id="txt_valorotroscargos" value="<?php echo $valor_otroscargos;?>"  />
@@ -3359,7 +3344,7 @@ function OcultarFilaPassword(id,opcion)
 
 										<td style="text-align:right;width:12%" ><label class="columna">Numero:</label></td>
 										<td style="text-align:left;width:15%">
-											<input style="width:96%" id="txt_seriedocumento" type="text" value="-" disabled="disabled">
+											<input style="width:96%" id="txt_correlativodocumento" type="text" value="-" disabled="disabled">
 										</td>
 									</tr>
 								</table>
@@ -3425,7 +3410,7 @@ function OcultarFilaPassword(id,opcion)
 						<tr>
 							<td style="text-align: right; bottom: 3em; position: relative;"><label class="columna">Observación: </label></td>
 							<td style="text-align:left;">
-								<textarea id="txt_razonsocialcliente" type="text" value="" style="width:98%;" ></textarea>
+								<textarea id="txt_observacion" type="text" value="" style="width:98%;" ></textarea>
 							</td>
 						</tr>
 						<tr>
@@ -3468,7 +3453,7 @@ function OcultarFilaPassword(id,opcion)
 							<td style="text-align:right;width:30%" valign="top">
 								<table width="100%" border="0" >
 									<tr>							
-										<td style="text-align:right;width:20%">Importe Retenido S./</td>
+										<td style="text-align:right;width:20%">Importe Total Retenido S./</td>
 										<td style="text-align:right;width:15%" >
 											<input type="text" id="txt_importe_retenido_footer" value="0.00" disabled="disabled" style="width:80%;text-align:right" >
 										</td>			
@@ -3544,7 +3529,7 @@ function OcultarFilaPassword(id,opcion)
 						Numero Documento Relacionado :
 					</td >
 					<td style="width:50%" colspan="4">
-						<input type="text" name="txt_numero_relacionado" id="txt_numero_relacionado" placeholder="____/________" class="" maxlength="13" pattern="[A-Z]{4}-[0-9]{8}">
+						<input type="text" name="txt_numero_relacionado" id="txt_numero_relacionado" class="" maxlength="13" onChange="javascript:Numero_Pago_Ret(this.value)" >
 					</td>
 				</tr>
 				<tr>
@@ -3555,7 +3540,7 @@ function OcultarFilaPassword(id,opcion)
 						<table border="0" style="border-collapse:separate; border-spacing:0px 0px;">
 							<tr>
 								<td>
-									<input id="txt_FechaEmision_Relacionado" type="text" value=""/>
+									<input id="txt_FechaEmision_Relacionado" type="text" value="" disabled="disa" />
 								</td>
 							</tr>
 						</table>
@@ -3590,7 +3575,7 @@ function OcultarFilaPassword(id,opcion)
 						<table border="0" style="border-collapse:separate; border-spacing:0px 0px;">
 							<tr>
 								<td>
-									<input id="txt_FechaPago" type="text" value="" onChange="">
+									<input id="txt_FechaPago" type="text" value="" onChange="" disabled="disabled"/>
 								</td>
 							</tr>
 						</table>
@@ -3601,7 +3586,7 @@ function OcultarFilaPassword(id,opcion)
 						Numero de Pago :
 					</td >
 					<td style="width:50%" colspan="4">
-						<input name="txt_numero_pago" id="txt_numero_pago" placeholder="0" type="text">
+						<input name="txt_numero_pago" id="txt_numero_pago" placeholder="0" type="text" disabled="disabled" value="1">
 					</td>
 				</tr>
 				<tr>
@@ -3609,7 +3594,7 @@ function OcultarFilaPassword(id,opcion)
 						Importe Pago Sin Retencion :
 					</td >
 					<td style="width:50%" colspan="4">
-						<input name="txt_importepago_sin_retencion" id="txt_importepago_sin_retencion" placeholder="0.00" type="text">
+						<input name="txt_importepago_sin_retencion" id="txt_importepago_sin_retencion" placeholder="0.00" type="text" onchange="javascript:validaMonto(this.value)">
 					</td>
 				</tr>
 				<tr>
@@ -3622,7 +3607,7 @@ function OcultarFilaPassword(id,opcion)
 				</tr>
 				<tr>
 					<td style="width:50%;font-weight:bold">
-						Importe Retenido :
+						Importe Total Retenido :
 					</td >
 					<td style="width:50%" colspan="4">
 						<input name="txt_importe_retenido" id="txt_importe_retenido" placeholder="0.00" type="text" disabled="disabled">
@@ -3636,7 +3621,7 @@ function OcultarFilaPassword(id,opcion)
 						<table border="0" style="border-collapse:separate; border-spacing:0px 0px;">
 							<tr>
 								<td>
-									<input id="txt_fechaRetencion" type="text" value=""/>
+									<input id="txt_fechaRetencion" type="text" value="" disabled="disabled"/>
 								</td>
 							</tr>
 						</table>
@@ -3657,7 +3642,7 @@ function OcultarFilaPassword(id,opcion)
 								Moneda Referencia Tipo Cambio :
 							</td >
 							<td style="width:50%" colspan="4">
-								<input style="margin-left: 13px" name="txt_moneda_referencia" id="txt_moneda_referencia" placeholder="US DOLLAR" type="text" disabled="disabled">
+								<input style="margin-left: 13px" name="txt_moneda_referencia" id="txt_moneda_referencia" placeholder="Sol" type="text" disabled="disabled">
 							</td>
 						</tr>
 						<tr>
@@ -3665,7 +3650,7 @@ function OcultarFilaPassword(id,opcion)
 								Factor Tipo Cambio Moneda:
 							</td >
 							<td style="width:50%" colspan="4">
-								<input style="margin-left: 13px" name="txt_tipo_cambio" id="txt_tipo_cambio" placeholder="0.00" value="3.15" type="text">
+								<input style="margin-left: 13px" name="txt_tipo_cambio" id="txt_tipo_cambio" placeholder="0.00" value="3.1400" type="text">
 							</td>
 						</tr>
 						<tr>
@@ -3676,7 +3661,7 @@ function OcultarFilaPassword(id,opcion)
 								<table border="0" style="border-collapse:separate; border-spacing:0px 0px;">
 									<tr>
 										<td>
-											<input style="margin-left: 13px" id="txt_fechaCambio" type="text" value=""/>
+											<input style="margin-left: 13px" id="txt_fechaCambio" type="text" value="" disabled="disabled"/>
 										</td>
 									</tr>
 								</table>
@@ -4024,23 +4009,19 @@ function OcultarFilaPassword(id,opcion)
 	</form>
 </div>
 
-		<div id="dialog-form-adicional" title="Datos Adicionales">
-		 	<form>
-			<table width="100%" border="0px">				
-				<tr>
-					<td style="font-weight:bold" colspan="5">
-						<div id="div_Busqueda_DatosAdicionales" style="width:100%;border:solid 0px;float:left;
-							text-align:center;margin-top:10px">
-						</div>
-					</td>
-				</tr>
-			</table>
-		  </form>
-		</div>
-
-<script>
-	Listar_DatosDocumentoModificar();
-</script>
+<div id="dialog-form-adicional" title="Datos Adicionales">
+	<form>
+		<table width="100%" border="0px">				
+			<tr>
+				<td style="font-weight:bold" colspan="5">
+					<div id="div_Busqueda_DatosAdicionales" style="width:100%;border:solid 0px;float:left;
+					text-align:center;margin-top:10px">
+				</div>
+			</td>
+		</tr>
+	</table>
+</form>
+</div>
 
 </body>	
 </html>

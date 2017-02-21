@@ -870,11 +870,11 @@
 				</div>	
 			<div style="width:100%;border:solid 1px;float:left;margin-top:10px; border: 1px solid #a6c9e2;border-radius:5px;">	
 				<table width="100%"  border="0px" class="ui-widget-header">
-					<!--
+					
 					<input id="txt_datosseleccionados_estado" type="hidden" value="" />
 					<input id="txt_cantidaddocumborrador" type="hidden" value="0" />
 					<input id="txt_cantidaddocum_estado" type="hidden" value="0" />
-					-->
+					
 					<input id="txt_datosseleccionados" type="hidden" value="" />
 					<input id="txt_cantidadseleccionados" type="hidden" value="0" />
 					<input id="txt_filtrobusqueda" type="hidden" value="" />

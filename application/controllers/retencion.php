@@ -67,8 +67,6 @@ class Retencion extends CI_Controller {
 			//$prm['Listar_TipodeDocumento']=$this->Catalogos_model->Listar_TipodeDocumento();
 			//$prm['Config_ValorPrecio']=$_SESSION['SES_MarcoTrabajo'][0]['conf_venta'];		
 			//$prm['Listar_Unidades']=$this->Catalogos_model->Datos_Unidades($prm_cod_empr,$prm_tipo_confunidad);
-			//if (!isset($_GET['param1'])){	$prm_documentomodificar='';} else{$prm_documentomodificar=$_GET['param1'];}
-			//$prm['documentomodificar']=$prm_documentomodificar;
 			
 			$prm['pagina_ver']='retencion';
 			$this->load->view('retencion/retencion_listar',$prm);
@@ -95,9 +93,7 @@ class Retencion extends CI_Controller {
 		else
 		{
 			$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();		
-		}		
-
-		$prm_documentomodificar=trim($this->input->post('txt_documentomodificar'));				
+		}				
 		$prm_correoemisor=trim($this->input->post('txt_emisorcorreo'));//='yessica.prad@bizlinks.la';
 		$prm_correoadquiriente=trim($this->input->post('txt_correocliente'));
 		$prm_numerodocumentoemisor=trim($this->input->post('txt_RucEmpresa'));
@@ -105,7 +101,9 @@ class Retencion extends CI_Controller {
 		$prm_tipodocumento=trim($this->input->post('cmb_tipodocumentosunat'));
 		$prm_razonsocialemisor=trim($this->input->post('txt_RazonSocialEmpresa'));
 		$prm_nombrecomercialemisor=trim($this->input->post('txt_RazonSocialEmpresa'));
-		$prm_numerodocumento=trim($this->input->post('txt_numerodocumentosunat'));		
+		$prm_seriedocumento=trim($this->input->post('txt_seriedocumento'));
+		$prm_correlativodocumento=trim($this->input->post('txt_correlativodocumento'));
+
 
 		$prm_fechaemisiontmp=trim($this->input->post('txt_fecemisiondoc'));
 		$prm_fechaemisiontmp=explode('/',$prm_fechaemisiontmp);
@@ -191,7 +189,8 @@ class Retencion extends CI_Controller {
 				$prm_tipodocumento,
 				$prm_razonsocialemisor,
 				$prm_nombrecomercialemisor,
-				$prm_numerodocumento,
+				$prm_seriedocumento,
+				$prm_correlativodocumento,
 				$prm_fechaemision,
 				$prm_ubigeoemisor,
 				$prm_direccionemisor,
@@ -216,7 +215,6 @@ class Retencion extends CI_Controller {
 				$datosproveedor,
 				$prm_observacion,
 				$prm_tipo_registro,
-				$prm_documentomodificar,
 				$prm_moneda
 				);
 
@@ -579,33 +577,33 @@ class Retencion extends CI_Controller {
 			$prm_ruc_emisor=trim($this->input->post('param2'));
 
 			$carpetaemisor='6-'.$prm_ruc_emisor;		
-		$carpeta = ''; //keys/			
-		$rutadescargar=$this->Catalogos_model->Listar_RutaDocumentoDescargar();
-		if(!empty($rutadescargar))//SI NO ES NULO O VACIO
-		{
-			$carpeta=$rutadescargar[0]['valorcadena'];
-		}		
-		$nombrearchivopdf='';
-		$tipofirma='';
-		
-		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
-		
-		$Listar_EmpresaId=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);
-		
-		if(!empty($Listar_EmpresaId))//SI NO ES NULO O VACIO
-		{
-			$tipofirma=$Listar_EmpresaId[0]['tipo_conffirma'];
-		}
-		
-		$lista_documento=explode(',',$prm_cod_documento);
-		if(!empty($lista_documento))
-		{
-			$listadearchivos=NULL;
-			$contador=0;
-			$cantidad=0;
-			foreach($lista_documento as $key=>$v):
-				if (strlen($v)>4)
-				{
+			$carpeta = ''; //keys/			
+			$rutadescargar=$this->Catalogos_model->Listar_RutaDocumentoDescargar();
+			if(!empty($rutadescargar))//SI NO ES NULO O VACIO
+			{
+				$carpeta=$rutadescargar[0]['valorcadena'];
+			}		
+			$nombrearchivopdf='';
+			$tipofirma='';
+
+			$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
+
+			$Listar_EmpresaId=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);
+
+			if(!empty($Listar_EmpresaId))//SI NO ES NULO O VACIO
+			{
+				$tipofirma=$Listar_EmpresaId[0]['tipo_conffirma'];
+			}
+			
+			$lista_documento=explode(',',$prm_cod_documento);
+			if(!empty($lista_documento))
+			{
+				$listadearchivos=NULL;
+				$contador=0;
+				$cantidad=0;
+				foreach($lista_documento as $key=>$v):
+					if (strlen($v)>4)
+					{
 					if ($tipofirma==1)//BIZLIN
 					{
 						$nombrearchivopdf=$prm_ruc_emisor.'-'.$v;
@@ -927,11 +925,6 @@ class Retencion extends CI_Controller {
 			}
 
 			$prm['Listar_Unidades']=$this->Catalogos_model->Datos_Unidades($prm_cod_empr,$prm_tipo_confunidad);
-			
-			
-			if (!isset($_GET['param1'])){	$prm_documentomodificar='';} else{$prm_documentomodificar=$_GET['param1'];}
-			
-			$prm['documentomodificar']=$prm_documentomodificar;
 			
 			$this->load->view('retencion/registroretencion',$prm);
 		}
