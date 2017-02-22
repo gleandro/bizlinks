@@ -1,5 +1,5 @@
 <?php
-//@session_start();
+
 class Adicionales_model extends CI_Model
 {
 	function __construct()
@@ -12,7 +12,7 @@ class Adicionales_model extends CI_Model
 	{
 		$this->load->database('ncserver',TRUE);
 		$consulta = $this->db->query("select codigo, observacion, orden from bl_adicionales_auxiliares
-			where numerodocumentoemisor='".$prm_ruc_empr."';");
+			where numerodocumentoemisor='".$prm_ruc_empr."' order by codigo asc;");
 		return $consulta->result_array();		
 	}
 	
@@ -62,7 +62,7 @@ class Adicionales_model extends CI_Model
 			$result['result']=2;
 		}
 		$this->db_client->trans_commit();
-
+		
 		return $result;
 	}
 	

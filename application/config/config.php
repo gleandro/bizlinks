@@ -14,7 +14,26 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://BIZ002:99/';
+$possibleHostSources = array('HTTP_X_FORWARDED_HOST', 'HTTP_HOST', 'SERVER_NAME', 'SERVER_ADDR');
+$sourceTransformations = array("HTTP_X_FORWARDED_HOST" => function($value) {
+		$elements = explode(',', $value);
+		return trim(end($elements));
+	}
+);
+$host = '';
+foreach ($possibleHostSources as $source)
+{
+	if (!empty($host)) break;
+	if (empty($_SERVER[$source])) continue;
+	$host = $_SERVER[$source];
+	if (array_key_exists($source, $sourceTransformations))
+	{
+		$host = $sourceTransformations[$source]($host);
+	} 
+}
+$root = preg_replace('/:\d+$/', '', $host);
+
+$config['base_url']	= 'http://'.$root.':99/';
 
 /*
 |--------------------------------------------------------------------------
@@ -245,7 +264,7 @@ $config['encryption_key'] = 'pruebassecion';
 |
 */
 $config['sess_cookie_name']		= 'ci_session';
-$config['sess_expiration']		= 300;
+$config['sess_expiration']		= 7200;
 $config['sess_expire_on_close']	= TRUE;
 $config['sess_encrypt_cookie']	= FALSE;
 $config['sess_use_database']	= FALSE;
@@ -360,4 +379,3 @@ $config['proxy_ips'] = '';
 
 /* End of file config.php */
 /* Location: ./application/config/config.php */
-

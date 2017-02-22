@@ -56,11 +56,87 @@ class producto extends CI_Controller {
 	
 	public function get_Configuracion_ValorPrecio()
 	{
-		//$prm['valor_igv']=$this->Usuarioinicio_model->Get_Valor_IGV();
 		//Por default irá la configuración VALOR VENTA: 0
 		$valor=0;
 		$valor=$_SESSION['SES_MarcoTrabajo'][0]['conf_venta'];
 		echo json_encode($valor);
+	}
+	
+	public function Listar_Categorias()
+	{
+		$arr=NULL;
+		$contador=0;
+		$result['status']=0;
+		if(!$this->Usuarioinicio_model->SessionExiste())
+		{
+			$result['status']=1000;
+			echo json_encode($result);
+			exit;
+		}
+		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
+		$consulta =$this->producto_model->Listar_Categorias($prm_cod_empr);
+		if(!empty($consulta))//SI NO ES NULO O VACIO
+		{
+			foreach($consulta as $key=>$v):
+				$contador=$contador+1;
+					//id, grupo_id, grupo_nombre, nombre,valorentero, valorcadena,activo, cod_empr
+			$arr[$key]['nro_secuencia'] = $contador;				
+			$arr[$key]['id'] = trim($v['id']);
+			$arr[$key]['grupo_id'] = trim($v['grupo_id']);
+			$arr[$key]['nombre'] =trim($v['nombre']);				
+			$arr[$key]['valorcadena'] =trim($v['valorcadena']);
+			$arr[$key]['activo'] =trim($v['activo']);
+			$arr[$key]['cod_empr'] =  trim($v['cod_empr']);
+			endforeach;
+		}
+		if(sizeof($arr)>0){
+			$result['status']=1;
+			$result['data']=$arr;
+		}else
+		{
+			$result['status']=0;
+			$result['data']="";
+		}
+		echo json_encode($result);
+	}
+	
+	public function Listar_CategoriaId()
+	{
+		$arr=NULL;
+		$contador=0;
+		$result['status']=0;
+		if(!$this->Usuarioinicio_model->SessionExiste())
+		{
+			$result['status']=1000;
+			echo json_encode($result);
+			exit;
+		}
+		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
+		$prm_cod_id=trim($this->input->post('cod_id'));		
+		$consulta =$this->producto_model->Listar_CategoriaId($prm_cod_empr, $prm_cod_id);
+		
+		if(!empty($consulta))//SI NO ES NULO O VACIO
+		{
+			
+			foreach($consulta as $key=>$v):
+				$contador=$contador+1;
+			$arr[$key]['nro_secuencia'] = $contador;				
+			$arr[$key]['id'] = trim($v['id']);
+			$arr[$key]['grupo_id'] = trim($v['grupo_id']);
+			$arr[$key]['nombre'] =trim($v['nombre']);				
+			$arr[$key]['valorcadena'] =trim($v['valorcadena']);
+			$arr[$key]['activo'] =trim($v['activo']);
+			$arr[$key]['cod_empr'] =  trim($v['cod_empr']);
+			endforeach;
+		}
+		if(sizeof($arr)>0){
+			$result['status']=1;
+			$result['data']=$arr;
+		}else{
+			$result['status']=0;
+			$result['data']="";
+		}
+		echo json_encode($result);
 	}
 	
 	public function Listar_Productos()
@@ -74,6 +150,7 @@ class producto extends CI_Controller {
 			echo json_encode($result);
 			exit;
 		}
+		$valor=$_SESSION['SES_MarcoTrabajo'][0]['conf_venta'];
 		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
 		$consulta =$this->producto_model->Listar_Productos($prm_cod_empr);
 		
@@ -86,20 +163,23 @@ class producto extends CI_Controller {
 			$arr[$key]['cod_producto'] = trim($v['cod_producto']);
 			$arr[$key]['nom_corto'] =trim($v['nom_corto']);				
 			$arr[$key]['nom_largo'] =trim($v['nom_largo']);
-			$arr[$key]['valor_venta'] = number_format(trim($v['valor_venta']),2,'.',','); 
-			$arr[$key]['precio_venta'] = number_format(trim($v['precio_venta']),2,'.',','); 
+			if ($valor==0){
+				$arr[$key]['valor_venta'] = number_format(trim($v['valor_venta']),10,'.',','); 
+				$arr[$key]['precio_venta'] = number_format(trim($v['precio_venta']),10,'.',','); 
+			}else{
+				$arr[$key]['valor_venta'] = number_format(trim($v['valor_venta']),2,'.',','); 
+				$arr[$key]['precio_venta'] = number_format(trim($v['precio_venta']),2,'.',','); 
+			}					
 			$arr[$key]['categoria'] =  trim($v['categoria']);
 			$arr[$key]['med'] =  trim($v['med']);
 			$arr[$key]['cod_unidmedsunat'] =  trim($v['cod_unidmedsunat']);
+			$arr[$key]['est_reg'] =  trim($v['est_reg']);
 			endforeach;
 		}
-		
-		if(sizeof($arr)>0)
-		{
+		if(sizeof($arr)>0){
 			$result['status']=1;
 			$result['data']=$arr;
-		}
-		else
+		}else
 		{
 			$result['status']=0;
 			$result['data']="";
@@ -118,6 +198,7 @@ class producto extends CI_Controller {
 			echo json_encode($result);
 			exit;
 		}
+		$valor=$_SESSION['SES_MarcoTrabajo'][0]['conf_venta'];
 		$prm_cod_id=trim($this->input->post('cod_id'));		
 		$consulta =$this->producto_model->Listar_ProductoId($prm_cod_id);
 		
@@ -132,15 +213,19 @@ class producto extends CI_Controller {
 			$arr[$key]['cod_producto'] = trim($v['cod_producto']);
 			$arr[$key]['nom_corto'] =trim($v['nom_corto']);				
 			$arr[$key]['nom_largo'] =trim($v['nom_largo']);
-			$arr[$key]['valor_venta'] = number_format($v['valor_venta'],2,'.',','); 
-			$arr[$key]['precio_venta'] = number_format($v['precio_venta'],2,'.',','); 
+			if ($valor==0){
+				$arr[$key]['valor_venta'] = number_format(trim($v['valor_venta']),10,'.',','); 
+				$arr[$key]['precio_venta'] = number_format(trim($v['precio_venta']),10,'.',','); 
+			}else{
+				$arr[$key]['valor_venta'] = number_format(trim($v['valor_venta']),2,'.',','); 
+				$arr[$key]['precio_venta'] = number_format(trim($v['precio_venta']),2,'.',','); 
+			}
 			$arr[$key]['id_categoria'] =  trim($v['id_categoria']);					
 			$arr[$key]['categoria'] =  trim($v['categoria']);
 			$arr[$key]['med'] =  trim($v['med']);
 			$arr[$key]['cod_unidmedsunat'] =  trim($v['cod_unidmedsunat']);
 			endforeach;
 		}
-		
 		if(sizeof($arr)>0){
 			$result['status']=1;
 			$result['data']=$arr;
@@ -162,7 +247,7 @@ class producto extends CI_Controller {
 			echo json_encode($result);
 			exit;
 		}
-		
+		$valor=$_SESSION['SES_MarcoTrabajo'][0]['conf_venta'];
 		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
 		$prm_codigo=trim($this->input->post('txt_busqueda_codigoproducto'));	
 		$prm_descripcion=trim($this->input->post('txt_busqueda_descripcionproducto'));		
@@ -177,26 +262,82 @@ class producto extends CI_Controller {
 			$arr[$key]['cod_producto'] = trim($v['cod_producto']);
 			$arr[$key]['nom_corto'] =trim($v['nom_corto']);
 			$arr[$key]['nom_largo'] =trim($v['nom_largo']);
-			$arr[$key]['valor_venta'] = number_format($v['valor_venta'],2,'.',','); 
 			$arr[$key]['valor_venta_real'] = $v['valor_venta']; 
-			$arr[$key]['precio_venta'] = number_format($v['precio_venta'],2,'.',','); 
 			$arr[$key]['precio_venta_real'] = $v['precio_venta']; 
+			if ($valor==0){
+				$arr[$key]['valor_venta'] = number_format($v['valor_venta'],10,'.',','); 
+				$arr[$key]['precio_venta'] = number_format($v['precio_venta'],10,'.',','); 
+			}else{
+				$arr[$key]['valor_venta'] = number_format($v['valor_venta'],2,'.',','); 
+				$arr[$key]['precio_venta'] = number_format($v['precio_venta'],2,'.',','); 
+			}
 			$arr[$key]['cod_unidmedsunat'] =  trim($v['cod_unidmedsunat']);
 			$arr[$key]['idmed'] =  trim($v['idmed']);
-					//a.id, a.cod_producto, a.nom_corto, a.valor_venta, d.cod_unidmedsunat, idmed
-			
 			endforeach;
 		}
-		//print_r($arr[$key]['valor_venta']);
 		if(sizeof($arr)>0)
 		{
 			$result['status']=1;
 			$result['data']=$arr;
-		}
-		else
+		}else
 		{
 			$result['status']=0;
 			$result['data']="";
+		}
+		echo json_encode($result);
+	}
+	
+	public function Guadar_Categoria()
+	{	
+		$result['status']=0;
+		if(!$this->Usuarioinicio_model->SessionExiste())
+		{
+			$result['status']=1000;
+			echo json_encode($result);
+			exit;
+		}
+		$prm_cat_codigo=trim($this->input->post('txt_cat_codigo'));
+		$prm_cat_descripcion=trim($this->input->post('txt_cat_descripcion'));
+		$prm_value_cat=trim($this->input->post('txt_value_cat'));
+		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
+		
+		$resultado =$this->producto_model->Guadar_Categoria($prm_cat_codigo,$prm_cat_descripcion,$prm_value_cat,$prm_cod_empr);
+		
+		if ($resultado['result']==0)
+		{
+			$result['status']=0;		
+		}
+		else if ($resultado['result']==1)
+		{
+			$result['status']=1;	
+		}
+		else
+		{
+			$result['status']=2;	
+		}
+		echo json_encode($result);
+	}
+	
+	public function Modificar_Categoria()
+	{	
+		$result['status']=0;
+		if(!$this->Usuarioinicio_model->SessionExiste())
+		{
+			$result['status']=1000;
+			echo json_encode($result);
+			exit;
+		}
+		$prm_id_cat=trim($this->input->post('txt_id_cat'));
+		$prm_cat_codigo=trim($this->input->post('txt_cat_codigo'));
+		$prm_cat_descripcion=trim($this->input->post('txt_cat_descripcion'));
+		//$prm_value_cat=trim($this->input->post('txt_value_cat'));
+		//$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
+		
+		$resultado =$this->producto_model->Modificar_Categoria($prm_id_cat,$prm_cat_codigo,$prm_cat_descripcion);
+		
+		if ($resultado['result']==1)
+		{
+			$result['status']=1;	
 		}
 		echo json_encode($result);
 	}
@@ -273,7 +414,23 @@ class producto extends CI_Controller {
 		echo json_encode($result);
 	}
 	
-
+	public function Eliminar_Categoria()
+	{	
+		$result['status']=0;
+		if(!$this->Usuarioinicio_model->SessionExiste())
+		{
+			$result['status']=1000;
+			echo json_encode($result);
+			exit;
+		}
+		$prm_id=trim($this->input->post('cod_id'));
+		$resultado =$this->producto_model->Eliminar_Categoria($prm_id);		
+		if ($resultado['result']==1)
+		{
+			$result['status']=1;	
+		}
+		echo json_encode($result);
+	}
 	
 	public function Eliminar_Producto()
 	{	
@@ -285,8 +442,6 @@ class producto extends CI_Controller {
 			exit;
 		}
 		$prm_id=trim($this->input->post('cod_id'));
-		//print_r($prm_id);
-		//return;
 		$resultado =$this->producto_model->Eliminar_Producto($prm_id);		
 		if ($resultado['result']==1)
 		{
@@ -309,7 +464,7 @@ class producto extends CI_Controller {
 		$prm_codigo=trim($this->input->post('txt_codigo'));
 		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
 		$consulta =$this->producto_model->Valida_Producto($prm_codigo, $prm_cod_empr);
-
+		
 		if(!empty($consulta))//SI NO ES NULO O VACIO
 		{
 			//id
@@ -337,9 +492,48 @@ class producto extends CI_Controller {
 			$arr[$key]['est_reg'] =  trim($v['est_reg']);
 			endforeach;
 		}
+		if(sizeof($arr)>0)
+		{
+			$result['status']=1;
+			$result['data']=$arr;
+		}
+		else
+		{
+			$result['status']=0;
+			$result['data']="";
+		}
+		echo json_encode($result);
+	}
+	
+	public function Valida_Categoria()
+	{
+		$arr=NULL;
+		$contador=0;
+		$result['status']=0;
+		if(!$this->Usuarioinicio_model->SessionExiste())
+		{
+			$result['status']=1000;
+			echo json_encode($result);
+			exit;
+		}
+		$txt_cat_codigo=trim($this->input->post('txt_cat_codigo'));
+		//$txt_cat_descripcion=trim($this->input->post('txt_cat_descripcion'));
+		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
+		$consulta =$this->producto_model->Valida_Categoria($txt_cat_codigo, $prm_cod_empr);
 		
-		//print_r($arr);
-		
+		if(!empty($consulta))//SI NO ES NULO O VACIO
+		{
+			foreach($consulta as $key=>$v):
+				$contador=$contador+1;
+			$arr[$key]['nro_secuencia'] = $contador;				
+			$arr[$key]['id'] = trim($v['id']);
+			$arr[$key]['grupo_id'] = trim($v['grupo_id']);
+			$arr[$key]['nombre'] =trim($v['nombre']);				
+			$arr[$key]['valorcadena'] =trim($v['valorcadena']);
+			$arr[$key]['activo'] =trim($v['activo']);
+			$arr[$key]['cod_empr'] =  trim($v['cod_empr']);
+			endforeach;
+		}
 		if(sizeof($arr)>0)
 		{
 			$result['status']=1;

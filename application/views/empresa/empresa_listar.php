@@ -59,12 +59,17 @@
 					var cmb_distrito=$.trim($('#cmb_distrito').val());
 					var txt_urbanizacionempresa=$.trim($('#txt_urbanizacionempresa').val());
 					var txt_direccionempresa=$.trim($('#txt_direccionempresa').val());
+
+										allFields = $([]).add( $('#cmb_tipodocumentosunat')).add( $('#txt_numero_relacionado') ).add( $('#txt_importe_total_relacionado') ).add( $('#txt_numero_pago') ).add( $('#txt_importepago_sin_retencion') ).add( $('#txt_importe_retenido') ).add( $('#txt_importetotal_pagar') ).add( $('#cmb_Monedas') );
+					
+					allFields.removeClass( "ui-state-error" );
 					
 					if (cmb_tipodocempresa==0)
 					{
 						$('#div_MensajeValidacionEmpresa').fadeIn(0);
 						$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Seleccione el tipo de Documento</div>');
 						setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
+						$("#cmb_tipodocempresa").addClass( "ui-state-error" );
 						return;
 					}
 					if (txt_RucEmpresa=='')

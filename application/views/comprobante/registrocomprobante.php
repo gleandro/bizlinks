@@ -51,11 +51,43 @@
 				OcultarFilaTabla('row4',0);//MUESTRA FILA
 				ncsistema.Buscar_Clientes();
 				OcultarOtrosCargos();
+				ncsistema.FormatoDecimales();
 			})
 			
 			ncsistema=
 			{
-			
+				FormatoDecimales:function ()
+				{
+					var txt_config_valorprecio=$.trim($('#txt_config_valorprecio').val());
+					if (txt_config_valorprecio==0)
+					{
+						$('#txt_cantidad').attr('placeholder','0.0000000000');
+						$('#txt_valorunitario').attr('placeholder','0.0000000000');
+						$('#txt_descuento').attr('placeholder','0.0000000000');
+						$('#txt_isc').attr('placeholder','0.0000000000');
+						$('#txt_igv').attr('placeholder','0.0000000000');
+						$('#txt_valortotal').attr('placeholder','0.0000000000');
+						
+						$('#txt_preciounitario').attr('placeholder','0.0000000000');
+						$('#txt_precio').attr('placeholder','0.0000000000');
+						$('#txt_descuentoIGV').attr('placeholder','0.0000000000');
+						$('#txt_preciototal').attr('placeholder','0.0000000000');
+					}else
+					{
+						$('#txt_cantidad').attr('placeholder','0.00');
+						$('#txt_valorunitario').attr('placeholder','0.00');
+						$('#txt_descuento').attr('placeholder','0.00');
+						$('#txt_isc').attr('placeholder','0.00');
+						$('#txt_igv').attr('placeholder','0.00');
+						$('#txt_valortotal').attr('placeholder','0.00');
+						
+						$('#txt_preciounitario').attr('placeholder','0.00');
+						$('#txt_precio').attr('placeholder','0.00');
+						$('#txt_descuentoIGV').attr('placeholder','0.00');
+						$('#txt_preciototal').attr('placeholder','0.00');
+					}
+				},
+				
 				Buscar_Clientes:function ()
 				{
 					//var lista_clientes = {};
@@ -142,8 +174,7 @@
 				{	
 					$('#div_ListadoEmpresa').empty().append('');
 					var txt_valorigv=$.trim($('#txt_valorigv').val());
-					//$('#txt_tipdocemisor').val('');					
-					//$('#txt_datosseleccionados').val('');
+					var txt_config_valorprecio=$.trim($('#txt_config_valorprecio').val());
 					var tipo_registro=0;				
 					if ($("#cbox_exportaciondocumento").is(":checked"))//EXPORTACION
 					{
@@ -190,27 +221,51 @@
 							newHtml+='<td style="text-align:left">'+rs.desc_prod+'</td>';
 							newHtml+='<td style="text-align:left">'+rs.uni_med+'</td>';
 							newHtml+='<td style="text-align:right">'+rs.cant_prod+'</td>';
-							newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_unitario)).toFixed(2)+'</td>';
-							newHtml+='<td style="text-align:right">'+rs.val_igv+'</td>';
-							if (tipo_registro=='1')
+							if (txt_config_valorprecio==0)
 							{
-								if (rs.tip_afectacion=='10'){
-									newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_unitario)*parseFloat(1+txt_valorigv/100)).toFixed(2);+'</td>';
-								}else{
-									newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_unitario)).toFixed(2);+'</td>';
-									}
+								newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_unitario)).toFixed(10)+'</td>';
+								newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_igv)).toFixed(10)+'</td>';
+								if (tipo_registro=='1')
+								{
+									if (rs.tip_afectacion=='10'){
+										newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_unitario)*parseFloat(1+txt_valorigv/100)).toFixed(10)+'</td>';
+									}else{
+										newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_unitario)).toFixed(10)+'</td>';
+										}
+								}else
+								{
+									if (rs.tip_afectacion=='40'){
+										newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_unitario)).toFixed(10)+'</td>';
+									}else{
+										newHtml+='<td style="text-align:right">0.00</td>';
+										}
+								}
+								
+								newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_descuento)).toFixed(10)+'</td>';
+								newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_total)).toFixed(10)+'</td>';		
 							}else
 							{
-								if (rs.tip_afectacion=='40'){
-									newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_unitario)).toFixed(2);+'</td>';
-								}else{
-									newHtml+='<td style="text-align:right">0.00</td>';
-									}
-							}
-							
-							newHtml+='<td style="text-align:right">'+rs.val_descuento+'</td>';
-							newHtml+='<td style="text-align:right">'+rs.val_total+'</td>';				
-							//$('#txt_tipdocemisor').val(rs.tip_docemisor);							
+								newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_unitario)).toFixed(2)+'</td>';
+								newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_igv)).toFixed(2)+'</td>';
+								if (tipo_registro=='1')
+								{
+									if (rs.tip_afectacion=='10'){
+										newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_unitario)*parseFloat(1+txt_valorigv/100)).toFixed(2)+'</td>';
+									}else{
+										newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_unitario)).toFixed(2)+'</td>';
+										}
+								}else
+								{
+									if (rs.tip_afectacion=='40'){
+										newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_unitario)).toFixed(2)+'</td>';
+									}else{
+										newHtml+='<td style="text-align:right">0.00</td>';
+										}
+								}
+								
+								newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_descuento)).toFixed(2)+'</td>';
+								newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_total)).toFixed(2)+'</td>';		
+							}			
 						newHtml+='</tr>';	
 						contador++;					
 					});	
@@ -837,11 +892,6 @@
 							cmb_tiponotadecredito:cmb_tiponotadecredito,
 							txt_motivodenotacredito:txt_motivodenotacredito,
 							
-							//cmb_tipodocumentoreferencia,
-							//txt_numerodocumentoreferencia,
-							//cmb_tiponotadecredito,
-							//txt_motivodenotacredito,
-							
 							tipo_registro:tipo_registro,
 							txt_documentomodificar:txt_documentomodificar,
 							txt_otroscargos:txt_otroscargos,
@@ -1043,7 +1093,7 @@
 				
 				if (txt_config_valorprecio==0)
 				{
-					$('#txt_valorunitario').val(parseFloat(vv_precio).toFixed(2));
+					$('#txt_valorunitario').val(parseFloat(vv_precio).toFixed(10));
 					
 					$("#txt_valorunitario").prop('disabled', false);
 					$("#txt_descuento").prop('disabled', false);
@@ -1708,10 +1758,10 @@
 					{
 						if (cod_tipafect=='10')//GRAVADO - OPERACION ONEROSA
 						{	
-							txt_preciounitario=parseFloat(parseFloat(txt_valorunitario)*(1+parseFloat(txt_valorigv)/100)).toFixed(2);
+							txt_preciounitario=parseFloat(parseFloat(txt_valorunitario)*(1+parseFloat(txt_valorigv)/100)).toFixed(10);
 							
-							txt_precio=parseFloat(parseFloat(txt_valorunitario)*(1+parseFloat(txt_valorigv)/100).toFixed(2));
-							txt_descuentoIGV=parseFloat(parseFloat(txt_descuento)*(1+parseFloat(txt_valorigv)/100)).toFixed(2);
+							txt_precio=parseFloat(parseFloat(txt_valorunitario)*(1+parseFloat(txt_valorigv)/100).toFixed(10));
+							txt_descuentoIGV=parseFloat(parseFloat(txt_descuento)*(1+parseFloat(txt_valorigv)/100)).toFixed(10);
 							
 							if (txt_cantidad==0){
 								txt_igv=0;
@@ -1719,39 +1769,39 @@
 								txt_preciototal=0;
 							}
 							else{
-								txt_igv=parseFloat(( (parseFloat(txt_cantidad)*parseFloat(txt_valorunitario)) -parseFloat(txt_descuento)) * parseFloat(txt_valorigv/100)).toFixed(2);
-								txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(2);
-								txt_preciototal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV)).toFixed(2);
+								txt_igv=parseFloat(( (parseFloat(txt_cantidad)*parseFloat(txt_valorunitario)) -parseFloat(txt_descuento)) * parseFloat(txt_valorigv/100)).toFixed(10);
+								txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(10);
+								txt_preciototal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV)).toFixed(10);
 							}
 						}else 
 							if (cod_tipafect=='20')//EXONERADO - OPERACION ONEROSA
 							{	
-								txt_preciounitario=parseFloat(txt_valorunitario).toFixed(2);
-								txt_precio=parseFloat(txt_valorunitario).toFixed(2);
-								txt_descuentoIGV=parseFloat(txt_descuento).toFixed(2);
+								txt_preciounitario=parseFloat(txt_valorunitario).toFixed(10);
+								txt_precio=parseFloat(txt_valorunitario).toFixed(10);
+								txt_descuentoIGV=parseFloat(txt_descuento).toFixed(10);
 								
 								if (txt_cantidad==0){
 									txt_valortotal=0;
 									txt_preciototal=0;
 								}
 								else{
-									txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(2);
-									txt_preciototal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV)).toFixed(2);
+									txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(10);
+									txt_preciototal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV)).toFixed(10);
 								}
 							}else 
 								if (cod_tipafect=='30')//INAFECTO - OPERACION ONEROSA
 								{				
-									txt_preciounitario=parseFloat(txt_valorunitario).toFixed(2);
-									txt_precio=parseFloat(txt_valorunitario).toFixed(2);
-									txt_descuentoIGV=parseFloat(txt_descuento).toFixed(2);
+									txt_preciounitario=parseFloat(txt_valorunitario).toFixed(10);
+									txt_precio=parseFloat(txt_valorunitario).toFixed(10);
+									txt_descuentoIGV=parseFloat(txt_descuento).toFixed(10);
 									
 									if (txt_cantidad==0){
 										txt_valortotal=0;
 										txt_preciototal=0;
 									}
 									else{
-										txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(2);
-										txt_preciototal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV)).toFixed(2);
+										txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(10);
+										txt_preciototal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV)).toFixed(10);
 									}
 								}
 					}
@@ -1761,17 +1811,17 @@
 						{				
 							if (cod_tipafect=='40')//EXPORTACION
 							{				
-								txt_preciounitario=parseFloat(txt_valorunitario).toFixed(2);
-								txt_precio=parseFloat(txt_valorunitario).toFixed(2);
-								txt_descuentoIGV=parseFloat(txt_descuento).toFixed(2);
+								txt_preciounitario=parseFloat(txt_valorunitario).toFixed(10);
+								txt_precio=parseFloat(txt_valorunitario).toFixed(10);
+								txt_descuentoIGV=parseFloat(txt_descuento).toFixed(10);
 								
 								if (txt_cantidad==0){
 									txt_valortotal=0;
 									txt_preciototal=0;
 								}
 								else{
-									txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(2);
-									txt_preciototal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV)).toFixed(2);
+									txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(10);
+									txt_preciototal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV)).toFixed(10);
 								}
 							}
 						}else 
@@ -1782,8 +1832,8 @@
 									txt_descuentoIGV=0;
 									txt_descuento=0;
 									//VALIDAR EL CALCULO DEL IGV
-									txt_igv=parseFloat((( parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100)).toFixed(2);
-									txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(2);
+									txt_igv=parseFloat((( parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100)).toFixed(10);
+									txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(10);
 									
 									txt_precio=0;
 									txt_preciounitario=0;
@@ -1797,7 +1847,7 @@
 										txt_descuento=0;	
 										//VALIDAR EL CALCULO DEL IGV
 										//txt_igv=(((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100));
-										txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(2);
+										txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(10);
 										
 										txt_precio=0;
 										txt_preciounitario=0;
@@ -1805,13 +1855,13 @@
 									}
 							}
 					}
-					$('#txt_igv').val(parseFloat(txt_igv).toFixed(2));
-					$('#txt_valortotal').val(parseFloat(txt_valortotal).toFixed(2));
+					$('#txt_igv').val(parseFloat(txt_igv).toFixed(10));
+					$('#txt_valortotal').val(parseFloat(txt_valortotal).toFixed(10));
 					
-					$('#txt_precio').val(parseFloat(txt_precio).toFixed(2));
-					$('#txt_preciounitario').val(parseFloat(txt_preciounitario).toFixed(2));
-					$('#txt_descuentoIGV').val(parseFloat(txt_descuentoIGV).toFixed(2));
-					$('#txt_preciototal').val(parseFloat(txt_preciototal).toFixed(2));
+					$('#txt_precio').val(parseFloat(txt_precio).toFixed(10));
+					$('#txt_preciounitario').val(parseFloat(txt_preciounitario).toFixed(10));
+					$('#txt_descuentoIGV').val(parseFloat(txt_descuentoIGV).toFixed(10));
+					$('#txt_preciototal').val(parseFloat(txt_preciototal).toFixed(10));
 				}
 				else//Tipo de configuración es por Precio de Cobro
 				{
@@ -3559,7 +3609,13 @@
 						if (key > 47 && key < 58) {
 							if (field.value == "") return true
 							//regexp = /[0-9]{1,10}[\.][0-9]{1,3}$/
-							regexp = /[0-9]{2}$/
+							var txt_config_valorprecio=$.trim($('#txt_config_valorprecio').val());
+							if (txt_config_valorprecio==0){
+								regexp = /[0-9]{10}$/
+							}else
+							{
+								regexp = /[0-9]{2}$/
+							}
 							return !(regexp.test(field.value))
 						}
 					}
@@ -4025,7 +4081,7 @@
 						<table width="100%" border="0" style="border-spacing:0px 0px;">
 							<tr>
 								<td width="40%">
-									<input style="text-align:right" type="text" name="txt_cantidad" id="txt_cantidad" placeholder="0.00" onkeypress="return NumCheck(event, this);" onBlur="javascript:Calcular_Montos()">
+									<input style="text-align:right" type="text" name="txt_cantidad" id="txt_cantidad" onKeyPress="return NumCheck(event, this);" onBlur="javascript:Calcular_Montos()">
 								</td>
 								<td >
 								</td>
@@ -4051,7 +4107,7 @@
 									<table width="100%" border="0" style="border-spacing:0px 0px;">
 										<tr>
 											<td width="40%">
-												<input type="text" name="txt_valorunitario" id="txt_valorunitario" placeholder="0.00" onkeypress="return NumCheck(event, this);" style="text-align:right" onBlur="javascript:Calcular_Montos()">
+												<input type="text" name="txt_valorunitario" id="txt_valorunitario" onKeyPress="return NumCheck(event, this);" style="text-align:right" onBlur="javascript:Calcular_Montos()">
 											</td>
 											<td >
 											</td>
@@ -4070,7 +4126,7 @@
 									<table width="100%" border="0" style="border-spacing:0px 0px;">
 										<tr>
 											<td width="40%">
-												<input type="text" name="txt_descuento" id="txt_descuento" placeholder="0.00" onkeypress="return NumCheck(event, this);" style="text-align:right" onBlur="javascript:Calcular_Montos()">
+												<input type="text" name="txt_descuento" id="txt_descuento" onKeyPress="return NumCheck(event, this);" style="text-align:right" onBlur="javascript:Calcular_Montos()">
 											</td>
 											<td >
 											</td>
@@ -4086,7 +4142,7 @@
 									<table width="100%" border="0" style=" border-spacing:0px 0px;">
 										<tr>
 											<td width="40%">
-												<input type="text" name="txt_isc" id="txt_isc" placeholder="0.00" disabled="disabled" style="text-align:right">
+												<input type="text" name="txt_isc" id="txt_isc" disabled="disabled" style="text-align:right">
 											</td>
 											<td >
 											</td>
@@ -4102,7 +4158,7 @@
 									<table width="100%" border="0" style=" border-spacing:0px 0px;">
 										<tr>
 											<td width="40%">
-												<input type="text" name="txt_igv" id="txt_igv" placeholder="0.00" disabled="disabled" class="" style="text-align:right">
+												<input type="text" name="txt_igv" id="txt_igv" disabled="disabled" class="" style="text-align:right">
 											</td>
 											<td ><div id="div_mensajereferencia"></div>
 											</td>
@@ -4118,7 +4174,7 @@
 									<table width="100%" border="0" style=" border-spacing:0px 0px;">
 										<tr>
 											<td width="40%">
-												<input type="text" name="txt_valortotal" id="txt_valortotal" placeholder="0.00" disabled="disabled" class="" style="text-align:right">
+												<input type="text" name="txt_valortotal" id="txt_valortotal" disabled="disabled" class="" style="text-align:right">
 											</td>
 											<td >
 											</td>
@@ -4140,7 +4196,7 @@
 									<table width="100%" border="0" style="border-spacing:0px 0px;">
 										<tr>
 											<td width="40%">
-												<input type="text" name="txt_preciounitario" id="txt_preciounitario" placeholder="0.00" disabled="disabled" style="text-align:right">
+												<input type="text" name="txt_preciounitario" id="txt_preciounitario" disabled="disabled" style="text-align:right">
 											</td>
 											<td >
 											</td>
@@ -4156,7 +4212,7 @@
 									<table width="100%" border="0" style="border-spacing:0px 0px;">
 										<tr>
 											<td width="40%">
-												<input type="text" name="txt_precio" id="txt_precio" placeholder="0.00" onkeypress="return NumCheck(event, this);" disabled="disabled" style="text-align:right" onBlur="javascript:Calcular_Montos()">
+												<input type="text" name="txt_precio" id="txt_precio" onKeyPress="return NumCheck(event, this);" disabled="disabled" style="text-align:right" onBlur="javascript:Calcular_Montos()">
 											</td>
 											<td >
 											</td>
@@ -4172,7 +4228,7 @@
 									<table width="100%" border="0" style="border-spacing:0px 0px;">
 										<tr>
 											<td width="40%">
-												<input type="text" name="txt_descuentoIGV" id="txt_descuentoIGV" placeholder="0.00" onkeypress="return NumCheck(event, this);" disabled="disabled" style="text-align:right" onBlur="javascript:Calcular_Montos()">
+												<input type="text" name="txt_descuentoIGV" id="txt_descuentoIGV" onKeyPress="return NumCheck(event, this);" disabled="disabled" style="text-align:right" onBlur="javascript:Calcular_Montos()">
 											</td>
 											<td >
 											</td>
@@ -4194,7 +4250,7 @@
 									<table width="100%" border="0" style="border-spacing:0px 0px;">
 										<tr>
 											<td width="40%">
-												<input type="text" name="txt_preciototal" id="txt_preciototal" placeholder="0.00" disabled="disabled" style="text-align:right">
+												<input type="text" name="txt_preciototal" id="txt_preciototal" disabled="disabled" style="text-align:right">
 											</td>
 											<td >
 											</td>

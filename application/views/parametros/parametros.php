@@ -32,7 +32,7 @@
 			{
 				$("#tabs").tabs();
 				ncsistema.Listar_Parametros();	
-				
+				document.getElementById('div_ButtonImage').style.visibility="hidden";
 				
 				$('#txt_valorentero').numeric();
 
@@ -44,6 +44,57 @@
 				{
 					Limpiar_Parametros();
 				},
+				
+				InvocaUpload:function()
+				{
+					var inputFileImage = document.getElementById("uploadedfile");
+					var file = inputFileImage.files[0];
+					var data = new FormData();					
+					data.append('uploadedfile',file);
+					var url = '<?php echo base_url()?>upload'; 
+					
+					$.ajax({
+					url:url,					
+					type:'POST',
+					contentType:false,
+					data:data,
+					processData:false,
+					cache:false,
+					
+					success:function(result)
+						{
+							//alert(result);
+							switch(result) {
+								case '1':
+									$('#div_MensajeValidacionEmpresa').fadeIn(0);
+									$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/information.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">El registro de los datos se realiz&oacute; con &eacute;xito</div>');
+									setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
+				
+									Limpiar_Parametros();
+									ncsistema.Listar_Parametros();
+									alert('Es necesario reiniciar sesión y actualizar el navegador para que los cambian surtan efecto.');
+									break;
+								case '2':
+									$('#div_MensajeValidacionEmpresa').fadeIn(0);
+									$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/information.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Error formato de logo incorrecto!. El formato del logo debe de ser ".png"</div>');
+									setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
+									break;
+								case '3':
+									$('#div_MensajeValidacionEmpresa').fadeIn(0);
+									$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/information.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">El archivo es mayor que 100KB, debes reducirlo antes de subirlo.</div>');
+									setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
+									break;
+								default:
+									$('#div_MensajeValidacionEmpresa').fadeIn(0);
+									$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/information.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">No es posible actualizar, inténtelo nuevamente.</div>');
+									setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
+							}
+							return;
+							
+						}
+					});
+				},
+				
 				Guadar_Portalmultitabla:function()
 				{
 
@@ -78,13 +129,6 @@
 						setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
 						return;
 					}
-					//if (txt_valorcadena=='')
-					//{
-					//	$('#div_MensajeValidacionEmpresa').fadeIn(0);
-					//	$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Ingrese el valor texto</div>');
-					//	setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
-					//	return;
-					//}
 					
 					if (cmb_variables==7)
 					{
@@ -98,7 +142,7 @@
 					}
 					if (txt_codid==0)
 					{
-						if (cmb_variables==1 || cmb_variables==2 || cmb_variables==3 || cmb_variables==4 || cmb_variables==8)
+						if (cmb_variables==1 || cmb_variables==2 || cmb_variables==3 || cmb_variables==4 || cmb_variables==8 || cmb_variables==9)
 						{
 							$('#div_MensajeValidacionEmpresa').fadeIn(0);
 							$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">No se permite generar más registros de este tipo por ser globales.</div>');
@@ -129,9 +173,25 @@
 								setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
 								return;
 							}
+						}else
+						{
+							if  (cmb_variables==9)
+							{
+								var uploadedfile = document.getElementById("uploadedfile").value;	
+								if (uploadedfile=="" || uploadedfile==null)
+								{
+									$('#div_MensajeValidacionEmpresa').fadeIn(0);
+									$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Es necesario seleccionar el logo a modificar.</div>');
+									setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
+									return;
+								}else
+								{
+									ncsistema.InvocaUpload();
+									return;
+								}
+							}
 						}
 					}
-				
 					if (txt_codid==0)//GUARDAR
 					{
 						$.ajax({
@@ -144,7 +204,7 @@
 								grupo_nombre:grupo_nombre,
 								txt_nombrevariable:txt_nombrevariable,
 								txt_valorentero:txt_valorentero,
-								txt_valorcadena:txt_valorcadena
+								txt_valorcadena:txt_valorcadena	
 							},
 							beforeSend:function()
 							{
@@ -361,6 +421,8 @@
 				$('#txt_valorentero').val('');		
 				$('#txt_valorcadena').val('');
 				$('#div_DescripcionValorVenta_Precio').empty().append('');
+				//$('#div_ButtonImage').empty().append('');
+				document.getElementById('div_ButtonImage').style.visibility="hidden";
 				
 				$("#cmb_variables").prop('disabled', false);
 				$("#txt_valorcadena").prop('disabled', false);
@@ -370,9 +432,6 @@
 				$("#div_Guardar").addClass("enablediv").on("onclick");	
 			}
 			
-
-
-
 			function VerDatosParametro_Modificar(cod_id)
 			{
 				$.ajax
@@ -397,10 +456,11 @@
 									$.trim($('#txt_nombrevariable').val(rs.nombre));
 									$.trim($('#txt_valorentero').val(rs.valorentero));
 									$.trim($('#txt_valorcadena').val(rs.valorcadena));	
-									if (rs.grupo_id==8)								
+									if (rs.grupo_id==8 )								
 									{
 										$("#txt_valorcadena").prop('disabled', true);
 										$("#txt_nombrevariable").prop('disabled', true);
+										document.getElementById('div_ButtonImage').style.visibility="hidden";
 										if (rs.valorentero==0)
 										{ $('#div_DescripcionValorVenta_Precio').empty().append('Cálculo por Valor Venta');
 										}
@@ -410,9 +470,32 @@
 										
 									}else
 									{
-										$("#txt_valorcadena").prop('disabled', false);
-										$("#txt_nombrevariable").prop('disabled', false);
-										$('#div_DescripcionValorVenta_Precio').empty().append('');
+										if (rs.grupo_nombre=="OTROS_CARGOS" && rs.nombre=="% de Recargo por Servicio")
+										{
+											$("#txt_valorcadena").prop('disabled', true);
+											$("#txt_nombrevariable").prop('disabled', true);
+											$('#div_DescripcionValorVenta_Precio').empty().append('');
+											document.getElementById('div_ButtonImage').style.visibility="hidden";
+										}else
+										{
+											if (rs.grupo_nombre=="RUTA_LOGO")
+											{
+												//$('#div_ButtonImage').empty().append('Ruta');
+												//$("#div_ButtonImage").prop('disabled', true);
+												$("#txt_valorcadena").prop('disabled', true);
+												$('#div_DescripcionValorVenta_Precio').empty().append('');
+												//alert('rutalogo');
+												//document.getElementById('div_ButtonImage').style.visibility="hidden";
+												document.getElementById('div_ButtonImage').style.visibility="visible";
+												//$("#div_ButtonImage").prop('visible', true);
+											}else	{
+												$("#txt_valorcadena").prop('disabled', false);
+												$("#txt_nombrevariable").prop('disabled', false);
+												$('#div_DescripcionValorVenta_Precio').empty().append('');
+												document.getElementById('div_ButtonImage').style.visibility="hidden";
+												//$("#div_ButtonImage").prop('visible', false);
+											}
+										}
 									}
 									
 							});
@@ -473,6 +556,28 @@
 				}
 				
 			}
+			
+			function cargarImagen() {
+				//var inputElement = document.getElementById("uploadedfile");
+				var files = document.getElementById("uploadedfile").files; // FileList object
+			
+				// use the 1st file from the list
+				f = files[0];
+			
+				var reader = new FileReader();
+				alert(files[0].size);//tamaño del archivo en KB
+				return;
+				// Closure to capture the file information.
+				reader.onload = (function(theFile) {
+					return function(e) {
+			
+					  jQuery( '#ms_word_filtered_html' ).val( e.target.result );
+					};
+				  })(f);
+			
+				  // Read in the image file as a data URL.
+				  reader.readAsText(f);
+			  }
 
 		</script>
     </head>   
@@ -510,7 +615,11 @@
 							<td style="text-align:left;width:15%">
 								<input style="width:98%" type="text" id="txt_valorentero" maxlength="5" value="0" /></td>
 							<td style="text-align:left;width:60%" align="left">
-							<div id="div_DescripcionValorVenta_Precio"></div></td>
+								<div id="div_DescripcionValorVenta_Precio"></div>
+								<form name="actualizaImagen" enctype="multipart/form-data" action="uploader.php" method="post" >
+									<div id="div_ButtonImage"><input id="uploadedfile" name="uploadedfile" type="file" /></div>
+								</form>
+							</td>
 							
 						</tr>
 						

@@ -30,12 +30,23 @@
 
 			$(document).ready(function()
 			{
-				$("#tabs").tabs();
 				ncsistema.Listar_Productos();
 				$('#txt_valorentero').numeric({allow:'.'});
-				//$('#txt_precio').numeric({allow:'.'});
+				$("#tabs").tabs();
 				ncsistema.get_Configuracion_ValorPrecio();
 			})
+			
+			$(function() 
+			{
+				$("#tabs").tabs({ 
+					activate: function(event ,ui)
+						{
+							//alert( ui.newTab.attr('li',"innerHTML")[0].getElementsByTagName("a")[0].innerHTML);
+							if (( ui.newTab.attr('li',"innerHTML")[0].getElementsByTagName("a")[0].innerHTML)=='CATEGORÍA')
+							{
+								ListarConfiguracion_Tab2();}
+						} });
+			});
 			
 			ncsistema=
 			{
@@ -57,20 +68,153 @@
 							{
 								obj1 = document.getElementById('lbl_referencia_valor');
 								$("#txt_precio").prop('disabled', true);
+								$('#txt_valorentero').attr('placeholder','0.0000000000');
+								$('#txt_precio').attr('placeholder','0.0000000000');
 								obj1.style.display="none"
 							}else
 							{
 								obj2 = document.getElementById('lbl_referencia_precio');
 								$("#txt_valorentero").prop('disabled', true);
+								$('#txt_valorentero').attr('placeholder','0.00');
+								$('#txt_precio').attr('placeholder','0.00');
 								obj2.style.display="none"
 							}
 						}
 					});	
 				},
 				
-				Nuevo_Producto:function()
+				Guadar_Categoria:function()
 				{
-					Limpiar_Parametros();
+					var txt_id_cat=$.trim($('#txt_id_cat').val());
+					var txt_cat_codigo=$.trim($('#txt_cat_codigo').val());
+					var txt_cat_descripcion=$.trim($('#txt_cat_descripcion').val());
+					var txt_value_cat=$.trim($('#txt_value_cat').val());
+					
+					if (txt_cat_codigo=='')
+					{
+						$('#div_MensajeValidacionCategoria').fadeIn(0);
+						$('#div_MensajeValidacionCategoria').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Ingrese código de la categoría.</div>');
+						setTimeout(function(){ $("#div_MensajeValidacionCategoria").fadeOut(1500);},3000);
+						return;
+					}
+					if (txt_cat_descripcion=='')
+					{
+						$('#div_MensajeValidacionCategoria').fadeIn(0);
+						$('#div_MensajeValidacionCategoria').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Ingrese descripción de la categoría.</div>');
+						setTimeout(function(){ $("#div_MensajeValidacionCategoria").fadeOut(1500);},3000);
+						return;
+					}
+					if (txt_id_cat==0)//GUARDAR
+					{
+						$.ajax({
+							url:'<?php echo base_url()?>producto/Guadar_Categoria',
+							type: 'post',
+							dataType: 'json',
+							data:
+							{
+								txt_cat_codigo:txt_cat_codigo,
+								txt_cat_descripcion:txt_cat_descripcion,
+								txt_value_cat:txt_value_cat
+							},
+							beforeSend:function()
+							{
+								$('#div_Guardar').removeClass('enablediv');
+								$("#div_Guardar").addClass("disablediv").off("onclick");
+
+								$('#div_MensajeValidacionCategoria').fadeIn(0);
+								$('#div_MensajeValidacionCategoria').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/procesando.gif" width="27" height="27"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Procesando, Espere por favor...</div>');
+							},
+							success:function(result)
+							{
+								if(result.status==1)
+								{
+								
+									$('#div_MensajeValidacionCategoria').fadeIn(0);
+									$('#div_MensajeValidacionCategoria').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/information.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">El registro de los datos se realiz&oacute; con &eacute;xito</div>');
+									setTimeout(function(){ $("#div_MensajeValidacionCategoria").fadeOut(1500);},3000);
+
+									Limpiar_Categorias();
+									ncsistema.Listar_Categorias();
+									return;
+								}
+								else if (result.status==2)
+								{
+									$('#div_Guardar').removeClass('disablediv');
+									$("#div_Guardar").addClass("enablediv").on("onclick");
+									
+									$('#div_MensajeValidacionCategoria').fadeIn(0);
+									$('#div_MensajeValidacionCategoria').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">La categoría ya está registrado</div>');
+									setTimeout(function(){ $("#div_MensajeValidacionCategoria").fadeOut(1500);},3000);
+									return;
+								}		
+								else if (result.status==1000)
+								{
+									document.location.href= '<?php echo base_url()?>usuario';
+									return;
+								}			
+								else
+								{
+									$('#div_Guardar').removeClass('disablediv');
+									$("#div_Guardar").addClass("enablediv").on("onclick");
+									
+									$('#div_MensajeValidacionCategoria').fadeIn(0);
+									$('#div_MensajeValidacionCategoria').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/error.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Error al registrar los datos</div>');
+									setTimeout(function(){ $("#div_MensajeValidacionCategoria").fadeOut(1500);},3000);
+									return;
+								}
+							}
+						});
+					}else
+					{
+						$.ajax({
+							url:'<?php echo base_url()?>producto/Modificar_Categoria',
+							type: 'post',
+							dataType: 'json',
+							data:
+							{
+								txt_id_cat:txt_id_cat,
+								txt_cat_codigo:txt_cat_codigo,
+								txt_cat_descripcion:txt_cat_descripcion,
+								txt_value_cat:txt_value_cat
+							},
+							beforeSend:function()
+							{
+								$('#div_Guardar').removeClass('enablediv');
+								$("#div_Guardar").addClass("disablediv").off("onclick");
+								
+								$('#div_MensajeValidacionCategoria').fadeIn(0);
+								$('#div_MensajeValidacionCategoria').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/procesando.gif" width="27" height="27"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Procesando, Espere por favor...</div>');
+							},
+							success:function(result)
+							{
+								if(result.status==1)
+								{
+									$('#div_MensajeValidacionCategoria').fadeIn(0);
+									$('#div_MensajeValidacionCategoria').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/information.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">La Modificaci&oacute;n de los datos se realiz&oacute; con &eacute;xito</div>');
+									setTimeout(function(){ $("#div_MensajeValidacionCategoria").fadeOut(1500);},3000);
+
+									Limpiar_Categorias();
+									ncsistema.Listar_Categorias();
+									return;
+								}
+								else if (result.status==1000)
+								{
+									document.location.href= '<?php echo base_url()?>usuario';
+									return;
+								}
+								else
+								{
+									$('#div_Guardar').removeClass('disablediv');
+									$("#div_Guardar").addClass("enablediv").on("onclick");
+									
+									$('#div_MensajeValidacionCategoria').fadeIn(0);
+									$('#div_MensajeValidacionCategoria').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/error.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Error al modificar los datos</div>');
+									setTimeout(function(){ $("#div_MensajeValidacionCategoria").fadeOut(1500);},3000);
+									return;
+								}
+							}
+						});
+					}
 				},
 				
 				Guadar_Producto:function()
@@ -260,7 +404,18 @@
 						});
 					}
 				},
-
+				
+				Nuevo_Producto:function()
+				{
+					Limpiar_Parametros();
+				},
+				
+				Nuevo_Categoria:function()
+				{
+					Limpiar_Categorias();
+				},
+				
+				
 				Listar_Productos:function()
 				{
 					$.ajax({
@@ -405,13 +560,111 @@
 						$(event.target.parentNode).addClass('row_selected');
 					});
 				},	
+				
+				Listar_Categorias:function()
+				{
+					$.ajax({
+						url:'<?php echo base_url()?>producto/Listar_Categorias',
+						type: 'post',
+						dataType: 'json',
+						data:
+						{
+						},
+						beforeSend:function()
+						{
+						},
+						success:function(result)
+						{
+							if(result.status==1)
+							{
+								ncsistema.Listar_CategoriasTabla(result.data);
+								
+							}
+							else if (result.status==1000)
+							{
+								document.location.href= '<?php echo base_url()?>usuario';
+								return;
+							}
+							else
+							{
+								ncsistema.Listar_CategoriasTabla("");
+							}
+						}
+					});					
+				},
+				
+				Listar_CategoriasTabla:function(data)
+				{	
+					$('#div_ListadoCategoria').empty().append('');
+					newHtml='';
+					newHtml+='<table width="100%"  cellpadding="0" cellspacing="0" class="display" id="Tab_ListaCategorias">';
+					newHtml+='<thead>';
+					newHtml+='<tr>';						
+						newHtml+='<th style="width:5%">Nro.</td>';						
+						newHtml+='<th style="width:5%">Editar</td>';
+						newHtml+='<th style="width:20%">Código</td>';
+						newHtml+='<th style="width:65%">Descripción</td>';
+						newHtml+='<th style="width:5%">Eliminar</td>';	
+					newHtml+='</tr>';
+					newHtml+='</thead>';
+        			newHtml+='<tbody>';
+
+					contador=0;
+					$.each(data,function(key,rs)
+					{
+						contador++;
+						
+						newHtml+='<tr>';							
+							newHtml+='<td style="text-align:center">'+rs.nro_secuencia+'</td>';							
+							newHtml+='<td style="text-align:center"><a href="javascript:VerDatosCategoria_Modificar('+rs.id+')" ><img align="center" src="<?php echo base_url();?>application/helpers/image/ico/Editar.png" title="Imprimir" width="15"  height="15" border="0" ></a></td>';
+							newHtml+='<td style="text-align:left">'+rs.valorcadena+'</td>';
+							newHtml+='<td style="text-align:left">'+rs.nombre+'</td>';
+							if (rs.activo==0)//ANULADO
+							{
+								newHtml+='<td style="text-align:left"></td>';								
+							}
+							else
+							{
+								newHtml+='<td style="text-align:center"><a href="javascript:Eliminar_Categoria('+rs.id+')" ><img align="center" src="<?php echo base_url();?>application/helpers/image/ico/nceliminar.png" title="Eliminar" width="15"  height="15" border="0" ></a></td>';
+							}
+							
+						newHtml+='</tr>';						
+					  });	
+					
+					newHtml+='</tbody>';
+					newHtml+='</table>';
+					
+					$('#div_ListadoCategoria').empty().append(newHtml);	
+
+					oTable=$('#Tab_ListaCategorias').dataTable({
+						"bPaginate": true,
+						"sScrollX": "100%",
+						"sScrollXInner": "100%",
+						"bScrollCollapse": true,
+						"bJQueryUI": true
+					});
+				 
+					$("#Tab_ListaCategorias tbody").click(function(event) 
+					{
+						$(oTable.fnSettings().aoData).each(function (){
+							$(this.nTr).removeClass('row_selected');
+						});
+						$(event.target.parentNode).addClass('row_selected');
+					});
+				},
+				
+			}
+			
+			function ListarConfiguracion_Tab2()
+			{
+				ncsistema.Listar_Categorias();
+				
 			}
 			
 			function Limpiar_Parametros()
 			{
 				$('#txt_id').val('0');
 				$('#txt_codigo').val('');
-				$('#txt_codigo').attr('disabled', true);
 				$('#txt_nombrecorto').val('');
 				$('#txt_nombrelargo').val('');
 				$('#txt_valorentero').val('');	
@@ -419,6 +672,16 @@
 				$('#cmb_medida').val('0');
 				$('#txt_precio').val('');
 				$("#txt_codigo").prop('disabled', false);
+				$('#div_Guardar').removeClass('disablediv');
+				$("#div_Guardar").addClass("enablediv").on("onclick");	
+			}
+			
+			function Limpiar_Categorias()
+			{
+				$('#txt_id_cat').val('0');
+				$('#txt_cat_codigo').val('');
+				$('#txt_cat_descripcion').val('');
+				$("#txt_cat_codigo").prop('disabled', false);
 				$('#div_Guardar').removeClass('disablediv');
 				$("#div_Guardar").addClass("enablediv").on("onclick");	
 			}
@@ -442,16 +705,7 @@
 						{
 							$.each(result.data,function(key,rs)
 							{
-									//$("#cmb_variables").prop('disabled', true);
-									//id
-									//cod_producto
-									//nom_corto
-									//nom_largo
-									//valor_venta
-									//id_categoria
-									//categoria
-									//med
-									//cod_unidmedsunat 
+									
 									$('#txt_id').val(rs.id);
 									$('#txt_codigo').val(rs.cod_producto);
 									$("#txt_codigo").prop('disabled', true);
@@ -467,7 +721,39 @@
 										$('#txt_precio').val(rs.precio_venta);
 										Calcular_Montos_P();
 									}
-									//
+							});
+						}
+						else if (result.status==1000)
+						{
+							document.location.href= '<?php echo base_url()?>usuario';
+							return;
+						}
+					}
+				});
+			}
+			
+			function VerDatosCategoria_Modificar(cod_id)
+			{
+				$.ajax
+				({
+					url:'<?php echo base_url()?>producto/Listar_CategoriaId',type:'post',dataType:'json',
+					data:
+					{
+						cod_id:cod_id
+					},
+					beforeSend:function()
+					{
+					},
+					success:function(result)
+					{
+						if(parseInt(result.status)==1)
+						{
+							$.each(result.data,function(key,rs)
+							{
+									$('#txt_id_cat').val(rs.id);
+									$('#txt_cat_codigo').val(rs.valorcadena);
+									$("#txt_cat_codigo").prop('disabled', true);
+									$('#txt_cat_descripcion').val(rs.nombre);
 							});
 						}
 						else if (result.status==1000)
@@ -498,7 +784,7 @@
 					txt_valorigv=0;
 				}		
 				txt_precio=(parseFloat(txt_valorentero)*(1+parseFloat(txt_valorigv)+parseFloat(txt_valorotroscargos)));
-				$('#txt_precio').val(txt_precio.toFixed(2));
+				$('#txt_precio').val(txt_precio.toFixed(10));
 				
 			}
 			function Calcular_Montos_P()
@@ -523,6 +809,51 @@
 				$('#txt_valorentero').val(txt_valorentero.toFixed(2));
 			}
 			
+			function Eliminar_Categoria(cod_id)
+			{
+				if(confirm("¿ Está Seguro de Eliminar la Categoría ?"))
+				{
+					$.ajax
+					({
+						url:'<?php echo base_url()?>producto/Eliminar_Categoria',type:'post',dataType:'json',
+						data:
+						{
+							cod_id:cod_id
+						},
+						beforeSend:function()
+						{
+							$('#div_MensajeValidacionCategoria').fadeIn(0);
+							$('#div_MensajeValidacionCategoria').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/procesando.gif" width="27" height="27"/></div><div style="margin-left:20px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Procesando, Espere por favor...</div>')
+						},
+						success:function(result)
+						{
+							if(result.status==1)
+							{
+								$('#div_MensajeValidacionCategoria').fadeIn(0);
+								$('#div_MensajeValidacionCategoria').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/information.png"/></div><div style="margin-left:20px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">La eliminaci&oacute;n de la categoría se realiz&oacute; con &eacute;xito</div>');
+								setTimeout(function(){ $("#div_MensajeValidacionCategoria").fadeOut(1500);},3000);
+								ncsistema.Listar_Categorias();
+								return;							
+								
+	
+							}
+							else if (result.status==1000)
+							{
+								document.location.href= '<?php echo base_url()?>usuario';
+								return;
+							}
+							else
+							{
+								$('#div_MensajeValidacionCategoria').fadeIn(0);
+								$('#div_MensajeValidacionCategoria').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/error.png"/></div><div style="margin-left:20px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Error al eliminar el correlativo</div>');
+								setTimeout(function(){ $("#div_MensajeValidacionCategoria").fadeOut(1500);},3000);
+								return;
+							}
+						}			
+					});
+				}
+			}
+			
 			function Eliminar_Producto(cod_id)
 			{
 				if(confirm("¿ Está Seguro de Eliminar el Producto ?"))
@@ -544,7 +875,7 @@
 							if(result.status==1)
 							{
 								$('#div_MensajeValidacionEmpresa').fadeIn(0);
-								$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/information.png"/></div><div style="margin-left:20px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">La eliminaci&oacute;n de la serie se realiz&oacute; con &eacute;xito</div>');
+								$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/information.png"/></div><div style="margin-left:20px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">La eliminaci&oacute;n del producto se realiz&oacute; con &eacute;xito</div>');
 								setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
 								ncsistema.Listar_Productos();
 								return;							
@@ -559,7 +890,7 @@
 							else
 							{
 								$('#div_MensajeValidacionEmpresa').fadeIn(0);
-								$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/error.png"/></div><div style="margin-left:20px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Error al eliminar el correlativo</div>');
+								$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/error.png"/></div><div style="margin-left:20px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Error al eliminar el producto</div>');
 								setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
 								return;
 							}
@@ -568,10 +899,50 @@
 				}
 			}
 			
+			function validar_Categoria()
+			{
+				var txt_cat_codigo=$('#txt_cat_codigo').val();
+				//var txt_cat_descripcion=$('#txt_cat_descripcion').val();
+				if ($.trim(txt_cat_codigo)=='' && $.trim(txt_cat_descripcion)==''){
+					return;
+					}
+				$.ajax
+				({
+					url:'<?php echo base_url()?>producto/Valida_Categoria',type:'post',dataType:'json',
+					data:
+					{
+						txt_cat_codigo:txt_cat_codigo
+					},
+					beforeSend:function()
+					{
+					},
+					success:function(result)
+					{
+						if(parseInt(result.status)==1)
+						{
+							$.each(result.data,function(key,rs)
+							{
+								if (rs.activo=='0')
+								{
+									alert('Categoría registrado y deshabilitado. Se habilitará el registro con los nuevos datos a actualizar.');
+								}
+								$('#txt_id_cat').val(rs.id);
+								$('#txt_cat_codigo').val(rs.valorcadena);
+								$('#txt_cat_descripcion').val(rs.nombre);
+							});
+						}
+						else if (result.status==1000)
+						{
+							document.location.href= '<?php echo base_url()?>usuario';
+							return;
+						}	
+					}
+				});
+			}
+			
 			function VerDatos_Validar()
 			{
 				//var txt_id=$('#txt_id').val();
-				var txt_config_valorprecio=$.trim($('#txt_config_valorprecio').val());
 				var txt_codigo=$('#txt_codigo').val();
 				if ($.trim(txt_codigo)==''){
 					return;
@@ -590,7 +961,6 @@
 					{
 						if(parseInt(result.status)==1)
 						{
-							$('#txt_codigo').attr('disabled', true);
 							$.each(result.data,function(key,rs)
 							{
 								if (rs.est_reg=='0')
@@ -622,6 +992,7 @@
 			}
 			
 			function NumCheck(e, field) {
+				
 				key = e.keyCode ? e.keyCode : e.which
 				// backspace
 				if (key == 8 || key == 9 || key == 35 || key == 36 || key == 37 || key == 39) return true
@@ -633,7 +1004,13 @@
 						if (key > 47 && key < 58) {
 							if (field.value == "") return true
 							//regexp = /[0-9]{1,10}[\.][0-9]{1,3}$/
-							regexp = /[0-9]{2}$/
+							var txt_config_valorprecio=$.trim($('#txt_config_valorprecio').val());
+							if (txt_config_valorprecio==0){
+								regexp = /[0-9]{10}$/
+							}else{
+								regexp = /[0-9]{2}$/
+							}
+							
 							return !(regexp.test(field.value))
 						}
 					}
@@ -663,6 +1040,7 @@
 		<div id="tabs" style="width:99.7%;float:left;text-align:center;margin-top:5px">
 			<ul>
 				<li><a href="#tabs-1">PRODUCTOS</a></li>
+				<li><a href="#tabs-2">CATEGORÍA</a></li>
 			</ul>
 			<div id="tabs-1" style="width:95%;float:left">
 				<div id="div_datosempresa" style="width:100%;border:solid 1px;float:left;margin-top:10px;border: 1px solid #a6c9e2;border-radius:5px;">
@@ -691,11 +1069,11 @@
 							<td style="text-align:left">
 								<input type="hidden" id="txt_valorigv" value="<?php echo $valor_igv;?>" />
 								<input type="hidden" id="txt_valorotroscargos" value="<?php echo $valor_otroscargos;?>" />
-								<input  type="text" id="txt_valorentero" maxlength="23" placeholder="0.00" onkeypress="return NumCheck(event, this);"  onBlur="javascript:Calcular_Montos_VV()" style="text-align:right"/>
+								<input  type="text" id="txt_valorentero" maxlength="23" onKeyPress="return NumCheck(event, this);"  onBlur="javascript:Calcular_Montos_VV()" style="text-align:right"/>
 								<label id="lbl_referencia_valor" style="font-size:10px; color:#0000CC; font-weight:bold">(Referencial)</label></td>
 							<td style="text-align:right"><label class="columna">Precio de Cobro:</label></td>
 							<td style="text-align:left">
-								<input  type="text" id="txt_precio" maxlength="23" placeholder="0.00" onkeypress="return NumCheck(event, this);"  onBlur="javascript:Calcular_Montos_P()" style="text-align:right"/> 
+								<input  type="text" id="txt_precio" maxlength="23" placeholder="0.00" onKeyPress="return NumCheck(event, this);"  onBlur="javascript:Calcular_Montos_P()" style="text-align:right"/> 
 									<label id="lbl_referencia_precio" style="font-size:10px; color:#0000CC; font-weight:bold">(Referencial)</label></td>
 						</tr>
 						<tr>
@@ -754,6 +1132,61 @@
 					
 				</div>
 				<div id="div_ListadoProductos" style="width:100%;border:solid 0px;float:left;text-align:center;margin-top:10px">
+				</div>	
+			</div>
+			
+			<div id="tabs-2" style="width:95%;float:left">
+				<div id="div_datoscategoria" style="width:100%;border:solid 1px;float:left;margin-top:10px;border: 1px solid #a6c9e2;border-radius:5px;">
+					<input type="hidden" id="txt_id_cat"  value="0" />
+					<input type="hidden" id="txt_value_cat" value="CATEGORIA_PRODUCTO"/>
+					<table border="0" width="40%" style="border-collapse:separate; border-spacing:2px 1px;" cellpadding="3" 
+						class="tablaFormulario">
+						<tr><td colspan="4"><label class="columna"></label></td></tr>
+						<tr>
+							<td style="text-align:right; width:20%"><label class="columna">Código: </label></td>
+							<td style="text-align:left; width:80%">
+								<input type="text" id="txt_cat_codigo" maxlength="5" style="text-transform:uppercase" onBlur="javascrip:validar_Categoria()" /></td>
+						</tr>
+						<tr>
+							<td style="text-align:right;" ><label class="columna">Descripción: </label></td>
+							<td style="text-align:left;">
+								<input  style="width:100%" type="text" id="txt_cat_descripcion" maxlength="50" /></td>
+						</tr>
+						<tr style="vertical-align:top" >
+							<td  style="vertical-align:top" colspan="4">
+								<div style="width:100%;height:15px;border:solid 0px;margin-left:4px;margin-right:20px;margin-top:0px;text-align:center;float:left">
+									<div id="div_MensajeValidacionCategoria" style="width:100%;float:left;font-size:9px; color:#FF0000"></div>
+								</div>
+							</td>
+						</tr>
+						<tr  style="align:left" >
+							<td><label class="columna"></label></td>
+							<td style="text-align:left" colspan="3">
+								<table style="width:100%" border="0" >
+								  <tbody>
+									<tr style="align:left">
+										<td style="text-align:right; width:50%">
+											<a href="javascript:ncsistema.Nuevo_Categoria()" >
+												<button id="" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" style="width:105px; height:32px"  type="submit">
+														<span class="ui-button-icon-left ui-icon ui-icon-document"></span>
+														<span class="ui-button-text">Nuevo</span></button>
+											</a>
+										</td>
+										<td style="text-align:left;width:50%">
+											<a href="javascript:ncsistema.Guadar_Categoria()" >
+												<button id="" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" style="width:105px; height:32px"  type="submit">
+														<span class="ui-button-icon-left ui-icon ui-icon-disk"></span>
+														<span class="ui-button-text">Guardar</span></button>
+											</a></td>
+									</tr>
+								  </tbody>
+								</table>
+							</td>
+						  </tr>	
+					</table>
+				</div>
+				
+				<div id="div_ListadoCategoria" style="width:100%;border:solid 0px;float:left;text-align:center;margin-top:10px">
 				</div>	
 			</div>
 
