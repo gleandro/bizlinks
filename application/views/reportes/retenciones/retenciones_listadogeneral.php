@@ -1,6 +1,9 @@
 <?php
+	
 
-	$ruta_formato='FormatoListaRetenciones.xlsx';
+	
+	$ruta_formato=$nombreArchivo;//'FormatoListaRetenciones.xlsx';
+	$filename=   'ListaRetenciones';
 	$ruta_formato='nc_formatos/retenciones/'.$ruta_formato;
 	
 	$inputFileName = $ruta_formato;//NOMBRE DE LA RUTA DEL FORMATO
@@ -89,7 +92,7 @@
 	}
 	
 	//prepare download
-	$filename=   'ListaRetenciones';//$lista_datosdocumento[0]['nom_tipdoc'].'_'.$lista_datosdocumento[0]['ser_doc'].'-'.$lista_datosdocumento[0]['num_doc']; 
+	//$filename=   'ListaRetenciones';//$lista_datosdocumento[0]['nom_tipdoc'].'_'.$lista_datosdocumento[0]['ser_doc'].'-'.$lista_datosdocumento[0]['num_doc']; 
 	header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;meta charset="utf-8"');
 	header('Content-Disposition: attachment;filename="'.$filename.'.xlsx"');
 	header('Cache-Control: max-age=0');

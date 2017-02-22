@@ -15,7 +15,8 @@ class Parametros_model extends CI_Model
 		$this->load->database('ncserver',TRUE);
 		$consulta = $this->db->query("select id, grupo_id, grupo_nombre, nombre,
 										valorentero, valorcadena,activo, cod_empr
-									from sgr_multitabla where activo=1 and (cod_empr is null OR cod_empr=".$prm_cod_empr.")
+									from sgr_multitabla where activo=1 and grupo_id<>6 and 
+									(cod_empr is null OR cod_empr=".$prm_cod_empr.")
 									order by grupo_id;");
 		
 		return $consulta->result_array();

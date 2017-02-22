@@ -153,7 +153,7 @@ class Empresa_model extends CI_Model
 					a.tipo_confunid,
 					a.tipo_conffirma,
 					(select aa.valorentero from sgr_multitabla aa where aa.activo=1 and aa.grupo_nombre='VALOR_IGV') valor_igv,
-					(select cc.valorentero from sgr_multitabla cc where cc.activo=1 and cc.grupo_nombre='OTROS_CARGOS' and cc.cod_empr=".$prm_cod_empr." ) valor_otroscargos,
+					(select cc.valorentero from sgr_multitabla cc where cc.activo=1 and cc.grupo_nombre='OTROS_CARGOS' and cc.nombre='% de Recargo por Servicio' and cc.cod_empr=".$prm_cod_empr." ) valor_otroscargos,
 					(select bb.valorentero from sgr_multitabla bb where bb.activo=1 and bb.grupo_nombre='CONFIGURACION_VENTA') conf_venta
 				from sgr_empresa a 
 				where a.cod_empr=".$prm_cod_empr." and a.est_reg=1;";
