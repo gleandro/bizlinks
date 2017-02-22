@@ -55,10 +55,10 @@ class Comprobante_model extends CI_Model
 		'".$prm_val_txt_preciocobro."',
 		'".$prm_val_descuento_inc_igv."'
 		);";
-		/* 
-		print_r($query);	
-		return;	
-		*/
+		
+		//print_r($query);	
+		//return;	
+		
 
 		$this->db_client->query($query);
 		if ($this->db_client->trans_status() === FALSE)
@@ -78,7 +78,6 @@ class Comprobante_model extends CI_Model
 	
 	function Listar_ProductosDocumento($prm_cod_usu,$prm_cod_empr)
 	{
-		
 		$this->load->database('ncserver',TRUE);
 		$query="
 		select 
@@ -740,6 +739,10 @@ class Comprobante_model extends CI_Model
 			if ($Conf_Tipo_Venta==1){
 				$query_colum=$query_colum."codigoauxiliar40_2,"; 		$query_valores=$query_valores."'9123',";
 				$query_colum=$query_colum."textoAuxiliar40_2,"; 		$query_valores=$query_valores."'".number_format(trim($v['val_preciocobro']), 2, '.', '')."',";
+			}else
+			{
+				$query_colum=$query_colum."codigoauxiliar40_2,"; 		$query_valores=$query_valores."'9123',";
+				$query_colum=$query_colum."textoAuxiliar40_2,"; 		$query_valores=$query_valores."'".number_format(trim($val_precioconigv), 2, '.', '')."',";
 			}
 			//Fin Requerimiento 4		
 			$query_colum=$query_colum."importeigv,";					$query_valores=$query_valores."'".number_format(trim($v['val_igv']), 2, '.', '')."',";

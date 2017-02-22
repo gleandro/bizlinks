@@ -34,7 +34,7 @@ class Catalogos_model extends CI_Model
 		
 		return $consulta->result_array();
 	}
-	
+
 	function Listar_TipodeDocumento_Retencion()
 	{
 
@@ -43,7 +43,7 @@ class Catalogos_model extends CI_Model
 		$consulta=$this->db->query($query);
 		return $consulta->result_array();	
 	}
-
+	
 	function Listar_TipodeDocumento($codigo = 0)
 	{
 
@@ -103,8 +103,9 @@ class Catalogos_model extends CI_Model
 		and a.cod_empr=".$prm_cod_empr."
 		and b.cod_usu=".$prm_cod_usu."
 		and b.est_reg=1	;";
-		$consulta=$this->db->query($query);
 
+		$consulta=$this->db->query($query);
+		//return;
 		return $consulta->result_array();	
 	}
 	
@@ -208,9 +209,10 @@ class Catalogos_model extends CI_Model
 			"2"  => array ( "codigo"=> "3","nombre"=> "VALOR_IGV"),
 			"3"  => array ( "codigo"=> "4","nombre"=> "RUTA_DOCUMENTOS"),
 			"4"  => array ( "codigo"=> "5","nombre"=> "TIPO_MONEDA"),
-			"5"  => array ( "codigo"=> "6","nombre"=> "CATEGORIA_PRODUCTO"),
+						//"5"  => array ( "codigo"=> "6","nombre"=> "CATEGORIA_PRODUCTO"),
 			"6"  => array ( "codigo"=> "7","nombre"=> "OTROS_CARGOS"),
-			"7"  => array ( "codigo"=> "8","nombre"=> "CONFIGURACION_VENTA")
+			"7"  => array ( "codigo"=> "8","nombre"=> "CONFIGURACION_VENTA"),
+			"8"  => array ( "codigo"=> "9","nombre"=> "RUTA_LOGO")
 			);
 
 		return $lista;	
@@ -401,6 +403,23 @@ class Catalogos_model extends CI_Model
 		$this->load->database('ncserver',TRUE);
 		$query="select co_item_tabla, no_corto, no_largo from tm_tabla_multiple 
 		where no_tabla='ESTADO_DOCUMENTOSUNATFACTURA_PORTAL' and in_habilitado=1;";
+		$consulta=$this->db->query($query);
+		return $consulta->result_array();	
+	}
+	function Listar_EstadoSunatRetencion_Receptor()
+	{
+		$this->load->database('ncserver',TRUE);
+		$query="select co_item_tabla, no_corto, no_largo from tm_tabla_multiple 
+		where no_tabla='ESTADO_DOCUMENTOSUNATFACTURA_PORTAL' and in_habilitado=1 
+		and co_item_tabla<>'PE_02' and co_item_tabla<>'SIGNE';";
+		$consulta=$this->db->query($query);
+		return $consulta->result_array();	
+	}
+	function Listar_EstadoSunatRetencion_NoIn_Receptor()
+	{
+		$this->load->database('ncserver',TRUE);
+		$query="select co_item_tabla, no_corto, no_largo from tm_tabla_multiple 
+		where no_tabla='ESTADO_DOCUMENTOSUNATFACTURA_PORTAL' and in_habilitado=1 and co_item_tabla<>'SIGNE';";
 		$consulta=$this->db->query($query);
 		return $consulta->result_array();	
 	}

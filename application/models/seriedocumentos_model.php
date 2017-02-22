@@ -11,7 +11,6 @@ class Seriedocumentos_model extends CI_Model
 	
 	function Listar_Seriedocumentos($prm_cod_empr)
 	{
-
 		$this->load->database('ncserver',TRUE);
 		
 		$info = $this->db->query("select 
@@ -123,7 +122,7 @@ class Seriedocumentos_model extends CI_Model
 			$result['result']=2;
 		}
 		$this->db_client->trans_commit();
-
+		
 		return $result;
 	}
 
@@ -219,7 +218,7 @@ class Seriedocumentos_model extends CI_Model
 			$result['result']=2;
 		}
 		$this->db_client->trans_commit();
-
+		
 		return $result;
 	}
 	
@@ -235,7 +234,7 @@ class Seriedocumentos_model extends CI_Model
 			b.ser_doc,
 			c.nom_usu,
 			c.apell_usu					
-
+			
 			from sgr_configuracionseriesusuario a 
 			inner join sgr_configuracionseries b on a.cod_confser=b.cod_confser
 			inner join sgr_usuario c on c.cod_usu=a.cod_usu
