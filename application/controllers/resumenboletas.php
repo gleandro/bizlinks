@@ -10,23 +10,23 @@ class Resumenboletas extends CI_Controller {
 		$this->load->model('Empresa_model');
 		$this->load->model('Usuarioinicio_model');
 		$this->load->model('Menu_model');
-		$this->load->model('excel_model'); 
-		$this->load->model('Catalogos_model'); 		
+		$this->load->model('excel_model');
+		$this->load->model('Catalogos_model');
 	}
-	
+
 	public function index()
 	{
 		if(!$this->Usuarioinicio_model->SessionExiste())
 		{
-			//echo 'SESSION EXPIRADA, VUELVA A INICIAR!'; 
-			//exit(0); 
-			$this->load->view('usuario/login'); 
+			//echo 'SESSION EXPIRADA, VUELVA A INICIAR!';
+			//exit(0);
+			$this->load->view('usuario/login');
 		}
 		else
 		{
 			$prm_cod_usuadm=$this->Usuarioinicio_model->Get_Cod_UsuAdm();
 			$prm_cod_usu=$this->Usuarioinicio_model->Get_Cod_Usu();
-			$prm_tip_usu=$this->Usuarioinicio_model->Get_Tip_Usu();		
+			$prm_tip_usu=$this->Usuarioinicio_model->Get_Tip_Usu();
 			if(!$this->Usuarioinicio_model->MarcoTrabajoExiste())
 			{
 				$prm_cod_empr=0;
@@ -37,22 +37,22 @@ class Resumenboletas extends CI_Controller {
 			}
 
 			$prm['Listar_UsuarioAccesos']=$this->Menu_model->Listar_UsuarioAccesosInvitado($prm_cod_usuadm,$prm_cod_empr,$prm_cod_usu,$prm_tip_usu);
-			
+
 			$Listar_Empresa=$this->Empresa_model->Listar_Empresa($this->Usuarioinicio_model->Get_Cod_UsuAdm());
-			$prm['Listar_Empresa']=$Listar_Empresa;			
+			$prm['Listar_Empresa']=$Listar_Empresa;
 			$prm['Listar_Empresas']=$this->Empresa_model->Listar_EmpresaContacto($prm_cod_usuadm,$prm_tip_usu,$prm_cod_usu);
 			$prm['Listar_TipodeDocumento']=$this->Resumenboletas_model->Listar_TipodeDocumento();
-			
-			$Listar_EmpresaId=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);	
-			
+
+			$Listar_EmpresaId=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);
+
 			if(!empty($Listar_EmpresaId))//SI NO ES NULO O VACIO
 			{
-				$prm['Ruc_Empresa']=$Listar_EmpresaId[0]['ruc_empr'];	
+				$prm['Ruc_Empresa']=$Listar_EmpresaId[0]['ruc_empr'];
 				$prm['Razon_Social']=$Listar_EmpresaId[0]['raz_social'];
 			}
 			else
 			{
-				$prm['Ruc_Empresa']='';	
+				$prm['Ruc_Empresa']='';
 				$prm['Razon_Social']='';
 			}
 			//BORRAMOS LOS DATOS DEL USUARIO EN LA TABLA TEMPORAL
@@ -60,23 +60,23 @@ class Resumenboletas extends CI_Controller {
 			$prm['pagina_ver']='resumenboletas';
 
 			$this->load->view('resumenboletas/resumenboletas',$prm);
-		}		
+		}
 	}
-	
-	
+
+
 	public function ListaResumenBoletas()
 	{
 		if(!$this->Usuarioinicio_model->SessionExiste())
 		{
-			//echo 'SESSION EXPIRADA, VUELVA A INICIAR!'; 
-			//exit(0); 
-			$this->load->view('usuario/login'); 
+			//echo 'SESSION EXPIRADA, VUELVA A INICIAR!';
+			//exit(0);
+			$this->load->view('usuario/login');
 		}
 		else
 		{
 			$prm_cod_usuadm=$this->Usuarioinicio_model->Get_Cod_UsuAdm();
 			$prm_cod_usu=$this->Usuarioinicio_model->Get_Cod_Usu();
-			$prm_tip_usu=$this->Usuarioinicio_model->Get_Tip_Usu();		
+			$prm_tip_usu=$this->Usuarioinicio_model->Get_Tip_Usu();
 			if(!$this->Usuarioinicio_model->MarcoTrabajoExiste())
 			{
 				$prm_cod_empr=0;
@@ -87,11 +87,11 @@ class Resumenboletas extends CI_Controller {
 			}
 
 			$prm['Listar_UsuarioAccesos']=$this->Menu_model->Listar_UsuarioAccesosInvitado($prm_cod_usuadm,$prm_cod_empr,$prm_cod_usu,$prm_tip_usu);
-			
+
 			$Listar_Empresa=$this->Empresa_model->Listar_Empresa($this->Usuarioinicio_model->Get_Cod_UsuAdm());
-			$prm['Listar_Empresa']=$Listar_Empresa;			
-			$prm['Listar_Empresas']=$this->Empresa_model->Listar_EmpresaContacto($prm_cod_usuadm,$prm_tip_usu,$prm_cod_usu);	
-			
+			$prm['Listar_Empresa']=$Listar_Empresa;
+			$prm['Listar_Empresas']=$this->Empresa_model->Listar_EmpresaContacto($prm_cod_usuadm,$prm_tip_usu,$prm_cod_usu);
+
 			//Obtener estados sunat bajo la condicion su es inHouse o no
 			$Listar_Parametros=$this->Catalogos_model->Listar_Parametros();
 			if(!empty($Listar_Parametros))//SI NO ES NULO O VACIO
@@ -108,29 +108,29 @@ class Resumenboletas extends CI_Controller {
 			else{
 				$prm['Listar_EstadoSunatResumen']=$this->Catalogos_model->Listar_EstadoSunatResumen();
 			}
-			
+
 			//$prm['Listar_EstadoDocumento']=$this->Catalogos_model->Listar_EstadoDocumento();
 			//Nuevo Req. No se considera estado Borrador para las listas de resumenes
-			$prm['Listar_EstadoDocumento']=$this->Catalogos_model->Listar_EstadoDocumentoResumenes();		
+			$prm['Listar_EstadoDocumento']=$this->Catalogos_model->Listar_EstadoDocumentoResumenes();
 
-			$Listar_EmpresaId=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);	
+			$Listar_EmpresaId=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);
 			if(!empty($Listar_EmpresaId))//SI NO ES NULO O VACIO
 			{
-				$prm['Ruc_Empresa']=$Listar_EmpresaId[0]['ruc_empr'];	
+				$prm['Ruc_Empresa']=$Listar_EmpresaId[0]['ruc_empr'];
 				$prm['Razon_Social']=$Listar_EmpresaId[0]['raz_social'];
 			}
 			else
 			{
-				$prm['Ruc_Empresa']='';	
+				$prm['Ruc_Empresa']='';
 				$prm['Razon_Social']='';
 			}
 			$prm['pagina_ver']='resumenboletas/listaresumenboletas';
-			
+
 			$this->load->view('resumenboletas/listaresumenboletas',$prm);
-		}		
+		}
 	}
-	
-	
+
+
 
 	public function Listar_DocumentosdeResumen()
 	{
@@ -251,7 +251,7 @@ class Resumenboletas extends CI_Controller {
 	}
 
 	public function Guardar_ResumenBoletas()
-	{	
+	{
 		$result['status']=0;
 		if(!$this->Usuarioinicio_model->SessionExiste())
 		{
@@ -259,29 +259,29 @@ class Resumenboletas extends CI_Controller {
 			echo json_encode($result);
 			exit;
 		}
-		$result['mensaje']='';	
+		$result['mensaje']='';
 
 		$prm_cod_usu=$this->Usuarioinicio_model->Get_Cod_Usu();
 		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
-		$prm_documento=trim($this->input->post('txt_datosseleccionados'));			
-		$prm_ruc_empr=trim($this->input->post('txt_RucEmpresa'));	
-		$prm_est_declarar=trim($this->input->post('tip_evento'));		
-		$prm_fec_doc=trim($this->input->post('txt_FechaEmision')); 		
-		$prm_tip_docemisor=trim($this->input->post('txt_tipdocemisor'));		
-		$txt_fecemisiondoc=trim($this->input->post('txt_fecemisiondoc')); 
+		$prm_documento=trim($this->input->post('txt_datosseleccionados'));
+		$prm_ruc_empr=trim($this->input->post('txt_RucEmpresa'));
+		$prm_est_declarar=trim($this->input->post('tip_evento'));
+		$prm_fec_doc=trim($this->input->post('txt_FechaEmision'));
+		$prm_tip_docemisor=trim($this->input->post('txt_tipdocemisor'));
+		$txt_fecemisiondoc=trim($this->input->post('txt_fecemisiondoc'));
 
-		$fechadocumento=explode('/',$prm_fec_doc); 
+		$fechadocumento=explode('/',$prm_fec_doc);
 		$fecha_actual = strtotime('now');
 		$fecha_entrada = strtotime($fechadocumento[2].'/'.$fechadocumento[1].'/'.$fechadocumento[0]);
 
 		$dias	= (( $fecha_actual-$fecha_entrada)/86400);
-		$dias 	= abs($dias); 
-		$dias = floor($dias);	
+		$dias 	= abs($dias);
+		$dias = floor($dias);
 
 		if ($dias>7)
 		{
 			$result['status']=0;
-			$result['mensaje']='La fecha de emisión es inferior a 7 dias calendarios';
+			$result['mensaje']='La fecha de emisiï¿½n es inferior a 7 dias calendarios';
 			echo json_encode($result);
 			return;
 		}
@@ -303,13 +303,10 @@ class Resumenboletas extends CI_Controller {
 
 		if ($consulta['result']==1)
 		{
-			$result['status']=1;	
-			$result['mensaje']='';	
-		}		
+			$result['status']=1;
+			$result['mensaje']='';
+		}
 		echo json_encode($result);
-
-
-
 	}
 
 	public function Guardar_SummaryHeader()
@@ -416,6 +413,7 @@ class Resumenboletas extends CI_Controller {
 		echo json_encode($result);
 	}
 
+
 	public function Reiniciar_Correlativos()
 	{
 		$arr=NULL;
@@ -427,17 +425,17 @@ class Resumenboletas extends CI_Controller {
 			echo json_encode($result);
 			exit;
 		}
-		$prm_ruc_empr=trim($this->input->post('txt_RucEmpresa'));		
+		$prm_ruc_empr=trim($this->input->post('txt_RucEmpresa'));
 		$prm_datosseleccionados_estado=trim($this->input->post('txt_datosseleccionados_estado'));
 		$consulta =$this->Resumenboletas_model->Reiniciar_Correlativos($prm_ruc_empr,$prm_datosseleccionados_estado);
 		if ($consulta['result']==1)
 		{
-			$result['status']=1;	
+			$result['status']=1;
 		}
 		else
 		{
 			$result['status']=0;
-		}		
+		}
 		echo json_encode($result);
 	}
 
@@ -513,28 +511,28 @@ class Resumenboletas extends CI_Controller {
 				if ($prm_bl_estadoproceso=='0')
 				{
 
-					$arr[$key]['numerodocumentoemisor'] = trim($v['numerodocumentoemisor']); 
-					$arr[$key]['resumenid'] =trim($v['resumenid']); 
+					$arr[$key]['numerodocumentoemisor'] = trim($v['numerodocumentoemisor']);
+					$arr[$key]['resumenid'] =trim($v['resumenid']);
 					$arr[$key]['tipodocumentoemisor'] =  trim($v['tipodocumentoemisor']);
 					$arr[$key]['correoemisor'] =  trim($v['correoemisor']);
 					$arr[$key]['fechaemisioncomprobante'] =  trim($v['fechaemisioncomprobante']);
 					$arr[$key]['fechageneracionresumen'] =  trim($v['fechageneracionresumen']);
-					$arr[$key]['inhabilitado'] =  trim($v['inhabilitado']);				
+					$arr[$key]['inhabilitado'] =  trim($v['inhabilitado']);
 					$arr[$key]['razonsocialemisor'] =  trim($v['razonsocialemisor']);
 					$arr[$key]['resumentipo'] =  trim($v['resumentipo']);
-					$arr[$key]['estadoregistro'] =  strtoupper(trim($v['estadoregistro']));	
-					$arr[$key]['bl_estadoregistro'] =  trim($v['bl_estadoregistro']);		
+					$arr[$key]['estadoregistro'] =  strtoupper(trim($v['estadoregistro']));
+					$arr[$key]['bl_estadoregistro'] =  trim($v['bl_estadoregistro']);
 					if ($v['bl_estadoregistro']=='L') //PASO A BIZLINK
 					{
-						$arr[$key]['bl_reintento'] =  trim($v['reintento']);				
+						$arr[$key]['bl_reintento'] =  trim($v['reintento']);
 					}
 					else
 					{
 						$arr[$key]['bl_reintento'] = trim($v['bl_reintento']);
 					}
 					$arr[$key]['estadosunat'] =  trim($v['estadosunat']);
-					
-					
+
+
 					if ( $v['mensajeresponse']=='1')
 					{
 						$arr[$key]['obssunat'] ='Pendiente de envio - Programado';
@@ -552,7 +550,7 @@ class Resumenboletas extends CI_Controller {
 							else
 							{
 								$arr[$key]['obssunat'] =  '';
-							}						
+							}
 						}
 						else
 						{
@@ -574,42 +572,42 @@ class Resumenboletas extends CI_Controller {
 						}
 					}
 
-					$arr[$key]['bl_fecharespuestasunat'] =  trim($v['bl_fecharespuestasunat']);	
-					$arr[$key]['bl_fechaenviosunat'] =  trim($v['bl_fechaenviosunat']);	
+					$arr[$key]['bl_fecharespuestasunat'] =  trim($v['bl_fecharespuestasunat']);
+					$arr[$key]['bl_fechaenviosunat'] =  trim($v['bl_fechaenviosunat']);
 					$arr[$key]['nombreestadosunat']=strtoupper($this->Resumenboletas_model->Listar_EstadoDocumento(strtoupper($v['estadosunat'])));
 				}
 				else
 				{
 					$estadodocsunat=$v['estadosunat'];
-					$posicion = strpos($estadodocsunat,'/');			 
-					if($posicion !== FALSE)	
+					$posicion = strpos($estadodocsunat,'/');
+					if($posicion !== FALSE)
 					{
-						$estadodocsunat=substr($estadodocsunat, -5); 
+						$estadodocsunat=substr($estadodocsunat, -5);
 					}
-					$posicion = strpos($estadodocsunat,$prm_bl_estadoproceso);			 
-					if($posicion !== FALSE)	
+					$posicion = strpos($estadodocsunat,$prm_bl_estadoproceso);
+					if($posicion !== FALSE)
 					{
-						$arr[$key]['numerodocumentoemisor'] = trim($v['numerodocumentoemisor']); 
-						$arr[$key]['resumenid'] =trim($v['resumenid']); 
+						$arr[$key]['numerodocumentoemisor'] = trim($v['numerodocumentoemisor']);
+						$arr[$key]['resumenid'] =trim($v['resumenid']);
 						$arr[$key]['tipodocumentoemisor'] =  trim($v['tipodocumentoemisor']);
 						$arr[$key]['correoemisor'] =  trim($v['correoemisor']);
 						$arr[$key]['fechaemisioncomprobante'] =  trim($v['fechaemisioncomprobante']);
 						$arr[$key]['fechageneracionresumen'] =  trim($v['fechageneracionresumen']);
-						$arr[$key]['inhabilitado'] =  trim($v['inhabilitado']);				
+						$arr[$key]['inhabilitado'] =  trim($v['inhabilitado']);
 						$arr[$key]['razonsocialemisor'] =  trim($v['razonsocialemisor']);
 						$arr[$key]['resumentipo'] =  trim($v['resumentipo']);
-						$arr[$key]['estadoregistro'] =  strtoupper(trim($v['estadoregistro']));	
-						$arr[$key]['bl_estadoregistro'] =  trim($v['bl_estadoregistro']);		
+						$arr[$key]['estadoregistro'] =  strtoupper(trim($v['estadoregistro']));
+						$arr[$key]['bl_estadoregistro'] =  trim($v['bl_estadoregistro']);
 						if ($v['bl_estadoregistro']=='L') //PASO A BIZLINK
 						{
-							$arr[$key]['bl_reintento'] =  trim($v['reintento']);				
+							$arr[$key]['bl_reintento'] =  trim($v['reintento']);
 						}
 						else
 						{
 							$arr[$key]['bl_reintento'] = trim($v['bl_reintento']);
 						}
 						$arr[$key]['estadosunat'] =  trim($v['estadosunat']);
-						
+
 						if ( $v['mensajeresponse']=='1')
 						{
 							$arr[$key]['obssunat'] ='Pendiente de envio - Programado';
@@ -627,7 +625,7 @@ class Resumenboletas extends CI_Controller {
 								else
 								{
 									$arr[$key]['obssunat'] =  '';
-								}						
+								}
 							}
 							else
 							{
@@ -648,11 +646,11 @@ class Resumenboletas extends CI_Controller {
 								}
 							}
 						}
-						$arr[$key]['bl_fecharespuestasunat'] =  trim($v['bl_fecharespuestasunat']);	
-						$arr[$key]['bl_fechaenviosunat'] =  trim($v['bl_fechaenviosunat']);	
+						$arr[$key]['bl_fecharespuestasunat'] =  trim($v['bl_fecharespuestasunat']);
+						$arr[$key]['bl_fechaenviosunat'] =  trim($v['bl_fechaenviosunat']);
 						$arr[$key]['nombreestadosunat']=strtoupper($this->Resumenboletas_model->Listar_EstadoDocumento(strtoupper($v['estadosunat'])));
 					}
-					
+
 				}
 			endforeach;//fin
 		}
@@ -667,7 +665,7 @@ class Resumenboletas extends CI_Controller {
 			$result['data']="";
 		}
 		echo json_encode($result);
-	}	
+	}
 
 	public function Exportar_ExcelGeneral()
 	{
@@ -682,7 +680,7 @@ class Resumenboletas extends CI_Controller {
 		if (!isset($_GET['param4'])){	$prm_fec_genfinaltmp='';} else{$prm_fec_genfinaltmp=$_GET['param4'];}
 		if (!isset($_GET['param5'])){	$prm_cod_estdoc=0;} else{$prm_cod_estdoc=$_GET['param5'];}
 		if (!isset($_GET['param6'])){	$prm_fec_emisiniciotmp='';} else{$prm_fec_emisiniciotmp=$_GET['param6'];}
-		if (!isset($_GET['param7'])){	$prm_fec_emisfinaltmp='';} else{$prm_fec_emisfinaltmp=$_GET['param7'];}		
+		if (!isset($_GET['param7'])){	$prm_fec_emisfinaltmp='';} else{$prm_fec_emisfinaltmp=$_GET['param7'];}
 		if (!isset($_GET['param8'])){	$prm_datosbuscar='';} else{$prm_datosbuscar=$_GET['param8'];}
 		if (!isset($_GET['param9'])){	$prm_bl_estadoproceso='';} else{$prm_bl_estadoproceso=$_GET['param9'];}
 
@@ -740,28 +738,28 @@ class Resumenboletas extends CI_Controller {
 			foreach($consulta as $key=>$v):
 				if ($prm_bl_estadoproceso=='0')
 				{
-					$arr[$key]['numerodocumentoemisor'] = trim($v['numerodocumentoemisor']); 
-					$arr[$key]['resumenid'] =trim($v['resumenid']); 
+					$arr[$key]['numerodocumentoemisor'] = trim($v['numerodocumentoemisor']);
+					$arr[$key]['resumenid'] =trim($v['resumenid']);
 					$arr[$key]['tipodocumentoemisor'] =  trim($v['tipodocumentoemisor']);
 					$arr[$key]['correoemisor'] =  trim($v['correoemisor']);
 					$arr[$key]['fechaemisioncomprobante'] =  trim($v['fechaemisioncomprobante']);
 					$arr[$key]['fechageneracionresumen'] =  trim($v['fechageneracionresumen']);
-					$arr[$key]['inhabilitado'] =  trim($v['inhabilitado']);				
+					$arr[$key]['inhabilitado'] =  trim($v['inhabilitado']);
 					$arr[$key]['razonsocialemisor'] =  trim($v['razonsocialemisor']);
 					$arr[$key]['resumentipo'] =  trim($v['resumentipo']);
-					$arr[$key]['estadoregistro'] =  strtoupper(trim($v['estadoregistro']));	
-					$arr[$key]['bl_estadoregistro'] =  trim($v['bl_estadoregistro']);		
+					$arr[$key]['estadoregistro'] =  strtoupper(trim($v['estadoregistro']));
+					$arr[$key]['bl_estadoregistro'] =  trim($v['bl_estadoregistro']);
 					if ($v['bl_estadoregistro']=='L') //PASO A BIZLINK
 					{
-						$arr[$key]['bl_reintento'] =  trim($v['reintento']);				
+						$arr[$key]['bl_reintento'] =  trim($v['reintento']);
 					}
 					else
 					{
 						$arr[$key]['bl_reintento'] = trim($v['bl_reintento']);
 					}
 					$arr[$key]['estadosunat'] =  trim($v['estadosunat']);
-					
-					
+
+
 					if ($v['bl_estadoregistro']=='E') //ERROR LOCAL
 					{
 						//TRAER LOS DATOS DEL ERROR
@@ -773,7 +771,7 @@ class Resumenboletas extends CI_Controller {
 						else
 						{
 							$arr[$key]['obssunat'] =  '';
-						}						
+						}
 					}
 					else
 					{
@@ -793,49 +791,49 @@ class Resumenboletas extends CI_Controller {
 							$arr[$key]['obssunat']=$v['bl_mensaje'];
 						}
 					}
-					
-					
-					$arr[$key]['bl_fecharespuestasunat'] =  trim($v['bl_fecharespuestasunat']);	
-					$arr[$key]['bl_fechaenviosunat'] =  trim($v['bl_fechaenviosunat']);	
+
+
+					$arr[$key]['bl_fecharespuestasunat'] =  trim($v['bl_fecharespuestasunat']);
+					$arr[$key]['bl_fechaenviosunat'] =  trim($v['bl_fechaenviosunat']);
 					$arr[$key]['nombreestadosunat']=strtoupper($this->Resumenboletas_model->Listar_EstadoDocumento(strtoupper($v['estadosunat'])));
-					
+
 					$estado_documento=trim(strtoupper($v['estadoregistro']));
 					$estado_documentosunat=$arr[$key]['nombreestadosunat'];
-					
+
 				}
 				else
 				{
 					$estadodocsunat=$v['estadosunat'];
-					$posicion = strpos($estadodocsunat,'/');			 
-					if($posicion !== FALSE)	
+					$posicion = strpos($estadodocsunat,'/');
+					if($posicion !== FALSE)
 					{
-						$estadodocsunat=substr($estadodocsunat, -5); 
+						$estadodocsunat=substr($estadodocsunat, -5);
 					}
-					$posicion = strpos($estadodocsunat,$prm_bl_estadoproceso);			 
-					if($posicion !== FALSE)	
+					$posicion = strpos($estadodocsunat,$prm_bl_estadoproceso);
+					if($posicion !== FALSE)
 					{
-						$arr[$key]['numerodocumentoemisor'] = trim($v['numerodocumentoemisor']); 
-						$arr[$key]['resumenid'] =trim($v['resumenid']); 
+						$arr[$key]['numerodocumentoemisor'] = trim($v['numerodocumentoemisor']);
+						$arr[$key]['resumenid'] =trim($v['resumenid']);
 						$arr[$key]['tipodocumentoemisor'] =  trim($v['tipodocumentoemisor']);
 						$arr[$key]['correoemisor'] =  trim($v['correoemisor']);
 						$arr[$key]['fechaemisioncomprobante'] =  trim($v['fechaemisioncomprobante']);
 						$arr[$key]['fechageneracionresumen'] =  trim($v['fechageneracionresumen']);
-						$arr[$key]['inhabilitado'] =  trim($v['inhabilitado']);				
+						$arr[$key]['inhabilitado'] =  trim($v['inhabilitado']);
 						$arr[$key]['razonsocialemisor'] =  trim($v['razonsocialemisor']);
 						$arr[$key]['resumentipo'] =  trim($v['resumentipo']);
-						$arr[$key]['estadoregistro'] =  strtoupper(trim($v['estadoregistro']));	
-						$arr[$key]['bl_estadoregistro'] =  trim($v['bl_estadoregistro']);		
+						$arr[$key]['estadoregistro'] =  strtoupper(trim($v['estadoregistro']));
+						$arr[$key]['bl_estadoregistro'] =  trim($v['bl_estadoregistro']);
 						if ($v['bl_estadoregistro']=='L') //PASO A BIZLINK
 						{
-							$arr[$key]['bl_reintento'] =  trim($v['reintento']);				
+							$arr[$key]['bl_reintento'] =  trim($v['reintento']);
 						}
 						else
 						{
 							$arr[$key]['bl_reintento'] = trim($v['bl_reintento']);
 						}
 						$arr[$key]['estadosunat'] =  trim($v['estadosunat']);
-						
-						
+
+
 						if ($v['bl_estadoregistro']=='E') //ERROR LOCAL
 						{
 							//TRAER LOS DATOS DEL ERROR
@@ -847,7 +845,7 @@ class Resumenboletas extends CI_Controller {
 							else
 							{
 								$arr[$key]['obssunat'] =  '';
-							}						
+							}
 						}
 						else
 						{
@@ -867,16 +865,16 @@ class Resumenboletas extends CI_Controller {
 								$arr[$key]['obssunat']=$v['bl_mensaje'];
 							}
 						}
-						
-						
-						$arr[$key]['bl_fecharespuestasunat'] =  trim($v['bl_fecharespuestasunat']);	
-						$arr[$key]['bl_fechaenviosunat'] =  trim($v['bl_fechaenviosunat']);	
+
+
+						$arr[$key]['bl_fecharespuestasunat'] =  trim($v['bl_fecharespuestasunat']);
+						$arr[$key]['bl_fechaenviosunat'] =  trim($v['bl_fechaenviosunat']);
 						$arr[$key]['nombreestadosunat']=strtoupper($this->Resumenboletas_model->Listar_EstadoDocumento(strtoupper($v['estadosunat'])));
-						
+
 						$estado_documento=trim(strtoupper($v['estadoregistro']));
 						$estado_documentosunat=$arr[$key]['nombreestadosunat'];
 					}
-					
+
 				}
 			endforeach;//fin
 		}
@@ -902,7 +900,7 @@ class Resumenboletas extends CI_Controller {
 		else
 		{
 			$prm['param9']='LISTADO SELECCIONADO DEL RESUMEN DE BOLETAS';
-		}		
+		}
 		$prm['param10']=$prm_datosbuscar;
 
 
@@ -910,7 +908,7 @@ class Resumenboletas extends CI_Controller {
 		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
 		$prm['datos_empresa']=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);
 
-		$this->load->view('reportes/resumenboletas/resumenboletas_listadogeneral',$prm);		
+		$this->load->view('reportes/resumenboletas/resumenboletas_listadogeneral',$prm);
 	}
 
 	public function Descargar_ExcelDetalle()
@@ -935,7 +933,7 @@ class Resumenboletas extends CI_Controller {
 			$arr[$key]['correoemisor'] =trim($v['correoemisor']);
 			$arr[$key]['fechaemisioncomprobante'] =trim($v['fechaemisioncomprobante']);
 			$arr[$key]['fechageneracionresumen'] =trim($v['fechageneracionresumen']);
-			$arr[$key]['inhabilitado'] =trim($v['inhabilitado']);				
+			$arr[$key]['inhabilitado'] =trim($v['inhabilitado']);
 			$arr[$key]['razonsocialemisor'] =strtoupper(trim($v['razonsocialemisor']));
 			$arr[$key]['resumentipo'] =trim($v['resumentipo']);
 			$arr[$key]['bl_estadoregistro'] =trim($v['bl_estadoregistro']);
@@ -959,7 +957,7 @@ class Resumenboletas extends CI_Controller {
 			$arr[$key]['totalotroscargos'] =number_format(trim($v['totalotroscargos']),2,'.',',');
 			$arr[$key]['totalotrostributos'] =trim($v['totalotrostributos']);
 			$arr[$key]['totalvalorventaopexoneradasigv'] =number_format(trim($v['totalvalorventaopexoneradasigv']),2,'.',',');
-				//$arr[$key]['totalvalorventaopgratuitas'] =trim($v['totalvalorventaopgratuitas']);				
+				//$arr[$key]['totalvalorventaopgratuitas'] =trim($v['totalvalorventaopgratuitas']);
 			if (is_null($v['totalvalorventaopgratuitas']) or $v['totalvalorventaopgratuitas']=='')
 			{
 				$arr[$key]['totalvalorventaopgratuitas'] ='0.00';
@@ -967,9 +965,9 @@ class Resumenboletas extends CI_Controller {
 			else
 			{
 				$arr[$key]['totalvalorventaopgratuitas'] =number_format(trim($v['totalvalorventaopgratuitas']),2,'.',',');
-			}				
+			}
 			$arr[$key]['totalvalorventaopgravadaconigv'] =number_format(trim($v['totalvalorventaopgravadaconigv']),2,'.',',');
-			$arr[$key]['totalvalorventaopinafectasigv'] =number_format(trim($v['totalvalorventaopinafectasigv']),2,'.',','); 
+			$arr[$key]['totalvalorventaopinafectasigv'] =number_format(trim($v['totalvalorventaopinafectasigv']),2,'.',',');
 			$arr[$key]['totalventa'] =number_format(trim($v['totalventa']),2,'.',',');
 
 			$arr[$key]['nombre_tipodocumento'] =trim($v['nombre_tipodocumento']);
@@ -977,7 +975,7 @@ class Resumenboletas extends CI_Controller {
 
 			if ($v['tipomoneda']=='PEN')
 			{
-				$arr[$key]['tipomonedadoc'] ='Sol'; 
+				$arr[$key]['tipomonedadoc'] ='Sol';
 			}
 			else
 			{
@@ -993,10 +991,10 @@ class Resumenboletas extends CI_Controller {
 			}
 
 			endforeach;
-			
+
 
 		}
-		
+
 		//print_r($arr);
 		//return;
 		$prm['lista_datosdocumento']=$arr;
@@ -1005,10 +1003,10 @@ class Resumenboletas extends CI_Controller {
 		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
 		$prm['datos_empresa']=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);
 
-		$this->load->view('reportes/resumenboletas/resumenboletas_detalle',$prm);		
-	}	
-	
-	
+		$this->load->view('reportes/resumenboletas/resumenboletas_detalle',$prm);
+	}
+
+
 	public function Listar_DetalleDocumento()
 	{
 
@@ -1023,9 +1021,9 @@ class Resumenboletas extends CI_Controller {
 		}
 
 		$prm_ruc_empremisor=trim($this->input->post('txt_RucEmpresa'));
-		
+
 		$prm_datosseleccionados=trim($this->input->post('txt_datosseleccionados'));
-		$prm_datosseleccionados=(str_replace(",","",$prm_datosseleccionados));		
+		$prm_datosseleccionados=(str_replace(",","",$prm_datosseleccionados));
 		//$datos_seleccionados=explode('-',$prm_datosseleccionados);
 		//$prm_tipo_documento=$datos_seleccionados[0];
 		$prm_serie_numero=$prm_datosseleccionados;//$datos_seleccionados[1].'-'.$datos_seleccionados[2];
@@ -1045,7 +1043,7 @@ class Resumenboletas extends CI_Controller {
 			$arr[$key]['correoemisor'] =trim($v['correoemisor']);
 			$arr[$key]['fechaemisioncomprobante'] =trim($v['fechaemisioncomprobante']);
 			$arr[$key]['fechageneracionresumen'] =trim($v['fechageneracionresumen']);
-			$arr[$key]['inhabilitado'] =trim($v['inhabilitado']);				
+			$arr[$key]['inhabilitado'] =trim($v['inhabilitado']);
 			$arr[$key]['razonsocialemisor'] =strtoupper(trim($v['razonsocialemisor']));
 			$arr[$key]['resumentipo'] =trim($v['resumentipo']);
 			$arr[$key]['bl_estadoregistro'] =trim($v['bl_estadoregistro']);
@@ -1077,7 +1075,7 @@ class Resumenboletas extends CI_Controller {
 				$arr[$key]['totalvalorventaopgratuitas'] =number_format(trim($v['totalvalorventaopgratuitas']),2,'.',',');
 			}
 			$arr[$key]['totalvalorventaopgravadaconigv'] =number_format(trim($v['totalvalorventaopgravadaconigv']),2,'.',',');
-			$arr[$key]['totalvalorventaopinafectasigv'] =number_format(trim($v['totalvalorventaopinafectasigv']),2,'.',','); 
+			$arr[$key]['totalvalorventaopinafectasigv'] =number_format(trim($v['totalvalorventaopinafectasigv']),2,'.',',');
 			$arr[$key]['totalventa'] =number_format(trim($v['totalventa']),2,'.',',');
 
 			$arr[$key]['nombre_tipodocumento'] =trim($v['nombre_tipodocumento']);
@@ -1085,7 +1083,7 @@ class Resumenboletas extends CI_Controller {
 
 			if ($v['tipomoneda']=='PEN')
 			{
-				$arr[$key]['tipomonedadoc'] ='Sol'; 
+				$arr[$key]['tipomonedadoc'] ='Sol';
 			}
 			else
 			{
@@ -1101,7 +1099,7 @@ class Resumenboletas extends CI_Controller {
 			}
 
 			endforeach;
-			
+
 
 		}
 		if(sizeof($arr)>0)
@@ -1115,45 +1113,45 @@ class Resumenboletas extends CI_Controller {
 			$result['data']="";
 		}
 		echo json_encode($result);
-	}	
-	
-	public function Crear_ArchivosDocumentoSeleccionado()//Crear_ArchivosDocumentoSeleccionado  
+	}
+
+	public function Crear_ArchivosDocumentoSeleccionado()//Crear_ArchivosDocumentoSeleccionado
 	{
 		//if (!isset($_GET['param1'])){	$prm_cod_documento='';} else{$prm_cod_documento=$_GET['param1'];}
 
-		//$prm_cod_documento = basename($_GET['param1']);		
-		//$prm_ruc_emisor = basename($_GET['param2']);	
-		
+		//$prm_cod_documento = basename($_GET['param1']);
+		//$prm_ruc_emisor = basename($_GET['param2']);
+
 		$result['status']=0;
 
 		$prm_cod_documento=trim($this->input->post('param1'));
 		$prm_ruc_emisor=trim($this->input->post('param2'));
 
-		
-		$carpetaemisor='6-'.$prm_ruc_emisor;		
-		$carpeta = ''; //keys/			
+
+		$carpetaemisor='6-'.$prm_ruc_emisor;
+		$carpeta = ''; //keys/
 		$rutadescargar=$this->Catalogos_model->Listar_RutaDocumentoDescargar();
 		if(!empty($rutadescargar))//SI NO ES NULO O VACIO
 		{
 			$carpeta=$rutadescargar[0]['valorcadena'];
 		}
-		
+
 		$tipofirma='';
 		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
 		$Listar_EmpresaId=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);
 		if(!empty($Listar_EmpresaId))//SI NO ES NULO O VACIO
 		{
 			$tipofirma=$Listar_EmpresaId[0]['tipo_conffirma'];
-		}		
+		}
 		$nombre_carpeta=$carpetaemisor.'/bloquedescargar';
 		$carpetadescarga = '././download/'.$nombre_carpeta;
 
-		$lista_documento=explode(',',$prm_cod_documento);	
+		$lista_documento=explode(',',$prm_cod_documento);
 
 		if(!empty($lista_documento))
-		{	
-			$this->load->library('zip'); 			
-			if (!file_exists($carpetadescarga)) 
+		{
+			$this->load->library('zip');
+			if (!file_exists($carpetadescarga))
 			{
 				mkdir($carpetadescarga,0777, true);
 			}
@@ -1166,7 +1164,7 @@ class Resumenboletas extends CI_Controller {
 			$contador=0;
 			$cantidad=0;
 			$cantidadbucle=0;
-			
+
 			foreach($lista_documento as $key=>$v):
 				$nombrearchivopdf='';
 			if (strlen($v)>4)
@@ -1183,16 +1181,16 @@ class Resumenboletas extends CI_Controller {
 					$src=$carpeta.$carpetaemisor.'/'.$v.'/'.$nombrearchivopdf.'.pdf';
 					if (file_exists($src))  //El fichero $nombre_fichero existe
 					{
-					} 
+					}
 					else //El fichero $nombre_fichero no existe
 					{
-						$codigodocumento='el_archivo_no_existe.pdf';	
+						$codigodocumento='el_archivo_no_existe.pdf';
 						$src='././download/'.$codigodocumento;//base_url().'download/el_archivo_no_existe.pdf';
 					}
 					$this->zip->read_file($src);
-					
+
 					*/
-					
+
 
 					//CASO CDR
 					$src=$carpeta.$carpetaemisor.'/'.$v.'/XML_CDR.xml';
@@ -1201,7 +1199,7 @@ class Resumenboletas extends CI_Controller {
 						$this->zip->read_file($src);
 						$cantidad++;
 						$cantidadbucle++;
-					} 
+					}
 					//CASO UBL
 					$src=$carpeta.$carpetaemisor.'/'.$v.'/XML_UBL.xml';
 					if (file_exists($src))  //El fichero $nombre_fichero existe
@@ -1209,8 +1207,8 @@ class Resumenboletas extends CI_Controller {
 						$this->zip->read_file($src);
 						$cantidad++;
 						$cantidadbucle++;
-					} 
-					
+					}
+
 					//CASO LOCAL_ CDR
 					$src=$carpeta.$carpetaemisor.'/'.$v.'/LOCAL_XML_CDR.xml';
 					if (file_exists($src))  //El fichero $nombre_fichero existe
@@ -1218,7 +1216,7 @@ class Resumenboletas extends CI_Controller {
 						$this->zip->read_file($src);
 						$cantidad++;
 						$cantidadbucle++;
-					} 
+					}
 					//CASO LOCAL_ UBL
 					$src=$carpeta.$carpetaemisor.'/'.$v.'/LOCAL_XML_UBL.xml';
 					if (file_exists($src))  //El fichero $nombre_fichero existe
@@ -1226,13 +1224,13 @@ class Resumenboletas extends CI_Controller {
 						$this->zip->read_file($src);
 						$cantidad++;
 						$cantidadbucle++;
-					} 
+					}
 					if ($cantidadbucle>0)
 					{
 						$nombrecarpetadoc=$prm_ruc_emisor.'-'.$v;
 						$listadearchivos[$contador]=$carpetadescarga.'/'.$nombrecarpetadoc;
 						//print_r($listadearchivos);
-						//return;	
+						//return;
 						$this->zip->archive($carpetadescarga.'/'.$nombrecarpetadoc.'.zip');
 						$this->zip->clear_data();
 						$contador++;
@@ -1240,7 +1238,7 @@ class Resumenboletas extends CI_Controller {
 					$cantidadbucle=0;
 				}
 			endforeach;//fin
-				//$this->zip->clear_data();
+			//$this->zip->clear_data();
 			if ($cantidad>0)
 			{
 				$result['status']=1;
@@ -1259,19 +1257,19 @@ class Resumenboletas extends CI_Controller {
 		if (!isset($_GET['param1'])){	$prm_cod_documento='';} else{$prm_cod_documento=$_GET['param1'];}
 
 
-		$prm_cod_documento = basename($_GET['param1']);		
-		$prm_ruc_emisor = basename($_GET['param2']);		
+		$prm_cod_documento = basename($_GET['param1']);
+		$prm_ruc_emisor = basename($_GET['param2']);
 
 
 		//$this->Crear_ArchivosDocumentoSeleccionado($prm_cod_documento,$prm_ruc_emisor);
 
-		$carpetaemisor='6-'.$prm_ruc_emisor;		
-		$carpeta = ''; //keys/			
+		$carpetaemisor='6-'.$prm_ruc_emisor;
+		$carpeta = ''; //keys/
 		$rutadescargar=$this->Catalogos_model->Listar_RutaDocumentoDescargar();
 		if(!empty($rutadescargar))//SI NO ES NULO O VACIO
 		{
 			$carpeta=$rutadescargar[0]['valorcadena'];
-		}		
+		}
 
 		$tipofirma='';
 		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
@@ -1279,17 +1277,17 @@ class Resumenboletas extends CI_Controller {
 		if(!empty($Listar_EmpresaId))//SI NO ES NULO O VACIO
 		{
 			$tipofirma=$Listar_EmpresaId[0]['tipo_conffirma'];
-		}		
+		}
 		$nombre_carpeta=$carpetaemisor.'/bloquedescargar';
 		$carpetadescarga = '././download/'.$nombre_carpeta;
 		$lista_documento=explode(',',$prm_cod_documento);
 
 		if(!empty($lista_documento))
-		{	
-			$this->load->library('zip'); 
+		{
+			$this->load->library('zip');
 			$listadearchivos=NULL;
 			$contador=0;
-			
+
 			foreach($lista_documento as $key=>$v):
 				if (strlen($v)>4)
 				{
@@ -1303,13 +1301,13 @@ class Resumenboletas extends CI_Controller {
 			//$listadearchivos=array ( 	"0"=> "././download/6-20100037689/bloquedescargar/2010003768901-F001-00000001","1"=> "././download/6-20100037689/bloquedescargar/2010003768901-F001-00000004");
 
 			foreach($listadearchivos as $key1=>$v1):
-				$this->zip->read_file($v1.'.zip');				
+				$this->zip->read_file($v1.'.zip');
 			endforeach;
 
 			//$fecha_actual = explode('/',date("d/m/Y"));
 			$fecha_actual=((date("Y-m-d H-i-s")).'.'.substr(microtime(),0,5)*1000);
-			//$this->zip->download($prm_ruc_emisor.'-'.$fecha_actual[2].'-'.$fecha_actual[1].'-'.$fecha_actual[0].'.zip'); 
-			$this->zip->download($prm_ruc_emisor.'-'.$fecha_actual.'.zip'); 
+			//$this->zip->download($prm_ruc_emisor.'-'.$fecha_actual[2].'-'.$fecha_actual[1].'-'.$fecha_actual[0].'.zip');
+			$this->zip->download($prm_ruc_emisor.'-'.$fecha_actual.'.zip');
 		}
 	}
 
@@ -1362,7 +1360,5 @@ class Resumenboletas extends CI_Controller {
 		echo json_encode($result);
 	}
 
+
 }
-
-
-

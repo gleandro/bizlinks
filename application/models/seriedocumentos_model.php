@@ -11,7 +11,6 @@ class Seriedocumentos_model extends CI_Model
 	
 	function Listar_Seriedocumentos($prm_cod_empr)
 	{
-
 		$this->load->database('ncserver',TRUE);
 		
 		$info = $this->db->query("select 

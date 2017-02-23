@@ -4,10 +4,10 @@ class Resumenboletas_model extends CI_Model
 {
 	function __construct()
 	{
-		parent::__construct();		
+		parent::__construct();
 	}
-	
-	
+
+
 	function Guardar_ResumenBoletas($prm_cod_usu,$prm_cod_empr,$prm_documento,$prm_ruc_empr,$prm_est_declarar,$prm_fec_doc,$prm_tip_docemisor)
 	{
 		$result['result']=0;
@@ -64,8 +64,8 @@ class Resumenboletas_model extends CI_Model
 
 		return $result;
 	}
-	
-	
+
+
 	function Listar_DocumentosdeResumen($prm_cod_usu,$prm_cod_empr,$prm_ruc_empr,$prm_fechabusqueda)
 	{
 
@@ -142,16 +142,16 @@ class Resumenboletas_model extends CI_Model
 
 		return $consulta->result_array();
 	}
-	
+
 	function Listar_TipodeDocumento()
 	{
 
 		$this->load->database('ncserver',TRUE);
 		$query="select co_item_tabla,no_corto from tm_tabla_multiple where no_tabla='TIPO_DOCUMENTO' and in_habilitado=1 and co_item_tabla in('01','03','07','08');";
 		$consulta=$this->db->query($query);
-		return $consulta->result_array();	
+		return $consulta->result_array();
 	}
-	
+
 	function Guardar_SummaryHeader
 	(
 		$prm_numerodocumentoemisor ,
@@ -389,9 +389,9 @@ class Resumenboletas_model extends CI_Model
 
 		return $result;
 	}
-	
-	
-	
+
+
+
 	function Eliminar_DocumentoBoletaResumen($prm_ruc,$prm_tipo_doc,$prm_comprobante)
 	{
 		$result['result']=0;
@@ -423,15 +423,16 @@ class Resumenboletas_model extends CI_Model
 		$result['result']=1;
 		return $result;
 	}
-	
+
 	function Buscar_CorrelativoDocumento($prm_cod_empr,$prm_fecha)
 	{
 
 		$this->load->database('ncserver',TRUE);
-		$query="select (num_corre+1) valorentero from sgr_correlativoresumen 
+		$query="select (num_corre+1) valorentero from sgr_correlativoresumen
 		where cod_empr=".$prm_cod_empr." and tip_resum=2 and fec_resum='".$prm_fecha."' and est_reg=1;";
 		$consulta=$this->db->query($query);
-		return $consulta->result_array();	
+		//print_r($prm_fecha);
+		return $consulta->result_array();
 	}
 
 	function Eliminar_Resumenboletas($prm_cod_empr,$prm_cod_usu)
@@ -440,7 +441,7 @@ class Resumenboletas_model extends CI_Model
 		$this->load->database('ncserver',TRUE);
 		$query="delete from sgr_resumenboletas_temp where cod_empr='".$prm_cod_empr."' and cod_usu= '".$prm_cod_usu."';";
 		$this->db->query($query);
-		return 1;	
+		return 1;
 	}
 
 	function Listar_SummaryHeader($prm_ruc_empr,$prm_cod_resum,$prm_fec_geninicio,
@@ -524,8 +525,8 @@ class Resumenboletas_model extends CI_Model
 		return $consulta->result_array();
 
 	}
-	
-	
+
+
 	function Listar_SummaryHeaderDetalle($prm_ruc_empr,$prm_resumenid)
 	{
 		$prm_conect_db='ncserver';
@@ -610,33 +611,34 @@ class Resumenboletas_model extends CI_Model
 		return $consulta->result_array();
 
 	}
-	
-	
+
+
+
 	function Reiniciar_Correlativos($prm_ruc_empr,$prm_documento)
 	{
-		$result['result']=0;		
-		$this->db_client =$this->load->database('ncserver',TRUE);	
+		$result['result']=0;
+		$this->db_client =$this->load->database('ncserver',TRUE);
 		$this->db_client->trans_begin();
-		
-		$lista_documento=explode(',',$prm_documento);	
 
-		foreach($lista_documento as $key=>$v):	
+		$lista_documento=explode(',',$prm_documento);
+
+		foreach($lista_documento as $key=>$v):
 			if (strlen($v)>3)//AVECES LLEGA VACIO
 		{
 			$detalle_documento=explode('-',$v);
 				//RA-20160519-4-A
 			if ($detalle_documento[3]=='SIGNED')
 			{
-				$query="update spe_summary_response set reintento=0 where tipodocumentoemisor='6' and numerodocumentoemisor='".$prm_ruc_empr."' 
+				$query="update spe_summary_response set reintento=0 where tipodocumentoemisor='6' and numerodocumentoemisor='".$prm_ruc_empr."'
 				and resumenid='".$detalle_documento[0].'-'.$detalle_documento[1].'-'.$detalle_documento[2]."';";
 			}
 			else
 			{
-				$query="update spe_summaryheader set bl_reintento=0 where tipodocumentoemisor='6' and numerodocumentoemisor='".$prm_ruc_empr."'  
+				$query="update spe_summaryheader set bl_reintento=0 where tipodocumentoemisor='6' and numerodocumentoemisor='".$prm_ruc_empr."'
 				and resumenid='".$detalle_documento[0].'-'.$detalle_documento[1].'-'.$detalle_documento[2]."';";
-			}	
-				//print_r($query);	
-				//return;					
+			}
+				//print_r($query);
+				//return;
 			$this->db_client->query($query);
 			if ($this->db_client->trans_status() === FALSE)
 			{
@@ -647,23 +649,23 @@ class Resumenboletas_model extends CI_Model
 		}
 
 		endforeach;
-		
+
 		$this->db_client->trans_commit();
 		$result['result']=1;
-		
-		
+
+
 		return $result;
 	}
-	
-	
+
+
 	function Listar_DetalleDocumento($prm_ruc_empremisor,$prm_serie_numero)
 	{
 		$prm_conect_db='ncserver';
 		$this->db_client = $this->load->database($prm_conect_db, true);
-		
+
 
 		$query="";
-		$query="select 
+		$query="select
 		a.numerodocumentoemisor,
 		a.resumenid,
 		a.tipodocumentoemisor,
@@ -697,46 +699,46 @@ class Resumenboletas_model extends CI_Model
 		b.totalvalorventaopinafectasigv,
 		b.totalventa,
 		(select aa.no_corto from tm_tabla_multiple aa
-		where aa.no_tabla='TIPO_DOCUMENTO' and aa.in_habilitado=1 
+		where aa.no_tabla='TIPO_DOCUMENTO' and aa.in_habilitado=1
 		and aa.co_item_tabla in('01','03','07','08') and b.tipodocumento=aa.co_item_tabla ) nombre_tipodocumento,
 		c.bl_estadoproceso estadosunat
 
-		from spe_summaryheader a 
-		inner join spe_summarydetail b on 
+		from spe_summaryheader a
+		inner join spe_summarydetail b on
 		a.tipodocumentoemisor=b.tipodocumentoemisor and
-		a.numerodocumentoemisor=b.numerodocumentoemisor and 
-		a.resumenid=b.resumenid 
+		a.numerodocumentoemisor=b.numerodocumentoemisor and
+		a.resumenid=b.resumenid
 		left join spe_summary_response c on
 		a.tipodocumentoemisor=c.tipodocumentoemisor and
-		a.numerodocumentoemisor=c.numerodocumentoemisor and 
-		a.resumenid=c.resumenid 
+		a.numerodocumentoemisor=c.numerodocumentoemisor and
+		a.resumenid=c.resumenid
 		where a.tipodocumentoemisor='6' and a.numerodocumentoemisor='".$prm_ruc_empremisor."' and a.resumenid='".$prm_serie_numero."'
 		order by a.resumenid,b.numerofila;";
 
 		//print_r($query);
 		//return;
 
-		$consulta =  $this->db_client->query($query);		
+		$consulta =  $this->db_client->query($query);
 		return $consulta->result_array();
 
 	}
-	
-	
+
+
 	function Listar_EstadoDocumento($prm_estado)
 	{
 		$prm_conect_db='ncserver';
 		$this->db_client = $this->load->database($prm_conect_db, true);
-		
+
 		$query="";
 		$query="select no_corto from tm_tabla_multiple where no_tabla='ESTADO_RESUMENDOCUMENTO_PORTAL' and in_habilitado=1 and no_largo='".$prm_estado."';";
-		
-		
-		$consulta =  $this->db_client->query($query);	
+
+
+		$consulta =  $this->db_client->query($query);
 		$listaestado=$consulta->result_array();
 		$estadodocumento='';
-		
+
 		//print_r($query);
-		
+
 		if(!empty($listaestado))//SI NO ES NULO O VACIO
 		{
 			$estadodocumento=$listaestado[0]['no_corto'];
@@ -745,24 +747,24 @@ class Resumenboletas_model extends CI_Model
 		return $estadodocumento;//$consulta->result_array();
 
 	}
-	
+
 	function Listar_ErrorDocumento($prm_numerodocumentoemisor,$prm_tipodocumentoemisor,$prm_resumenid)
 	{
 		$prm_conect_db='ncserver';
 		$this->db_client = $this->load->database($prm_conect_db, true);
 
 		$query="";
-		$query="select codigoerror,descripcionerror from spe_error_log 
-		where 
+		$query="select codigoerror,descripcionerror from spe_error_log
+		where
 		tipodocumentoemisor='".$prm_tipodocumentoemisor."'
 		and numerodocumentoemisor='".$prm_numerodocumentoemisor."'
 		and resumenid= '".$prm_resumenid."' order by fecharegistro desc";
 
 		//print_r($query);
-		//return;					
-		$consulta =  $this->db_client->query($query);		
+		//return;
+		$consulta =  $this->db_client->query($query);
 		return $consulta->result_array();
-	}	
+	}
 
 	function Declarar_Comprobante($prm_ruc,$prm_comprobante,$prm_tipo_doc)
 	{
@@ -802,5 +804,5 @@ class Resumenboletas_model extends CI_Model
 		$result['result']=1;
 		return $result;
 	}
-	
+
 }
