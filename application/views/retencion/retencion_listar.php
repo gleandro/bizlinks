@@ -892,7 +892,6 @@
 					
 					<input id="txt_datosseleccionados_estado" type="hidden" value="" />
 					<input id="txt_cantidaddocumborrador" type="hidden" value="0" />
-					
 					<input id="txt_cantidaddocum_estado" type="hidden" value="0" />
 					
 					<input id="txt_datosseleccionados" type="hidden" value="" />

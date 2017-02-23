@@ -181,7 +181,7 @@
 					newHtml+='<thead>';
 					newHtml+='<tr>';						
 						newHtml+='<th width:3%>Opci&oacute;n</td>';						
-						newHtml+='<th width:10%>Proveedor</td>';						
+						newHtml+='<th width:10%>Cliente</td>';						
 						newHtml+='<th width:20%>SerieNúmero</td>';
 						newHtml+='<th width:5%>Imp.Total a Pagar</td>';
 						newHtml+='<th width:5%>Moneda a Pagar</td>';
@@ -804,7 +804,7 @@
 								<input style="width:95%" type="text" id="txt_RazonSocialEmpresa" value="<?php echo trim(utf8_decode($Razon_Social));?>" disabled="disabled" /></td>
 						</tr>
 						<tr>
-							<td style="text-align:right"><label class="columna">Emisor :</label></td>
+							<td style="text-align:right"><label class="columna">Cliente :</label></td>
 							<td style="text-align:left">
 								<input style="width:95%" id="txt_RazonSocialCliente" type="text" value="" placeholder="Buscar Emisor por Raz. Social" />
 								<input style="width:95%" id="txt_DocumentoCliente" type="hidden" value="" />
