@@ -12,7 +12,7 @@ class Adicionales_model extends CI_Model
 	{
 		$this->load->database('ncserver',TRUE);
 		$consulta = $this->db->query("select codigo, observacion, orden from bl_adicionales_auxiliares
-			where numerodocumentoemisor='".$prm_ruc_empr."' order by codigo asc;");
+			where numerodocumentoemisor='".$prm_ruc_empr."' and codigo<>'9371' order by codigo asc;");
 		return $consulta->result_array();		
 	}
 	
@@ -24,9 +24,7 @@ class Adicionales_model extends CI_Model
 		$this->db_client->trans_begin();
 		
 		$consulta = $this->db_client->query("select count(numerodocumentoemisor) cantidad from bl_adicionales_auxiliares 
-			where numerodocumentoemisor='".$prm_ruc_empr.
-			"' and codigo = ".$prm_codigo.
-			" and observacion = '".$prm_observacion."';");		
+			where numerodocumentoemisor='".$prm_ruc_empr."' and codigo='".$prm_codigo."';");		
 		
 		if ($this->db_client->trans_status() === FALSE)
 		{

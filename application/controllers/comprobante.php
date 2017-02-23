@@ -1,6 +1,8 @@
 <?php
 if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+class portalException extends Exception {}
+
 class Comprobante extends CI_Controller {
 
 	public function __construct()
@@ -420,20 +422,24 @@ class Comprobante extends CI_Controller {
 		$variable['descuentototal']=number_format($descuentototal,2,'.',','); 
 		$variable['isctotal']=number_format( $isctotal,2,'.',',');
 		$variable['igvtotal']=number_format( $igvtotal,2,'.',',');
-		//print_r($variable['igvtotal']);
+		
 		//Validar el tipo de configuracion valor venta o precio
-		if ($Config_ValorPrecio==0)
+		//print_r('VER OJO: '.$preciocobroTotal);
+		//print_r('VER OJO: '.$operaciongravadas);
+		//print_r('VER OJO: '.$igvtotal);
+		if ($operaciongravadas==0)
 		{
 			$otroscargos=0;
 		}else
 		{
-			$valor_otroscargos=$this->Usuarioinicio_model->Get_Valor_OtrosCargos();
+			//$valor_otroscargos=$this->Usuarioinicio_model->Get_Valor_OtrosCargos();
 			//No se está volviendo a calcular porque hay casos en se pierden centecimas y/o se aumentan centecimas
 			//$otroscargos=$operaciongravadas*($valor_otroscargos/100);
 			$otroscargos=$preciocobroTotal-($operaciongravadas+$igvtotal);
 		}
 		
 		$variable['otroscargos']=number_format($otroscargos,2,'.',',');
+		//print_r('OJO CARGOS: '.$otroscargos);
 		$importetotal=$importetotal+$operaciongravadas+$operacionexoneradas+$operacionexportacion+$operacioninafectos+$igvtotal+$otroscargos;
 		//$importetotal=$importetotal+(number_format($operaciongravadas,2,'.',',')+number_format($operacionexoneradas,2,'.',',')+
 		//	number_format($operacionexportacion,2,'.',',')+number_format($operacioninafectos,2,'.',',')+number_format( $igvtotal,2,'.',','));
@@ -781,18 +787,24 @@ class Comprobante extends CI_Controller {
 		$prm_razonsocialadquiriente=trim($this->input->post('txt_razonsocialcliente'));
 		$prm_tipomoneda=trim($this->input->post('cmb_monedadocumento'));	
 		
-		$prm_totalvalorventanetoopgravadas=trim($this->input->post('txt_operaciongravadas'));	
-		$prm_totalvalorventanetoopgravadas=number_format(trim($prm_totalvalorventanetoopgravadas), 2, '.', '');
-		
+		$prm_totalvalorventanetoopgravadas=trim($this->input->post('txt_operaciongravadas'));
+		$prm_totalvalorventanetoopgravadas=str_replace(",","",$prm_totalvalorventanetoopgravadas);		
+		$prm_totalvalorventanetoopgravadas=number_format($prm_totalvalorventanetoopgravadas, 2, '.', '');
+
 		$prm_totalvalorventanetoopnogravada=trim($this->input->post('txt_operacioninafectos'));
+		$prm_totalvalorventanetoopnogravada=str_replace(",","",$prm_totalvalorventanetoopnogravada);
 		$prm_totalvalorventanetoopnogravada=number_format(trim($prm_totalvalorventanetoopnogravada), 2, '.', '');
 		
 		$prm_totalvalorventanetoopexonerada=trim($this->input->post('txt_operacionexoneradas'));
+		$prm_totalvalorventanetoopexonerada=str_replace(",","",$prm_totalvalorventanetoopexonerada);
 		$prm_totalvalorventanetoopexonerada=number_format(trim($prm_totalvalorventanetoopexonerada), 2, '.', '');
 		
 		$prm_opexportacion=trim($this->input->post('txt_operacionexportacion'));
+		$prm_opexportacion=str_replace(",","",$prm_opexportacion);
 		$prm_opexportacion=number_format(trim($prm_opexportacion), 2, '.', '');
-		$prm_opgratuitas=trim($this->input->post('txt_operaciongratuitas'));		
+
+		$prm_opgratuitas=trim($this->input->post('txt_operaciongratuitas'));
+		$prm_opgratuitas=str_replace(",","",$prm_opgratuitas);	
 		if(number_format($prm_opgratuitas, 2, '.', '')>0)
 		{
 			$prm_totalvalorventanetoopgratuitas=$prm_opgratuitas;
@@ -806,17 +818,22 @@ class Comprobante extends CI_Controller {
 		$prm_totalvalorventanetoopnogravada=number_format(trim($prm_totalvalorventanetoopnogravada), 2, '.', '');
 		
 		$prm_totaligv=trim($this->input->post('txt_igvtotal'));
+		$prm_totaligv=str_replace(",","",$prm_totaligv);	
 		$prm_totaligv=number_format(trim($prm_totaligv), 2, '.', '');
 		
 		$prm_totaldescuentos=trim($this->input->post('txt_descuentototal'));
+		$prm_totaldescuentos=str_replace(",","",$prm_totaldescuentos);
 		$prm_totaldescuentos=number_format(trim($prm_totaldescuentos), 2, '.', '');
 		
 		//Req v2: Registrar el importe de otros cargos
 		$prm_totalotroscargos=trim($this->input->post('txt_otroscargos'));
+		$prm_totalotroscargos=str_replace(",","",$prm_totalotroscargos);
 		$prm_totalotroscargos=number_format(trim($prm_totalotroscargos), 2, '.', '');
+
 		$prm_porcentajeotroscargos=trim($this->input->post('txt_porcentajeotroscargos'));
 		
 		$prm_totalventa=trim($this->input->post('txt_importetotal'));
+		$prm_totalventa=str_replace(",","",$prm_totalventa);
 		$prm_totalventa=number_format(trim($prm_totalventa), 2, '.', '');
 		
 		$prm_textoleyenda_1=strtoupper($this->funciones->ConvertirNumeroLetras(str_replace(",","",$prm_totalventa)));	
@@ -937,9 +954,12 @@ class Comprobante extends CI_Controller {
 		$prm_adicionalCantidad=trim($this->input->post('arr_adicional_Cantidad'));
 		$prm_adicionalCodigo=($this->input->post('arr_adicional_Codigo'));
 		$prm_adicionalValor=($this->input->post('arr_adicional_Valor'));
+		//NO se está considerando el campo 500_5 porque se está reservando
+		//para guardar la cantidad de datos adicionales insertados.
+		//La cantidad se registra para que sea utilizada al momento de editar un comprobante.
 		$prm_adicionalCampos = array("100_3","100_4","100_5","100_6","100_7","100_8","100_9","100_10","40_3","40_4","40_5","40_6",
 			"40_7","40_8","40_9","40_10","40_11","40_12","40_13","40_14","40_15","40_16","40_17","40_18",
-			"40_19","40_20","500_1","500_2","500_3","500_4","500_5","250_1","250_2","250_3","250_4","250_5",
+			"40_19","40_20","500_1","500_2","500_3","500_4","250_1","250_2","250_3","250_4","250_5",
 			"250_6","250_7","250_8","250_9","250_10","250_11","250_12","250_13","250_14","250_15","250_16",
 			"250_17","250_18","250_19","250_20","250_21","250_22","250_23","250_24","250_25");
 		
@@ -2978,7 +2998,6 @@ class Comprobante extends CI_Controller {
 
 		public function Listar_DatosDocumentoModificar()
 		{
-
 			$arr=NULL;
 			$Contador=0;
 			$result['status']=0;
@@ -2988,6 +3007,7 @@ class Comprobante extends CI_Controller {
 				echo json_encode($result);
 				exit;
 			}
+			$Config_ValorPrecio=$_SESSION['SES_MarcoTrabajo'][0]['conf_venta'];
 			$prm_tipodocumentoemisor=6;
 			$prm_numerodocumentoemisor=trim($this->input->post('txt_rucempresa'));		
 			
@@ -2997,9 +3017,11 @@ class Comprobante extends CI_Controller {
 			$prm_tipodedocumento=$datos_seleccionados[0];
 			$prm_serienumero=$datos_seleccionados[1].'-'.$datos_seleccionados[2];
 			
-			
-			$consulta =$this->Comprobante_model->Listar_DatosDocumentoModificar($prm_tipodocumentoemisor,$prm_numerodocumentoemisor,$prm_tipodedocumento,$prm_serienumero);
+			$valor_igv=$this->Usuarioinicio_model->Get_Valor_IGV();	
+			$valor_otroscargos=$this->Usuarioinicio_model->Get_Valor_OtrosCargos();	
 
+			$consulta =$this->Comprobante_model->Listar_DatosDocumentoModificar($prm_tipodocumentoemisor,$prm_numerodocumentoemisor,$prm_tipodedocumento,$prm_serienumero);
+			
 		//print_r($consulta);
 		//return;
 			$ultima_fecha='';
@@ -3021,7 +3043,7 @@ class Comprobante extends CI_Controller {
 
 			$prm_fec_emisiniciotmp=explode('-',$consulta[0]['fechaemision']);
 			$arr['fechaemision'] =($prm_fec_emisiniciotmp[2].'/'.$prm_fec_emisiniciotmp[1].'/'.$prm_fec_emisiniciotmp[0]);
-			
+			//print_r($arr['fechaemision']);
 			
 			$arr['ubigeoemisor'] =$consulta[0]['ubigeoemisor'];
 			$arr['direccionemisor'] =$consulta[0]['direccionemisor'];
@@ -3041,6 +3063,8 @@ class Comprobante extends CI_Controller {
 			$arr['totalvalorventanetoopgratuitas'] =$consulta[0]['totalvalorventanetoopgratuitas'];			
 			$arr['totaligv'] =$consulta[0]['totaligv'];
 			$arr['totaldescuentos'] =$consulta[0]['totaldescuentos'];
+			
+			//$arr['totalOtrosCargos'] =$consulta[0]['totalOtrosCargos'];
 			$arr['totalventa'] =$consulta[0]['totalventa'];
 			$arr['textoleyenda_1'] =$consulta[0]['textoleyenda_1'];
 			$arr['codigoleyenda_1'] =$consulta[0]['codigoleyenda_1'];
@@ -3073,41 +3097,48 @@ class Comprobante extends CI_Controller {
 			
 			$arr['bl_origen'] =$consulta[0]['bl_origen'];			
 			
-			//se extrae el primer registro que existe despues del documento
-			$consulta_fecha =$this->Comprobante_model->Buscar_UltimaFechaDocumento($prm_tipodocumentoemisor,$prm_numerodocumentoemisor,$prm_tipodedocumento,$prm_serienumero);
-			
+			//Calculo de las restricciones de fechas de emision
+			$tmpserie='';
+			$tmpnumero=(int)$arr['numerodocumento']; 
+
+			//Obtiene fecha inicial de rango permitido
+			$tmpserie='';
+			$tmpserie=$arr['seriedocumento'].'-'.str_pad((string)($tmpnumero+1), 8, "0", STR_PAD_LEFT);
+			$consulta_fecha =$this->Comprobante_model->Buscar_Documento($prm_tipodocumentoemisor,$prm_numerodocumentoemisor,$prm_tipodedocumento,$tmpserie);
+			if(!empty($consulta_fechainicio))//SI NO ES NULO O VACIO
+			{
+				$prm_fec_emisinicio_tmp=explode('-',$consulta_fechainicio[0]['fechaemision']);
+				$primera_fecha=($prm_fec_emisinicio_tmp[2].'/'.$prm_fec_emisinicio_tmp[1].'/'.$prm_fec_emisinicio_tmp[0]);
+			}else
+			{
+				$primera_fecha=$arr['fechaemision'];
+			}
+			$arr['primera_fecha'] =$primera_fecha;
+
+			//Obtiene fecha final de rango permitido
+			$tmpserie='';
+			$tmpserie=$arr['seriedocumento'].'-'.str_pad((string)($tmpnumero-1), 8, "0", STR_PAD_LEFT);
+			$consulta_fecha =$this->Comprobante_model->Buscar_Documento($prm_tipodocumentoemisor,$prm_numerodocumentoemisor,$prm_tipodedocumento,$tmpserie);//$prm_serienumero);
 			
 			if(!empty($consulta_fecha))//SI NO ES NULO O VACIO
 			{
 				$prm_fec_emisinicio_tmp=explode('-',$consulta_fecha[0]['fechaemision']);
 				$ultima_fecha=($prm_fec_emisinicio_tmp[2].'/'.$prm_fec_emisinicio_tmp[1].'/'.$prm_fec_emisinicio_tmp[0]);
-			}
-			else
+			}else
 			{
-				$ultima_fecha=date("d/m/Y");
+				$ultima_fecha=date("dd/mm/yy");
 			}
 			$arr['ultima_fecha'] =$ultima_fecha;
-			
-			
-			
-			
-			$consulta_fechainicio =$this->Comprobante_model->Buscar_PrimeraFechaDocumento($prm_tipodocumentoemisor,$prm_numerodocumentoemisor,$prm_tipodedocumento,$prm_serienumero);
-			
-			
-			if(!empty($consulta_fechainicio))//SI NO ES NULO O VACIO
-			{
-				$prm_fec_emisinicio_tmp=explode('-',$consulta_fechainicio[0]['fechaemision']);
-				$primera_fecha=($prm_fec_emisinicio_tmp[2].'/'.$prm_fec_emisinicio_tmp[1].'/'.$prm_fec_emisinicio_tmp[0]);
-			}
-			else
-			{
-				$primera_fecha=$arr['fechaemision'];
-			}
-			$arr['primera_fecha'] =$primera_fecha;
 			
 
 			$prm_cod_usu=$this->Usuarioinicio_model->Get_Cod_Usu();
 			$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
+
+			//Inicia: Carga de datos de adicionales
+			//$cantidad_adicionales=0;
+			//$cantidad_adicionales =$consulta[0]['textoAuxiliar500_5'];
+			//print_r('Cantidad de adicionales'.$cantidad_adicionales);
+			//INICIA: Registro del detalle en la tabla temporal de productos
 			//Eliminamos los registros anteriores de productos para la empresa y el usuario
 			$this->Comprobante_model->Eliminar_ProductotemporalRegistros($prm_cod_empr,$prm_cod_usu);		
 			$prm_cod_tipregist=$this->Catalogos_model->Tipo_AfectacionModificar($consulta[0]['codigorazonexoneracion']);			
@@ -3132,7 +3163,13 @@ class Comprobante extends CI_Controller {
 			$prm_tip_afectacion=trim($v['codigorazonexoneracion']); 
 			$prm_val_igv=trim($v['importeigv']);
 			$prm_val_total=trim($v['importetotalsinimpuesto']);	
-			
+				//$valor_igv
+				//textoAuxiliar40_2
+
+			$prm_val_txt_preciocobro=trim($v['textoAuxiliar40_2']);	
+				//este calculo es cuando valor venta
+			$prm_val_descuento_inc_igv=number_format(($prm_val_descuento*(1+$valor_igv/100+$valor_otroscargos/100)),0,'.','');
+
 			$prm_ruc_empr=trim($v['numerodocumentoemisor']);
 			
 			
@@ -3141,12 +3178,10 @@ class Comprobante extends CI_Controller {
 					$prm_val_igv=0;
 					$prm_val_unitario=trim($v['importereferencial']);
 				}
-				
 				$this->Comprobante_model->Guardar_Registroproductos($prm_cod_usu,$prm_cod_prod,$prm_cant_prod,$prm_uni_med,
 					$prm_desc_prod,$prm_val_unitario,$prm_val_descuento,$prm_val_isc,$prm_tip_afectacion,$prm_val_igv,
-					$prm_val_total,$prm_cod_empr,$prm_ruc_empr,$prm_cod_tipregist);
-				
-				
+					$prm_val_total,$prm_cod_empr,$prm_ruc_empr,
+					$prm_cod_tipregist, $prm_val_txt_preciocobro, $prm_val_descuento_inc_igv);
 				endforeach;
 			}
 			if(sizeof($arr)>0)

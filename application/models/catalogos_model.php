@@ -34,7 +34,7 @@ class Catalogos_model extends CI_Model
 		
 		return $consulta->result_array();
 	}
-
+	
 	function Listar_TipodeDocumento_Retencion()
 	{
 
@@ -43,7 +43,7 @@ class Catalogos_model extends CI_Model
 		$consulta=$this->db->query($query);
 		return $consulta->result_array();	
 	}
-	
+
 	function Listar_TipodeDocumento($codigo = 0)
 	{
 

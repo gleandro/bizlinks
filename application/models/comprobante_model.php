@@ -1,5 +1,8 @@
 <?php
-//@session_start();
+if(!isset($_SESSION)) { session_start(); } 
+
+
+
 class Comprobante_model extends CI_Model
 {
 	function __construct()
@@ -438,6 +441,10 @@ class Comprobante_model extends CI_Model
 			}
 		//Fin Requerimiento
 		//Requerimiento 4-version 2: Campos Adicionales
+			//Inicio cantidad adicional: Se esta reservando estos dos campos para guardar la cantidad de adicionales insertados
+			//$query_colum=$query_colum."codigoAuxiliar500_5,"; 				$query_valores=$query_valores."'ADIC',";
+			//$query_colum=$query_colum."textoAuxiliar500_5,"; 				$query_valores=$query_valores."'".$prm_adicionalCantidad."',";
+			//Fin cantidad adicional
 			if ($prm_adicionalCantidad>0)
 			{
 				while($prm_adicionalCantidad>0)
@@ -450,7 +457,7 @@ class Comprobante_model extends CI_Model
 					
 					$prm_adicionalCantidad--;
 				}
-			}
+			}		
 		//Fin Requerimiento
 		if($prm_tipodocumento=='03')//BOLETA
 		{
@@ -733,18 +740,19 @@ class Comprobante_model extends CI_Model
 					$query_colum=$query_colum."codigoauxiliar40_1,"; 		$query_valores=$query_valores."'9122',";
 					$query_colum=$query_colum."textoAuxiliar40_1,"; 		$query_valores=$query_valores."'".number_format(trim($PrecioTotal_tmp), 2, '.', '')."',";
 				}
+				//Inicio Req. 7: Cuando el registro de venta es del tipo 1 se registra el precio de cobro
+				if ($Conf_Tipo_Venta==1){
+					$query_colum=$query_colum."codigoauxiliar40_2,"; 		$query_valores=$query_valores."'9123',";
+					$query_colum=$query_colum."textoAuxiliar40_2,"; 		$query_valores=$query_valores."'".number_format(trim($v['val_preciocobro']), 2, '.', '')."',";
+				}else
+				{
+					$query_colum=$query_colum."codigoauxiliar40_2,"; 		$query_valores=$query_valores."'9123',";
+					$query_colum=$query_colum."textoAuxiliar40_2,"; 		$query_valores=$query_valores."'".number_format(trim($val_precioconigv), 2, '.', '')."',";
+				}
+				//Fin Requerimiento 7
 			}
 			//Fin requerimiento 4
-			//Inicio Req. 7: Cuando el registro de venta es del tipo 1 se registra el precio de cobro
-			if ($Conf_Tipo_Venta==1){
-				$query_colum=$query_colum."codigoauxiliar40_2,"; 		$query_valores=$query_valores."'9123',";
-				$query_colum=$query_colum."textoAuxiliar40_2,"; 		$query_valores=$query_valores."'".number_format(trim($v['val_preciocobro']), 2, '.', '')."',";
-			}else
-			{
-				$query_colum=$query_colum."codigoauxiliar40_2,"; 		$query_valores=$query_valores."'9123',";
-				$query_colum=$query_colum."textoAuxiliar40_2,"; 		$query_valores=$query_valores."'".number_format(trim($val_precioconigv), 2, '.', '')."',";
-			}
-			//Fin Requerimiento 4		
+			
 			$query_colum=$query_colum."importeigv,";					$query_valores=$query_valores."'".number_format(trim($v['val_igv']), 2, '.', '')."',";
 			$query_colum=$query_colum."codigorazonexoneracion,";		$query_valores=$query_valores."'".trim($v['tip_afectacion'])."',";
 			
@@ -916,6 +924,7 @@ class Comprobante_model extends CI_Model
 						}
 						
 						$query=$query." order by fechaemision;";
+			//print_r($query);
 					}
 		else if ($rol_usuario==2) //RECEPTOR
 		{
@@ -1285,8 +1294,9 @@ class Comprobante_model extends CI_Model
 		b.importedescuento,
 		b.importecargo,
 		b.importereferencial,
-		b.codigoimportereferencial
-		
+		b.codigoimportereferencial,
+		b.textoAuxiliar40_2
+
 		from spe_einvoiceheader a
 		inner join spe_einvoicedetail b on 
 		a.tipodocumentoemisor=b.tipodocumentoemisor 
@@ -1388,7 +1398,22 @@ class Comprobante_model extends CI_Model
 
 	}
 	
-	
+	function Buscar_Documento($prm_tipodocumentoemisor,$prm_numerodocumentoemisor,$prm_tipodedocumento,$prm_serienumero)
+	{
+		$prm_conect_db='ncserver';
+		$this->db_client = $this->load->database($prm_conect_db, true);
+
+		$query="";
+		$query="select fechaemision from spe_einvoiceheader 
+		where 
+		tipodocumentoemisor='".$prm_tipodocumentoemisor."'
+		and numerodocumentoemisor='".$prm_numerodocumentoemisor."'
+		and tipodocumento= '".$prm_tipodedocumento."'
+		and serienumero='".$prm_serienumero."' ;";
+		$consulta =  $this->db_client->query($query);		
+		return $consulta->result_array();
+	}
+
 	function Buscar_UltimaFechaDocumento($prm_tipodocumentoemisor,$prm_numerodocumentoemisor,$prm_tipodedocumento,$prm_serienumero)
 	{
 		$prm_conect_db='ncserver';
@@ -1400,14 +1425,9 @@ class Comprobante_model extends CI_Model
 		tipodocumentoemisor='".$prm_tipodocumentoemisor."'
 		and numerodocumentoemisor='".$prm_numerodocumentoemisor."'
 		and tipodocumento= '".$prm_tipodedocumento."'
-		and serienumero> '".$prm_serienumero."' order by  serienumero;";
-
-		//print_r($query);
-		//return;
-		
+		and serienumero='".$prm_serienumero."' ;";
 		$consulta =  $this->db_client->query($query);		
 		return $consulta->result_array();
-
 	}
 
 	function Buscar_PrimeraFechaDocumento($prm_tipodocumentoemisor,$prm_numerodocumentoemisor,$prm_tipodedocumento,$prm_serienumero)
@@ -1436,9 +1456,10 @@ class Comprobante_model extends CI_Model
 		$this->db_client = $this->load->database($prm_conect_db, true);
 		$query="";
 		$query="select codigo, observacion, numerodocumentoemisor from bl_adicionales_auxiliares 
-		where numerodocumentoemisor='".$prm_tipodocumentoemisor."' order by orden;";
+		where numerodocumentoemisor='".$prm_tipodocumentoemisor."' and codigo<>'9371' order by orden;";
 		$consulta =  $this->db_client->query($query);		
 		return $consulta->result_array();
 	}
 
 }
+

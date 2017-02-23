@@ -42,7 +42,7 @@
 					changeMonth: true ,
 					changeYear: true
 				});
-				$('#txt_FechaEmision').datepicker('setDate', 'today');				
+				$('#txt_FechaEmision').datepicker('setDate', 'today');	
 				$('#txt_cantidad, #txt_valorunitario,#txt_descuento, #txt_isc,#txt_descuentoglobal, #txt_porcentajedetraccion, #txt_montodetraccionreferencial, #txt_porcentajepercepcion, #txt_baseimponiblepercepcion').numeric({allow:'.'});
 				
 				Tipo_Afectacion();
@@ -457,7 +457,7 @@
 							if(result.status==1)
 							{
 								ncsistema.filtro_datosAdicionales_Tabla(result.data);
-								
+								$('#txt_dato_adicional_condicion').val(1);
 							}
 							else if (result.status==1000)
 							{
@@ -467,6 +467,7 @@
 							else
 							{
 								ncsistema.filtro_datosAdicionales_Tabla("");
+								$('#txt_dato_adicional_condicion').val(0);
 							}
 						}
 					});	
@@ -906,6 +907,12 @@
 							$('#div_MensajeValidacionEmpresa').fadeIn(0);
 							$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/procesando.gif" width="27" height="27"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Procesando. Espere por favor...</div>');
 						},
+						//error:function()
+						//{
+							//alert('Ocurrió un error en el registro de este comprobante.\n Comunicarse con Bizlinks para su revisión');	
+							//document.location.href= '<?php echo base_url()?>comprobante';							
+							//return;
+						//},
 						success:function(result)
 						{
 							if(result.status==1)
@@ -1060,7 +1067,7 @@
 					}
 					i++;
 				});
-				if (datoadicional_Cantidad>56)
+				if (datoadicional_Cantidad>55)
 				{
 					alert("Solo está permitido seleccionar 56 Campos Adicionales!");
 					return;
@@ -1312,7 +1319,11 @@
 				//Ventana para registrar nuevos adicionales
 				$("#create-aditional" ).button().on("click", function() 
 				{
-					ncsistema.filtro_datosAdicionales();
+					var txt_dato_adicional_condicion=$.trim($('#txt_dato_adicional_condicion').val());
+					if (txt_dato_adicional_condicion==0)
+					{
+						ncsistema.filtro_datosAdicionales();
+					}
 					dialogAdicional.dialog( "open" );
 				});
 				
@@ -2075,6 +2086,7 @@
 				$('#cmb_tiponotadecredito').val('');
 				$('#txt_motivodenotacredito').val('');
 				$('#txt_documentomodificar').val('');
+				$('#txt_dato_adicional_condicion').val(0);
 				
 				OcultarFilaTabla('row3',0);//OCULTA FILA
 				OcultarFilaTabla('row4',0);//OCULTA FILA
@@ -3421,8 +3433,6 @@
 			{
 				var txt_documentomodificar=$.trim($('#txt_documentomodificar').val());
 				var txt_rucempresa=$.trim($('#txt_RucEmpresa').val());
-				
-				
 				if (txt_documentomodificar!='')
 				{
 					$.ajax({
@@ -3437,27 +3447,24 @@
 						beforeSend:function()
 						{
 						},
+						/*
+						error:function()
+						{
+							alert('Ocurrió un error en la edición de este comprobante.\n Comunicarse con Bizlinks para su revisión');	
+							document.location.href= '<?php echo base_url()?>comprobante';							
+										return;
+						},*/
 						success:function(result)
 						{
-								
 							if(result.status==1)
 							{
-
-								
 								$("#cmb_tipodocumentosunat").prop('disabled', true);
-								
 								$('#cmb_tipodocumentosunat').val(result.data['tipodocumento']);	
-								
-								//alert(result.data['tipodocumentoreferenciaprincip']);
-								//alert(result.data['codigoserienumeroafectado']);
-								//alert(result.data['tipodocumentoadquiriente']);
-								
 								var tipodocumentoreferenciaprincip=result.data['tipodocumentoreferenciaprincip']
 								if (tipodocumentoreferenciaprincip=='' &&  result.data['tipodocumento']=='08')
 								{
 									tipodocumentoreferenciaprincip='01';
 								}
-						
 								Serie_Documento(result.data['tipodocumento'],result.data['seriedocumento'],tipodocumentoreferenciaprincip,result.data['codigoserienumeroafectado'],result.data['tipodocumentoadquiriente']);
 								//$('#cmb_seriedocumentosunat').val(result.data['seriedocumento']);	
 								$('#txt_numerodocumentosunat').val(result.data['numerodocumento']);
@@ -3539,7 +3546,8 @@
 									//$("#cmb_tiponotadecredito").prop('disabled', true);
 									
 								}
-
+								//alert(result.data['primera_fecha']);
+								//alert(result.data['ultima_fecha']);
 								$('#txt_FechaEmision') .datepicker('option', 'minDate', result.data['primera_fecha']) .datepicker('refresh'); 
 								$('#txt_FechaEmision') .datepicker('option', 'maxDate', result.data['ultima_fecha']) .datepicker('refresh'); 
 								
@@ -3548,29 +3556,36 @@
 								Tipo_Afectacion();	
 
 								return;
-							}
-							else if (result.status==1000)
+							}else 
+								if (result.status==1000)
+								{
+									document.location.href= '<?php echo base_url()?>usuario';
+									return;
+								}
+								else
+								{
+									/*
+									$('#txt_emisornombrecomercial').val(rs.nom_comercial);
+									$('#txt_emisorcorreo').val(rs.correo_usuario);
+									$('#txt_emisorpais').val(rs.nomb_pais);
+									$('#txt_emisorpaiscodigo').val(rs.cod_pais);
+									$('#txt_emisorubigeo').val(rs.cod_ubigeo);
+									$('#txt_emisordepartamento').val(rs.nomb_depa);
+									$('#txt_emisorprovincia').val(rs.nomb_prov);
+									$('#txt_emisordistrito').val(rs.nomb_dist);
+									$('#txt_emisorrubanizacion').val(rs.urbaniz_empresa);
+									$('#txt_emisordireccion').val(rs.direcc_empresa);
+									*/
+									alert('Error Entendible');								
+									return;
+								}
+							if (result.status==3)
 							{
-								document.location.href= '<?php echo base_url()?>usuario';
-								return;
-							}
-							else
-							{
-								/*
-								$('#txt_emisornombrecomercial').val(rs.nom_comercial);
-								$('#txt_emisorcorreo').val(rs.correo_usuario);
-								$('#txt_emisorpais').val(rs.nomb_pais);
-								$('#txt_emisorpaiscodigo').val(rs.cod_pais);
-								$('#txt_emisorubigeo').val(rs.cod_ubigeo);
-								$('#txt_emisordepartamento').val(rs.nomb_depa);
-								$('#txt_emisorprovincia').val(rs.nomb_prov);
-								$('#txt_emisordistrito').val(rs.nomb_dist);
-								$('#txt_emisorrubanizacion').val(rs.urbaniz_empresa);
-								$('#txt_emisordireccion').val(rs.direcc_empresa);
-								*/								
-								return;
+								alert('Error Entendible');								
+										return;
 							}
 						}
+						
 					});
 				}
 
@@ -3668,7 +3683,7 @@
 					<input type="hidden" id="txt_valorotroscargos" value="<?php echo $valor_otroscargos;?>"  />
 					<input type="hidden" id="txt_modificarregistro" value="0"  />
 					<input type="hidden" id="txt_config_valorprecio" value="<?php echo $Config_ValorPrecio;?>"  />
-					
+					<input type="hidden" id="txt_dato_adicional_condicion" value="0"  />
 					<table border="0" width="80%" style="border-collapse:separate; border-spacing:1px 1px;" cellpadding="3" class="tablaFormulario">
 						<tr><td><label class="columna"></label></td></tr>
 						<tr>

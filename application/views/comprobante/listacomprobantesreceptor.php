@@ -350,7 +350,7 @@
 							$('#div_param12').empty().append('');	
 							$('#div_param13').empty().append(rs.tipomonedacabecera);	
 							$('#div_param14').empty().append('');							
-							$('#div_param15').empty().append('SON: '+rs.textoleyenda_1);							
+							$('#div_param15').empty().append('SON: '+rs.textoleyenda_1);						
 							
 							OcultarFilaPassword('row1',0);
 							OcultarFilaPassword('row2',0);

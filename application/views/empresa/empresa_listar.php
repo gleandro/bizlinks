@@ -88,7 +88,6 @@
 					$("#txt_RazonSocialEmpresa").addClass( "ui-state-error" );
 					return;
 				}
-
 				if (Cmb_TipoConfiguracionSerie=='')
 				{
 					$('#div_MensajeValidacionEmpresa').fadeIn(0);
@@ -105,7 +104,6 @@
 					$("#Cmb_TipoConfiguracionUnidad").addClass( "ui-state-error" );
 					return;
 				}
-				
 				if (Cmb_TipoConfiguracionFirma=='')
 				{
 					$('#div_MensajeValidacionEmpresa').fadeIn(0);
@@ -114,7 +112,6 @@
 					$("#Cmb_TipoConfiguracionFirma").addClass( "ui-state-error" );
 					return;
 				}
-
 				if (Cmb_TipoEmpresa==0)
 				{
 					$('#div_MensajeValidacionEmpresa').fadeIn(0);
