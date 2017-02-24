@@ -419,6 +419,17 @@ class Resumenboletas_model extends CI_Model
 			$result['result']=0;
 			return $result;
 		}
+		$query="delete from SPE_EINVOICE_RESPONSE 
+		where serieNumero = '".$prm_comprobante."' and 
+		numerodocumentoemisor = '".$prm_ruc."' and
+		tipoDocumento = '".$prm_tipo_doc."'	";
+		$this->db_client->query($query);
+		if ($this->db_client->trans_status() === FALSE)
+		{
+			$this->db_client->trans_rollback();
+			$result['result']=0;
+			return $result;
+		}
 		$this->db_client->trans_commit();
 		$result['result']=1;
 		return $result;
