@@ -53,6 +53,10 @@ class Retencion_model extends CI_Model
 			{
 				$query=$query." and a.bl_estadoregistro='".$prm_cod_estdoc."' ";
 			}
+			if ($prm_estado_documentosunat!='0')	
+			{
+				$query=$query." and upper(b.bl_estadoProceso) like '%".$prm_estado_documentosunat."%' ";
+			}
 			if ($prm_fec_emisinicio!='' && $prm_fec_emisfinal!='')	
 			{
 				$query=$query." and a.fechaemision>='".$prm_fec_emisinicio."'
@@ -63,7 +67,47 @@ class Retencion_model extends CI_Model
 		}else{
 			if ($rol_usuario==2) //RECEPTOR
 			{
-				$query="";
+				$query="select a.tipodocumentoemisor, a.tipodocumento, a.numerodocumentoemisor, a.serienumeroretencion,
+				a.numerodocumentoproveedor, a.razonsocialproveedor, a.importetotalpagado, a.tipomonedatotalpagado, 
+				(select b.nombre from sgr_multitabla b where b.grupo_nombre='TIPO_MONEDA' and b.activo=1 
+				and b.grupo_id=5 and b.valorcadena=a.tipomonedatotalpagado) tipomonedapagado,
+				a.importetotalretenido, a.tipomonedatotalretenido, 
+				(select b.nombre from sgr_multitabla b where b.grupo_nombre='TIPO_MONEDA' and b.activo=1 
+				and b.grupo_id=5 and b.valorcadena=a.tipomonedatotalretenido) tipomonedaretenido,
+				a.fechaemision, a.bl_estadoregistro, 
+				(select b.no_corto from tm_tabla_multiple b where b.no_tabla='ESTADO_DOCUMENTO_PORTAL' 
+				and b.in_habilitado=1 and b.co_item_tabla=a.bl_estadoregistro) estadoregistro,
+				a.bl_reintento, b.reintento, b.bl_estadoproceso estadosunat,	
+				b.bl_mensaje, b.bl_mensajesunat,
+				(case when b.bl_estadoRegistro='L' and b.bl_estadoproceso='SIGNED' then 1 else 0 end) mensajeresponse,
+				a.visualizado
+				from spe_retention a
+				left join spe_retention_response b on
+				a.tipodocumentoemisor=b.tipodocumentoemisor 
+				and a.numerodocumentoemisor=b.numerodocumentoemisor
+				and a.serieNumeroRetencion=b.serieNumeroRetencion
+				and a.tipoDocumento=b.tipoDocumento
+				";
+				$query=$query." where a.tipoDocumentoEmisor='6' and a.tipoDocumento='20' and a.numeroDocumentoProveedor='".$prm_ruc_empr."' ";
+				if ($prm_documento_cliente!='')	
+				{
+					$query=$query." and a.numerodocumentoproveedor='".$prm_documento_cliente."' ";
+				}
+				if ($prm_serie_numeroinicio!='' && $prm_serie_numerofinal!='')	
+				{
+					$query=$query." and a.serienumero>='".$prm_serie_numeroinicio."' and a.serienumero<='".$prm_serie_numerofinal."' ";
+				}
+				if ($prm_estado_documentosunat!='0')	
+				{
+					$query=$query." and upper(b.bl_estadoProceso) like '%".$prm_estado_documentosunat."%' ";
+				}
+				if ($prm_fec_emisinicio!='' && $prm_fec_emisfinal!='')	
+				{
+					$query=$query." and a.fechaemision>='".$prm_fec_emisinicio."'
+					and	a.fechaemision<='".$prm_fec_emisfinal."' "; 
+				}
+				$query=$query." order by fechaemision;";
+			//print_r($query);
 			}
 		}
 		$consulta =  $this->db_client->query($query);		
@@ -134,7 +178,7 @@ class Retencion_model extends CI_Model
 		and c.grupo_id=5 and c.valorcadena=b.tipomonedadocumentorelacionado) tipomonedarelacionado,
 		b.importetotaldocumentorelaciona, 
 		b.importepagosinretencion, b.importeretenido, b.importetotalpagarneto,
-
+		
 		a.bl_estadoregistro, 
 		(select b.no_corto from tm_tabla_multiple b where b.no_tabla='ESTADO_DOCUMENTO_PORTAL' 
 		and b.in_habilitado=1 and b.co_item_tabla=a.bl_estadoregistro) estadoregistro
@@ -638,5 +682,6 @@ class Retencion_model extends CI_Model
 
 		return $result;
 	}	
+
 
 }

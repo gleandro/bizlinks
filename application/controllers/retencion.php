@@ -67,12 +67,14 @@ class Retencion extends CI_Controller {
 			//$prm['Listar_TipodeDocumento']=$this->Catalogos_model->Listar_TipodeDocumento();
 			//$prm['Config_ValorPrecio']=$_SESSION['SES_MarcoTrabajo'][0]['conf_venta'];		
 			//$prm['Listar_Unidades']=$this->Catalogos_model->Datos_Unidades($prm_cod_empr,$prm_tipo_confunidad);
+			//if (!isset($_GET['param1'])){	$prm_documentomodificar='';} else{$prm_documentomodificar=$_GET['param1'];}
+			//$prm['documentomodificar']=$prm_documentomodificar;
 			
 			$prm['pagina_ver']='retencion';
 			$this->load->view('retencion/retencion_listar',$prm);
 		}		
 	}
-
+	
 	public function Guardar_RetentionHeader()
 	{
 
@@ -286,10 +288,10 @@ class Retencion extends CI_Controller {
 			}
 			if ($prm['Valor_Inhouse']==0)
 			{
-				$prm['Listar_EstadoSunatRetencion']=$this->Catalogos_model->Listar_EstadoSunatRetencion_NoIn();
+				$prm['Listar_EstadoSunatRetencion']=$this->Catalogos_model->Listar_EstadoSunatRetencion_NoIn_Receptor();
 			}
 			else{
-				$prm['Listar_EstadoSunatRetencion']=$this->Catalogos_model->Listar_EstadoSunatRetencion();
+				$prm['Listar_EstadoSunatRetencion']=$this->Catalogos_model->Listar_EstadoSunatRetencion_Receptor();
 			}
 			
 			$prm['pagina_ver']='retencion';
@@ -563,7 +565,7 @@ class Retencion extends CI_Controller {
 			}
 			echo json_encode($result);
 		}
-
+		
 		public function Comprobar_DocumentoImprimir()
 		{
 			$result['status']=0;
@@ -575,35 +577,35 @@ class Retencion extends CI_Controller {
 			}
 			$prm_cod_documento=trim($this->input->post('param1'));
 			$prm_ruc_emisor=trim($this->input->post('param2'));
-
-			$carpetaemisor='6-'.$prm_ruc_emisor;		
-			$carpeta = ''; //keys/			
-			$rutadescargar=$this->Catalogos_model->Listar_RutaDocumentoDescargar();
-			if(!empty($rutadescargar))//SI NO ES NULO O VACIO
-			{
-				$carpeta=$rutadescargar[0]['valorcadena'];
-			}		
-			$nombrearchivopdf='';
-			$tipofirma='';
-
-			$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
-
-			$Listar_EmpresaId=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);
-
-			if(!empty($Listar_EmpresaId))//SI NO ES NULO O VACIO
-			{
-				$tipofirma=$Listar_EmpresaId[0]['tipo_conffirma'];
-			}
 			
-			$lista_documento=explode(',',$prm_cod_documento);
-			if(!empty($lista_documento))
-			{
-				$listadearchivos=NULL;
-				$contador=0;
-				$cantidad=0;
-				foreach($lista_documento as $key=>$v):
-					if (strlen($v)>4)
-					{
+			$carpetaemisor='6-'.$prm_ruc_emisor;		
+		$carpeta = ''; //keys/			
+		$rutadescargar=$this->Catalogos_model->Listar_RutaDocumentoDescargar();
+		if(!empty($rutadescargar))//SI NO ES NULO O VACIO
+		{
+			$carpeta=$rutadescargar[0]['valorcadena'];
+		}		
+		$nombrearchivopdf='';
+		$tipofirma='';
+		
+		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
+		
+		$Listar_EmpresaId=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);
+		
+		if(!empty($Listar_EmpresaId))//SI NO ES NULO O VACIO
+		{
+			$tipofirma=$Listar_EmpresaId[0]['tipo_conffirma'];
+		}
+		
+		$lista_documento=explode(',',$prm_cod_documento);
+		if(!empty($lista_documento))
+		{
+			$listadearchivos=NULL;
+			$contador=0;
+			$cantidad=0;
+			foreach($lista_documento as $key=>$v):
+				if (strlen($v)>4)
+				{
 					if ($tipofirma==1)//BIZLIN
 					{
 						$nombrearchivopdf=$prm_ruc_emisor.'-'.$v;
@@ -639,7 +641,7 @@ class Retencion extends CI_Controller {
 			}
 			echo json_encode($result);
 		}
-
+		
 		public function Imprimir_DocumentoSeleccionado()
 		{
 			if(!$this->Usuarioinicio_model->SessionExiste())
@@ -651,7 +653,7 @@ class Retencion extends CI_Controller {
 
 			$prm_cod_documento = basename($_GET['param1']);	
 			$prm_ruc_emisor = basename($_GET['param2']);		
-
+			
 			$carpetaemisor='6-'.$prm_ruc_emisor;		
 		$carpeta = ''; //keys/			
 		$rutadescargar=$this->Catalogos_model->Listar_RutaDocumentoDescargar();
@@ -707,7 +709,7 @@ class Retencion extends CI_Controller {
 					$pdf->addPDF($v1, 'all');
 				endforeach;
 				$fecha_actual=((date("Y-m-d H-i-s")).'.'.substr(microtime(),0,5)*1000);
-
+				
 				if ($contador==1)
 				{
 					$pdf->merge('download', $prm_ruc_emisor.'-'.$fecha_actual.'.pdf');
@@ -717,24 +719,24 @@ class Retencion extends CI_Controller {
 				}
 			}
 		}
-
+		
 		public function Listar_DetalleDocumento()
 		{
 			$arr=NULL;
 			$Contador=0;
 			$result['status']=0;
-
+			
 			$prm_ruc_empremisor=trim($this->input->post('txt_RucEmpresa'));
 			$prm_datosseleccionados=trim($this->input->post('txt_datosseleccionados'));
-
+			
 			$prm_datosseleccionados=(str_replace(",","",$prm_datosseleccionados));		
 			$datos_seleccionados=explode('-',$prm_datosseleccionados);
-
+			
 			$prm_tipo_documento=$datos_seleccionados[0];
 			$prm_serie_numero=$datos_seleccionados[1].'-'.$datos_seleccionados[2];
 		//print_r('INICIA');
 			$consulta =$this->Retencion_model->Listar_DetalleDocumento($prm_ruc_empremisor,$prm_tipo_documento,$prm_serie_numero);
-
+			
 		if(!empty($consulta))//SI NO ES NULO O VACIO
 		{
 			foreach($consulta as $key=>$v):
@@ -754,27 +756,27 @@ class Retencion extends CI_Controller {
 			$arr[$key]['numerodocumentoemisor'] =trim($v['numerodocumentoemisor']); 
 			$arr[$key]['tipodocumentoemisor'] =trim($v['tipodocumentoemisor']); 
 			$arr[$key]['nombre_tipodocumentoemisor'] =trim($v['nombre_tipodocumentoemisor']); 
-
+			
 			$arr[$key]['serienumero'] =trim($v['serienumeroretencion']); 
 			$arr[$key]['tipodocumento'] =trim($v['tipodocumento']); 
 			$arr[$key]['nombre_tipodocumento'] =trim($v['nombre_tipodocumento']);
-
+			
 			$arr[$key]['fechaemision'] = trim($v['fechaemision']);		
 			$arr[$key]['numerodocumentoadquiriente'] =trim($v['numerodocumentoproveedor']); 
 			$arr[$key]['razonsocialadquiriente'] =trim($v['razonsocialproveedor']); 	
 			$arr[$key]['direccioncliente'] =trim($v['direccionproveedor']); 
 			$arr[$key]['tasaretencion'] =trim($v['tasaretencion']); 
-
+			
 			$arr[$key]['importetotalretenido'] =trim($v['importetotalretenido']); 
 			$arr[$key]['tipomonedaretenido'] =trim($v['tipomonedaretenido']); 
 			$arr[$key]['importetotalpagado'] =trim($v['importetotalpagado']);
 			$arr[$key]['tipomonedapagado'] =trim($v['tipomonedapagado']); 
-
+			
 				//detalle
 			$arr[$key]['numeroordenitem'] =trim($v['numeroordenitem']); 
 			$arr[$key]['tipodocumentorelacionado'] =trim($v['tipodocumentorelacionado']); 
 			$arr[$key]['nomb_tipodocumento'] =trim($v['nomb_tipodocumento']); 
-
+			
 			$arr[$key]['numerodocumentorelacionado'] =trim($v['numerodocumentorelacionado']); 
 			$arr[$key]['fechaemisiondocumentorelaciona'] =trim($v['fechaemisiondocumentorelaciona']); 
 			$arr[$key]['fechapago'] =trim($v['fechapago']); 
@@ -787,7 +789,7 @@ class Retencion extends CI_Controller {
 			$arr[$key]['importetotalpagarneto'] =trim($v['importetotalpagarneto']); 
 			$arr[$key]['bl_estadoregistro'] =trim($v['bl_estadoregistro']); 
 			$arr[$key]['estadoregistro'] =trim($v['estadoregistro']); 
-
+			
 			endforeach;
 			
 			if($_SESSION['SES_MarcoTrabajo'][0]['cod_rolseleccion']==2)//SOLO SI ES RECEPTOR SE ACTUALIZA LOS DATOS
@@ -807,7 +809,7 @@ class Retencion extends CI_Controller {
 		}
 		echo json_encode($result);
 	}
-	
+
 	public function Listar_ProductosDocumento()
 	{
 
@@ -1011,7 +1013,7 @@ class Retencion extends CI_Controller {
 		}		
 		echo json_encode($result);
 	}
-
+	
 	public function Crear_ArchivosDocumentoSeleccionado()
 	{
 		$result['status']=0;
@@ -1023,7 +1025,7 @@ class Retencion extends CI_Controller {
 		}
 		$prm_cod_documento=trim($this->input->post('param1'));
 		$prm_ruc_emisor=trim($this->input->post('param2'));
-
+		
 		
 		$carpetaemisor='6-'.$prm_ruc_emisor;		
 		$carpeta = ''; //keys/			
@@ -1144,7 +1146,7 @@ class Retencion extends CI_Controller {
 			}
 			echo json_encode($result);
 		}
-
+		
 		public function Descargar_DocumentoSeleccionado()
 		{
 			if(!$this->Usuarioinicio_model->SessionExiste())
@@ -1153,10 +1155,10 @@ class Retencion extends CI_Controller {
 				exit;
 			}
 			if (!isset($_GET['param1'])){	$prm_cod_documento='';} else{$prm_cod_documento=$_GET['param1'];}
-
+			
 			$prm_cod_documento = basename($_GET['param1']);		
 			$prm_ruc_emisor = basename($_GET['param2']);		
-
+			
 			$carpetaemisor='6-'.$prm_ruc_emisor;		
 		$carpeta = ''; //keys/			
 		$rutadescargar=$this->Catalogos_model->Listar_RutaDocumentoDescargar();
@@ -1175,7 +1177,7 @@ class Retencion extends CI_Controller {
 		$nombre_carpeta=$carpetaemisor.'/bloquedescargar';
 		$carpetadescarga = '././download/'.$nombre_carpeta;
 		$lista_documento=explode(',',$prm_cod_documento);
-
+		
 		if(!empty($lista_documento))
 		{	
 			$this->load->library('zip'); 
@@ -1194,12 +1196,12 @@ class Retencion extends CI_Controller {
 				foreach($listadearchivos as $key1=>$v1):
 					$this->zip->read_file($v1.'.zip');				
 				endforeach;
-
+				
 				$fecha_actual=((date("Y-m-d H-i-s")).'.'.substr(microtime(),0,5)*1000);
 				$this->zip->download($prm_ruc_emisor.'-'.$fecha_actual.'.zip'); 
 			}
 		}
-
+		
 		public function Exportar_ExcelGeneral()
 		{
 			if(!$this->Usuarioinicio_model->SessionExiste())
@@ -1208,7 +1210,7 @@ class Retencion extends CI_Controller {
 				exit;
 			}
 			$Contador=0;
-
+			
 			if (!isset($_GET['param1'])){	$prm_ruc_empr='';} 				else{$prm_ruc_empr=$_GET['param1'];}
 			if (!isset($_GET['param2'])){	$prm_documento_cliente='';} 	else{$prm_documento_cliente=$_GET['param2'];}
 			if (!isset($_GET['param3'])){	$prm_serie_numeroinicio='';} 	else{$prm_serie_numeroinicio=$_GET['param3'];}
@@ -1221,7 +1223,7 @@ class Retencion extends CI_Controller {
 			if (!isset($_GET['param10'])){	$prm_datosbuscar='';} 			else{$prm_datosbuscar=$_GET['param9'];}
 			if (!isset($_GET['param11'])){	$prm_razonsocialcliente='';} 	else{$prm_razonsocialcliente=$_GET['param10'];}
 		//if (!isset($_GET['param12'])){	$prm_tipomoneda='';} 		else{$prm_tipomoneda=$_GET['param12'];}
-
+			
 			if ($prm_fec_emisiniciotmp=='')
 			{
 				$prm_fec_emisinicio='';
@@ -1244,7 +1246,7 @@ class Retencion extends CI_Controller {
 			{
 				$prm_documento_cliente='-';
 			}
-
+			
 			$arr=NULL;
 
 			$consulta =$this->Retencion_model->Listar_Retenciones(
@@ -1468,10 +1470,12 @@ class Retencion extends CI_Controller {
 			$prm['param2']=$prm_razonsocialcliente;
 			$prm['param3']=$prm_serie_numeroinicio;
 			$prm['param4']=$prm_serie_numerofinal;
-			if ($prm_cod_estdoc!='0'){ $prm['param5']=$estado_documento;}else{$prm['param5']='';}
+			
+			
+			
 		//if ($prm_tipo_documentosunat!='0'){$prm['param11']=$tipo_documentosunat;} else{$prm['param11']='';}		
 			if ($prm_estado_documentosunat!='0'){$prm['param12']=$estado_documentosunat;}else{$prm['param12']='';}
-
+			
 			$prm['param6']=$prm_fec_emisinicio;
 			$prm['param7']=$prm_fec_emisfinal;
 			$prm['param8']=date('d/m/Y h:i:s');
@@ -1486,16 +1490,28 @@ class Retencion extends CI_Controller {
 			$prm['param10']=$prm_datosbuscar;
 			$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
 			$prm['datos_empresa']=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);	
-
-			$this->load->view('reportes/retenciones/retenciones_listadogeneral',$prm);		
+			
+			$rol_usuario=$_SESSION['SES_MarcoTrabajo'][0]['cod_rolseleccion'];
+		//print_r($prm['rol']);
+		//return;
+			if ($rol_usuario==1)
+			{
+				$prm['nombreArchivo']='FormatoListaRetenciones.xlsx';
+				if ($prm_cod_estdoc!='0' ){ $prm['param5']=$estado_documento;}else{$prm['param5']='';}			
+			}
+			else{
+				$prm['nombreArchivo']='FormatoListaRetenciones_Receptor.xlsx';
+				$prm['param5']='';
+			}
+			$this->load->view('reportes/retenciones/retenciones_listadogeneral',$prm);
 		}
-
+		
 		function EliminarDirecctorio($carpeta)
 		{
 			foreach(glob($carpeta . "/*") as $archivos_carpeta)
 			{
 			//echo $archivos_carpeta;
-
+				
 				if (is_dir($archivos_carpeta))
 				{
 					EliminarDirecctorio($archivos_carpeta);
@@ -1507,19 +1523,19 @@ class Retencion extends CI_Controller {
 			}
 			rmdir($carpeta);
 		}
-
+		
 		public function existe_comprobante()
 		{
 			$arr=NULL;
 			$Contador=0;
 			$result['status']=0;
-
+			
 			$prm_tipodedocumento=trim($this->input->post('cmb_tipodedocumento'));
 			$prm_serienumero=trim($this->input->post('txt_serienumero'));
 			$prm_montototal=trim($this->input->post('txt_montototal'));		
 			$prm_montototal=number_format(trim($prm_montototal), 2, '.', '');
 			$prm_montototaltmp=explode('.',$prm_montototal);
-
+			
 			if (count($prm_montototaltmp)>1)
 			{
 				if (strlen($prm_montototaltmp['1'])==1)
@@ -1535,7 +1551,7 @@ class Retencion extends CI_Controller {
 			$prm_fechaemisiontmp=explode('/',trim($this->input->post('txt_fechaemision')));
 			$prm_fechaemision=$prm_fechaemisiontmp[2].'-'.$prm_fechaemisiontmp[1].'-'.$prm_fechaemisiontmp[0];		
 			$prm_rucproveedor=trim($this->input->post('text_rucproveedor'));
-
+			
 			$consulta =$this->Retencion_model->existe_comprobante($prm_tipodedocumento,$prm_serienumero,$prm_montototal,$prm_fechaemision,$prm_rucproveedor);
 
 		if(!empty($consulta))//SI NO ES NULO O VACIO
@@ -1581,27 +1597,27 @@ class Retencion extends CI_Controller {
 			$arr[$key]['numerodocumentoemisor'] =trim($v['numerodocumentoemisor']); 
 			$arr[$key]['tipodocumentoemisor'] =trim($v['tipodocumentoemisor']); 
 			$arr[$key]['nombre_tipodocumentoemisor'] =trim($v['nombre_tipodocumentoemisor']); 
-
+			
 			$arr[$key]['serienumero'] =trim($v['serienumeroretencion']); 
 			$arr[$key]['tipodocumento'] =trim($v['tipodocumento']); 
 			$arr[$key]['nombre_tipodocumento'] =trim($v['nombre_tipodocumento']);
-
+			
 			$arr[$key]['fechaemision'] = trim($v['fechaemision']);		
 			$arr[$key]['numerodocumentoadquiriente'] =trim($v['numerodocumentoproveedor']); 
 			$arr[$key]['razonsocialadquiriente'] =trim($v['razonsocialproveedor']); 	
 			$arr[$key]['direccioncliente'] =trim($v['direccionproveedor']); 
 			$arr[$key]['tasaretencion'] =trim($v['tasaretencion']); 
-
+			
 			$arr[$key]['importetotalretenido'] =trim($v['importetotalretenido']); 
 			$arr[$key]['tipomonedaretenido'] =trim($v['tipomonedaretenido']); 
 			$arr[$key]['importetotalpagado'] =trim($v['importetotalpagado']);
 			$arr[$key]['tipomonedapagado'] =trim($v['tipomonedapagado']); 
-
+			
 				//detalle
 			$arr[$key]['numeroordenitem'] =trim($v['numeroordenitem']); 
 			$arr[$key]['tipodocumentorelacionado'] =trim($v['tipodocumentorelacionado']); 
 			$arr[$key]['nomb_tipodocumento'] =trim($v['nomb_tipodocumento']); 
-
+			
 			$arr[$key]['numerodocumentorelacionado'] =trim($v['numerodocumentorelacionado']); 
 			$arr[$key]['fechaemisiondocumentorelaciona'] =trim($v['fechaemisiondocumentorelaciona']); 
 			$arr[$key]['fechapago'] =trim($v['fechapago']); 
@@ -1614,7 +1630,7 @@ class Retencion extends CI_Controller {
 			$arr[$key]['importetotalpagarneto'] =trim($v['importetotalpagarneto']); 
 			$arr[$key]['bl_estadoregistro'] =trim($v['bl_estadoregistro']); 
 			$arr[$key]['estadoregistro'] =trim($v['estadoregistro']); 
-
+			
 			endforeach;
 			
 		}
