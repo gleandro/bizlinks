@@ -3,7 +3,7 @@
 ini_set('memory_limit', '100M');
 ini_set('max_execution_time', '3600');
 
-@session_start();
+//@session_start();
 
 class Excel_model extends CI_Model 
 {

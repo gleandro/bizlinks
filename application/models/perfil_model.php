@@ -1,5 +1,5 @@
 <?php
-@session_start();
+//@session_start();
 class Perfil_model extends CI_Model
 {
 	function __construct()

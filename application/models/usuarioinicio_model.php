@@ -1,5 +1,8 @@
-<?php
-@session_start();
+<?php 
+	if(!isset($_SESSION)) { 
+			session_start(); 
+		} 
+	
 class Usuarioinicio_model extends CI_Model
 {
 	function __construct()
@@ -7,52 +10,49 @@ class Usuarioinicio_model extends CI_Model
 		parent::__construct();
 	}
 
-	
 	/*DATOS INCINIALES DEL USUARIO*/
 	function SessionExiste() 
 	{
+		//print_r('SessionExiste log ');
+		
+	
         if(!empty($_SESSION['SES_InicioSystem']))
 		{	
-		
-			//print_r($_SERVER['REMOTE_ADDR']);
-				
 			if(!empty($_SESSION['SES_MarcoTrabajo']))
 			{
 				$val1=$_SESSION['SES_MarcoTrabajo'][0]['fecha_session'];
 				$val2 = date('Y-m-d h:i:s');  //strtotime('now');//'2016-10-18 00:38:09.940';
 				
-				$datetime1 = new DateTime($val1);
-				$datetime2 = new DateTime($val2);
+				//$datetime1 = new DateTime($val1);
+				//$datetime2 = new DateTime($val2);
 				
-				$diferencia=($datetime1->diff($datetime2));
+				//$diferencia=($datetime1->diff($datetime2));
+				//$totalminutos=($diferencia->d*24*60)+($diferencia->h*60)+($diferencia->i);
 				
-				$totalminutos=($diferencia->d*24*60)+($diferencia->h*60)+($diferencia->i);
-				//print_r($totalminutos);
-				//echo($totalminutos);
-				
-				if ($totalminutos>30)//30
-				{
-					if (!empty($_SESSION['SES_InicioSystem'])) 
-					{
+				 $tiempo_transcurrido = (strtotime($val2)-strtotime($val1)); 
+				 
+				//if ($totalminutos>30){
+				//El tiempo de seión permitido está en segundos: 30 min = 1800 segundos
+				if ($tiempo_transcurrido>1800){//1800
+					if (!empty($_SESSION['SES_InicioSystem'])) {
 						$_SESSION['SES_InicioSystem']=NULL;
 					}
-					if (!empty($_SESSION['SES_MarcoTrabajo'])) 
-					{
+					if (!empty($_SESSION['SES_MarcoTrabajo'])) 	{
 						$_SESSION['SES_MarcoTrabajo']=NULL;
 					}
+					//session_destroy();
 					return false;
-				}
-				else
-				{
+				}else{
 					$_SESSION['SES_MarcoTrabajo'][0]['fecha_session']=date('Y-m-d h:i:s');
 				}
-				
 			}
-
+			//print_r($_SESSION['SES_MarcoTrabajo'][0]['login_usuario'] );
             return true;
         }
+		//print_r('USUARIOINICIO_MODEL_return ');
         return false;
-    }	
+    }
+	
 	function Get_Cod_UsuAdm(){
         $arr=$_SESSION['SES_InicioSystem'];
         return $arr[0]['cod_usuadm'];

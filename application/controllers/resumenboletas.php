@@ -232,278 +232,278 @@ class Resumenboletas extends CI_Controller {
 					$arr[$key]['cod_tipdoc'] =  trim($v['cod_tipdoc']);
 				}
 
-				endforeach;
-			}
-			if(sizeof($arr)>0)
-			{
-				$result['status']=1;
-				$result['data']=$arr;
-			}
-			else
-			{
-				$result['status']=0;
-				$result['data']="";
-				if($codigo_temp==1) {
-					$result['cod']=1;
-				}
-			}
-			echo json_encode($result);
+			endforeach;//fin
 		}
-
-		public function Guardar_ResumenBoletas()
+		if(sizeof($arr)>0)
+		{
+			$result['status']=1;
+			$result['data']=$arr;
+		}
+		else
 		{
 			$result['status']=0;
-			if(!$this->Usuarioinicio_model->SessionExiste())
-			{
-				$result['status']=1000;
-				echo json_encode($result);
-				exit;
+			$result['data']="";
+			if($codigo_temp==1) {
+				$result['cod']=1;
 			}
-			$result['mensaje']='';
+		}
+		echo json_encode($result);
+	}
 
-			$prm_cod_usu=$this->Usuarioinicio_model->Get_Cod_Usu();
-			$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
-			$prm_documento=trim($this->input->post('txt_datosseleccionados'));
-			$prm_ruc_empr=trim($this->input->post('txt_RucEmpresa'));
-			$prm_est_declarar=trim($this->input->post('tip_evento'));
-			$prm_fec_doc=trim($this->input->post('txt_FechaEmision'));
-			$prm_tip_docemisor=trim($this->input->post('txt_tipdocemisor'));
-			$txt_fecemisiondoc=trim($this->input->post('txt_fecemisiondoc'));
+	public function Guardar_ResumenBoletas()
+	{
+		$result['status']=0;
+		if(!$this->Usuarioinicio_model->SessionExiste())
+		{
+			$result['status']=1000;
+			echo json_encode($result);
+			exit;
+		}
+		$result['mensaje']='';
 
-			$fechadocumento=explode('/',$prm_fec_doc);
-			$fecha_actual = strtotime('now');
-			$fecha_entrada = strtotime($fechadocumento[2].'/'.$fechadocumento[1].'/'.$fechadocumento[0]);
+		$prm_cod_usu=$this->Usuarioinicio_model->Get_Cod_Usu();
+		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
+		$prm_documento=trim($this->input->post('txt_datosseleccionados'));
+		$prm_ruc_empr=trim($this->input->post('txt_RucEmpresa'));
+		$prm_est_declarar=trim($this->input->post('tip_evento'));
+		$prm_fec_doc=trim($this->input->post('txt_FechaEmision'));
+		$prm_tip_docemisor=trim($this->input->post('txt_tipdocemisor'));
+		$txt_fecemisiondoc=trim($this->input->post('txt_fecemisiondoc'));
 
-			$dias	= (( $fecha_actual-$fecha_entrada)/86400);
-			$dias 	= abs($dias);
-			$dias = floor($dias);
+		$fechadocumento=explode('/',$prm_fec_doc);
+		$fecha_actual = strtotime('now');
+		$fecha_entrada = strtotime($fechadocumento[2].'/'.$fechadocumento[1].'/'.$fechadocumento[0]);
 
-			if ($dias>7)
+		$dias	= (( $fecha_actual-$fecha_entrada)/86400);
+		$dias 	= abs($dias);
+		$dias = floor($dias);
+
+		if ($dias>7)
+		{
+			$result['status']=0;
+			$result['mensaje']='La fecha de emisi�n es inferior a 7 dias calendarios';
+			echo json_encode($result);
+			return;
+		}
+
+		if ($txt_fecemisiondoc!='')
+		{
+			if ($prm_fec_doc!=$txt_fecemisiondoc)
 			{
 				$result['status']=0;
-				$result['mensaje']='La fecha de emisi�n es inferior a 7 dias calendarios';
+				$result['mensaje']='No se puede agregar documentos de otra fecha';
 				echo json_encode($result);
 				return;
 			}
-
-			if ($txt_fecemisiondoc!='')
-			{
-				if ($prm_fec_doc!=$txt_fecemisiondoc)
-				{
-					$result['status']=0;
-					$result['mensaje']='No se puede agregar documentos de otra fecha';
-					echo json_encode($result);
-					return;
-				}
-			}
+		}
 		//FALTA AGREGAR LAS CONDICIONES POR CADA EVENTO, SI ES DE BAJA SOLO Q DEBEN TENER UN ESTADO ESPECIFICO
 
 
-			$consulta =$this->Resumenboletas_model->Guardar_ResumenBoletas($prm_cod_usu,$prm_cod_empr,$prm_documento,$prm_ruc_empr,$prm_est_declarar,$prm_fec_doc,$prm_tip_docemisor);
+		$consulta =$this->Resumenboletas_model->Guardar_ResumenBoletas($prm_cod_usu,$prm_cod_empr,$prm_documento,$prm_ruc_empr,$prm_est_declarar,$prm_fec_doc,$prm_tip_docemisor);
 
-			if ($consulta['result']==1)
-			{
-				$result['status']=1;
-				$result['mensaje']='';
-			}
-			echo json_encode($result);
-		}
-
-		public function Guardar_SummaryHeader()
+		if ($consulta['result']==1)
 		{
+			$result['status']=1;
+			$result['mensaje']='';
+		}
+		echo json_encode($result);
+	}
 
-			$arr=NULL;
-			$Contador=0;
-			$result['status']=0;
-			if(!$this->Usuarioinicio_model->SessionExiste())
-			{
-				$result['status']=1000;
-				echo json_encode($result);
-				exit;
-			}
-			$result['codigo_resumen']='';
+	public function Guardar_SummaryHeader()
+	{
 
-			$prm_numerodocumentoemisor=trim($this->input->post('txt_RucEmpresa'));
-			$fecha_actual = explode('/',date("d/m/Y"));
-			$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
-			$Buscar_CorrelativoDocumento=$this->Resumenboletas_model->Buscar_CorrelativoDocumento($prm_cod_empr,$fecha_actual[2].'-'.$fecha_actual[1].'-'.$fecha_actual[0]);
+		$arr=NULL;
+		$Contador=0;
+		$result['status']=0;
+		if(!$this->Usuarioinicio_model->SessionExiste())
+		{
+			$result['status']=1000;
+			echo json_encode($result);
+			exit;
+		}
+		$result['codigo_resumen']='';
+
+		$prm_numerodocumentoemisor=trim($this->input->post('txt_RucEmpresa'));
+		$fecha_actual = explode('/',date("d/m/Y"));
+		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
+		$Buscar_CorrelativoDocumento=$this->Resumenboletas_model->Buscar_CorrelativoDocumento($prm_cod_empr,$fecha_actual[2].'-'.$fecha_actual[1].'-'.$fecha_actual[0]);
 		//print_r($Buscar_CorrelativoDocumento);
-			if (!empty($Buscar_CorrelativoDocumento))
-			{
-				$correlativo=$Buscar_CorrelativoDocumento[0]['valorentero'];
-			}
-			else
-			{
-				$correlativo=1;
-			}
-			$correlativo=str_pad(trim($correlativo),3, "0", STR_PAD_LEFT);
-			$fecha_actual = explode('/',date("d/m/Y"));
-			$prm_resumenid='RC-'.$fecha_actual[2].$fecha_actual[1].$fecha_actual[0].'-'.$correlativo;
-			$prm_tipodocumentoemisor=trim($this->input->post('txt_tipdocemisor'));
-			$prm_correoemisor=$this->Usuarioinicio_model->Get_Email_UsuAdm();
-			$prm_fechaemisioncomprobante=trim($this->input->post('txt_fecemisiondoc'));
+		if (!empty($Buscar_CorrelativoDocumento))
+		{
+			$correlativo=$Buscar_CorrelativoDocumento[0]['valorentero'];
+		}
+		else
+		{
+			$correlativo=1;
+		}
+		$correlativo=str_pad(trim($correlativo),3, "0", STR_PAD_LEFT);
+		$fecha_actual = explode('/',date("d/m/Y"));
+		$prm_resumenid='RC-'.$fecha_actual[2].$fecha_actual[1].$fecha_actual[0].'-'.$correlativo;
+		$prm_tipodocumentoemisor=trim($this->input->post('txt_tipdocemisor'));
+		$prm_correoemisor=$this->Usuarioinicio_model->Get_Email_UsuAdm();
+		$prm_fechaemisioncomprobante=trim($this->input->post('txt_fecemisiondoc'));
 		//$prm_fechaemisioncomprobantetmp=explode('/',$prm_fechaemisioncomprobante);
 		//$prm_fechaemisioncomprobante=($prm_fechaemisioncomprobantetmp[2].'-'.$prm_fechaemisioncomprobantetmp[1].'-'.$prm_fechaemisioncomprobantetmp[0]);
 
-			$prm_fechageneracionresumen=($fecha_actual[2].'-'.$fecha_actual[1].'-'.$fecha_actual[0]);
-			$prm_inhabilitado='1';
-			$prm_razonsocialemisor=trim($this->input->post('txt_RazonSocialEmpresa'));
-			$prm_resumentipo='RC';
-			$prm_bl_estadoregistro='A';
-			$prm_bl_reintento=0;
-			$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
-			$prm_cod_usu=$this->Usuarioinicio_model->Get_Cod_Usu();
-			$prm_ruc_empr=trim($this->input->post('txt_RucEmpresa'));
+		$prm_fechageneracionresumen=($fecha_actual[2].'-'.$fecha_actual[1].'-'.$fecha_actual[0]);
+		$prm_inhabilitado='1';
+		$prm_razonsocialemisor=trim($this->input->post('txt_RazonSocialEmpresa'));
+		$prm_resumentipo='RC';
+		$prm_bl_estadoregistro='A';
+		$prm_bl_reintento=0;
+		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
+		$prm_cod_usu=$this->Usuarioinicio_model->Get_Cod_Usu();
+		$prm_ruc_empr=trim($this->input->post('txt_RucEmpresa'));
 
-			$consulta =$this->Resumenboletas_model->Guardar_SummaryHeader(
-				$prm_numerodocumentoemisor ,
-				$prm_resumenid,
-				$prm_tipodocumentoemisor,
-				$prm_correoemisor,
-				$prm_fechaemisioncomprobante,
-				$prm_fechageneracionresumen,
-				$prm_inhabilitado,
-				$prm_razonsocialemisor,
-				$prm_resumentipo,
-				$prm_bl_estadoregistro,
-				$prm_bl_reintento,
-				$prm_cod_empr,
-				$prm_cod_usu,
-				$prm_ruc_empr
-				);
-			if ($consulta['result']==2)
-			{
-				$result['status']=2;
-			}
-			if ($consulta['result']==1)
-			{
-				$result['status']=1;
-				$result['codigo_resumen']=$prm_resumenid;
-			}
-			else
-			{
-				$result['status']=0;
-				$result['codigo_resumen']='';
-			}
-			echo json_encode($result);
+		$consulta =$this->Resumenboletas_model->Guardar_SummaryHeader(
+			$prm_numerodocumentoemisor ,
+			$prm_resumenid,
+			$prm_tipodocumentoemisor,
+			$prm_correoemisor,
+			$prm_fechaemisioncomprobante,
+			$prm_fechageneracionresumen,
+			$prm_inhabilitado,
+			$prm_razonsocialemisor,
+			$prm_resumentipo,
+			$prm_bl_estadoregistro,
+			$prm_bl_reintento,
+			$prm_cod_empr,
+			$prm_cod_usu,
+			$prm_ruc_empr
+			);
+		if ($consulta['result']==2)
+		{
+			$result['status']=2;
 		}
-
-		public function Eliminar_DocumentoBoletaResumen()
+		if ($consulta['result']==1)
+		{
+			$result['status']=1;
+			$result['codigo_resumen']=$prm_resumenid;
+		}
+		else
 		{
 			$result['status']=0;
-			if(!$this->Usuarioinicio_model->SessionExiste())
-			{
-				$result['status']=1000;
-				echo json_encode($result);
-				exit;
-			}
-			$prm_comprobante=trim($this->input->post('var_comprobante'));
-			$prm_tipo_doc=trim($this->input->post('var_tipo_doc'));
-			$prm_ruc=trim($this->input->post('var_ruc'));
+			$result['codigo_resumen']='';
+		}
+		echo json_encode($result);
+	}
 
-			$consulta =$this->Resumenboletas_model->Eliminar_DocumentoBoletaResumen($prm_ruc,$prm_tipo_doc,$prm_comprobante);
-			if ($consulta['result']==1)
-			{
-				$result['status']=1;
-			}
-			else
-			{
-				$result['status']=0;
-			}
+	public function Eliminar_DocumentoBoletaResumen()
+	{
+		$result['status']=0;
+		if(!$this->Usuarioinicio_model->SessionExiste())
+		{
+			$result['status']=1000;
 			echo json_encode($result);
+			exit;
+		}
+		$prm_comprobante=trim($this->input->post('var_comprobante'));
+		$prm_tipo_doc=trim($this->input->post('var_tipo_doc'));
+		$prm_ruc=trim($this->input->post('var_ruc'));
+
+		$consulta =$this->Resumenboletas_model->Eliminar_DocumentoBoletaResumen($prm_ruc,$prm_tipo_doc,$prm_comprobante);
+		if ($consulta['result']==1)
+		{
+			$result['status']=1;
+		}
+		else
+		{
+			$result['status']=0;
+		}
+		echo json_encode($result);
+	}
+
+
+	public function Reiniciar_Correlativos()
+	{
+		$arr=NULL;
+		$Contador=0;
+		$result['status']=0;
+		if(!$this->Usuarioinicio_model->SessionExiste())
+		{
+			$result['status']=1000;
+			echo json_encode($result);
+			exit;
+		}
+		$prm_ruc_empr=trim($this->input->post('txt_RucEmpresa'));
+		$prm_datosseleccionados_estado=trim($this->input->post('txt_datosseleccionados_estado'));
+		$consulta =$this->Resumenboletas_model->Reiniciar_Correlativos($prm_ruc_empr,$prm_datosseleccionados_estado);
+		if ($consulta['result']==1)
+		{
+			$result['status']=1;
+		}
+		else
+		{
+			$result['status']=0;
+		}
+		echo json_encode($result);
+	}
+
+	public function Listar_SummaryHeader()
+	{
+
+		$arr=NULL;
+		$Contador=0;
+		$result['status']=0;
+		if(!$this->Usuarioinicio_model->SessionExiste())
+		{
+			$result['status']=1000;
+			echo json_encode($result);
+			exit;
+		}
+		$prm_ruc_empr=trim($this->input->post('txt_RucEmpresa'));
+		$prm_cod_resum=trim($this->input->post('txt_CodigoResumen'));
+
+		$prm_fec_geniniciotmp=trim($this->input->post('txt_FechaGenInicio'));
+		if ($prm_fec_geniniciotmp=='')
+		{
+			$prm_fec_geninicio='';
+		}
+		else
+		{
+			$prm_fec_geniniciotmp=explode('/',$prm_fec_geniniciotmp);
+			$prm_fec_geninicio=($prm_fec_geniniciotmp[2].'-'.$prm_fec_geniniciotmp[1].'-'.$prm_fec_geniniciotmp[0]);
 		}
 
-
-		public function Reiniciar_Correlativos()
+		$prm_fec_genfinaltmp=trim($this->input->post('txt_FechaGenFinal'));
+		if ($prm_fec_genfinaltmp=='')
 		{
-			$arr=NULL;
-			$Contador=0;
-			$result['status']=0;
-			if(!$this->Usuarioinicio_model->SessionExiste())
-			{
-				$result['status']=1000;
-				echo json_encode($result);
-				exit;
-			}
-			$prm_ruc_empr=trim($this->input->post('txt_RucEmpresa'));
-			$prm_datosseleccionados_estado=trim($this->input->post('txt_datosseleccionados_estado'));
-			$consulta =$this->Resumenboletas_model->Reiniciar_Correlativos($prm_ruc_empr,$prm_datosseleccionados_estado);
-			if ($consulta['result']==1)
-			{
-				$result['status']=1;
-			}
-			else
-			{
-				$result['status']=0;
-			}
-			echo json_encode($result);
+			$prm_fec_genfinal='';
+		}
+		else
+		{
+			$prm_fec_genfinaltmp=explode('/',$prm_fec_genfinaltmp);
+			$prm_fec_genfinal=$prm_fec_genfinaltmp[2].'-'.$prm_fec_genfinaltmp[1].'-'.$prm_fec_genfinaltmp[0];
 		}
 
-		public function Listar_SummaryHeader()
+		$prm_fec_emisiniciotmp=trim($this->input->post('txt_FechaEmisionInicio'));
+		if ($prm_fec_emisiniciotmp=='')
 		{
+			$prm_fec_emisinicio='';
+		}
+		else
+		{
+			$prm_fec_emisiniciotmp=explode('/',$prm_fec_emisiniciotmp);
+			$prm_fec_emisinicio=($prm_fec_emisiniciotmp[2].'-'.$prm_fec_emisiniciotmp[1].'-'.$prm_fec_emisiniciotmp[0]);
+		}
 
-			$arr=NULL;
-			$Contador=0;
-			$result['status']=0;
-			if(!$this->Usuarioinicio_model->SessionExiste())
-			{
-				$result['status']=1000;
-				echo json_encode($result);
-				exit;
-			}
-			$prm_ruc_empr=trim($this->input->post('txt_RucEmpresa'));
-			$prm_cod_resum=trim($this->input->post('txt_CodigoResumen'));
+		$prm_fec_emisfinaltmp=trim($this->input->post('txt_FechaEmisionFinal'));
+		if ($prm_fec_emisfinaltmp=='')
+		{
+			$prm_fec_emisfinal='';
+		}
+		else
+		{
+			$prm_fec_emisfinaltmp=explode('/',$prm_fec_emisfinaltmp);
+			$prm_fec_emisfinal=$prm_fec_emisfinaltmp[2].'-'.$prm_fec_emisfinaltmp[1].'-'.$prm_fec_emisfinaltmp[0];
+		}
 
-			$prm_fec_geniniciotmp=trim($this->input->post('txt_FechaGenInicio'));
-			if ($prm_fec_geniniciotmp=='')
-			{
-				$prm_fec_geninicio='';
-			}
-			else
-			{
-				$prm_fec_geniniciotmp=explode('/',$prm_fec_geniniciotmp);
-				$prm_fec_geninicio=($prm_fec_geniniciotmp[2].'-'.$prm_fec_geniniciotmp[1].'-'.$prm_fec_geniniciotmp[0]);
-			}
-
-			$prm_fec_genfinaltmp=trim($this->input->post('txt_FechaGenFinal'));
-			if ($prm_fec_genfinaltmp=='')
-			{
-				$prm_fec_genfinal='';
-			}
-			else
-			{
-				$prm_fec_genfinaltmp=explode('/',$prm_fec_genfinaltmp);
-				$prm_fec_genfinal=$prm_fec_genfinaltmp[2].'-'.$prm_fec_genfinaltmp[1].'-'.$prm_fec_genfinaltmp[0];
-			}
-
-			$prm_fec_emisiniciotmp=trim($this->input->post('txt_FechaEmisionInicio'));
-			if ($prm_fec_emisiniciotmp=='')
-			{
-				$prm_fec_emisinicio='';
-			}
-			else
-			{
-				$prm_fec_emisiniciotmp=explode('/',$prm_fec_emisiniciotmp);
-				$prm_fec_emisinicio=($prm_fec_emisiniciotmp[2].'-'.$prm_fec_emisiniciotmp[1].'-'.$prm_fec_emisiniciotmp[0]);
-			}
-
-			$prm_fec_emisfinaltmp=trim($this->input->post('txt_FechaEmisionFinal'));
-			if ($prm_fec_emisfinaltmp=='')
-			{
-				$prm_fec_emisfinal='';
-			}
-			else
-			{
-				$prm_fec_emisfinaltmp=explode('/',$prm_fec_emisfinaltmp);
-				$prm_fec_emisfinal=$prm_fec_emisfinaltmp[2].'-'.$prm_fec_emisfinaltmp[1].'-'.$prm_fec_emisfinaltmp[0];
-			}
-
-			$prm_cod_estdoc=trim($this->input->post('Cmb_EstadoDocumento'));
-			$prm_bl_estadoproceso=trim($this->input->post('Cmb_EstadoDocumentoSunat'));
+		$prm_cod_estdoc=trim($this->input->post('Cmb_EstadoDocumento'));
+		$prm_bl_estadoproceso=trim($this->input->post('Cmb_EstadoDocumentoSunat'));
 
 
-			$consulta =$this->Resumenboletas_model->Listar_SummaryHeader($prm_ruc_empr,$prm_cod_resum,$prm_fec_geninicio,
-				$prm_fec_genfinal,$prm_cod_estdoc,$prm_fec_emisinicio,$prm_fec_emisfinal,$prm_bl_estadoproceso);
+		$consulta =$this->Resumenboletas_model->Listar_SummaryHeader($prm_ruc_empr,$prm_cod_resum,$prm_fec_geninicio,
+			$prm_fec_genfinal,$prm_cod_estdoc,$prm_fec_emisinicio,$prm_fec_emisfinal,$prm_bl_estadoproceso);
 
 		if(!empty($consulta))//SI NO ES NULO O VACIO
 		{
@@ -652,87 +652,87 @@ class Resumenboletas extends CI_Controller {
 					}
 
 				}
-				endforeach;
-			}
-			if(sizeof($arr)>0)
-			{
-				$result['status']=1;
-				$result['data']=$arr;
-			}
-			else
-			{
-				$result['status']=0;
-				$result['data']="";
-			}
-			echo json_encode($result);
+			endforeach;//fin
+		}
+		if(sizeof($arr)>0)
+		{
+			$result['status']=1;
+			$result['data']=$arr;
+		}
+		else
+		{
+			$result['status']=0;
+			$result['data']="";
+		}
+		echo json_encode($result);
+	}
+
+	public function Exportar_ExcelGeneral()
+	{
+		if(!$this->Usuarioinicio_model->SessionExiste())
+		{
+			$this->load->view('usuario/login');
+			exit;
+		}
+		if (!isset($_GET['param1'])){	$prm_ruc_empr='';} else{$prm_ruc_empr=$_GET['param1'];}
+		if (!isset($_GET['param2'])){	$prm_cod_resum='';} else{$prm_cod_resum=$_GET['param2'];}
+		if (!isset($_GET['param3'])){	$prm_fec_geniniciotmp='';} else{$prm_fec_geniniciotmp=$_GET['param3'];}
+		if (!isset($_GET['param4'])){	$prm_fec_genfinaltmp='';} else{$prm_fec_genfinaltmp=$_GET['param4'];}
+		if (!isset($_GET['param5'])){	$prm_cod_estdoc=0;} else{$prm_cod_estdoc=$_GET['param5'];}
+		if (!isset($_GET['param6'])){	$prm_fec_emisiniciotmp='';} else{$prm_fec_emisiniciotmp=$_GET['param6'];}
+		if (!isset($_GET['param7'])){	$prm_fec_emisfinaltmp='';} else{$prm_fec_emisfinaltmp=$_GET['param7'];}
+		if (!isset($_GET['param8'])){	$prm_datosbuscar='';} else{$prm_datosbuscar=$_GET['param8'];}
+		if (!isset($_GET['param9'])){	$prm_bl_estadoproceso='';} else{$prm_bl_estadoproceso=$_GET['param9'];}
+
+
+
+		if ($prm_fec_geniniciotmp=='')
+		{
+			$prm_fec_geninicio='';
+		}
+		else
+		{
+			$prm_fec_geniniciotmp=explode('/',$prm_fec_geniniciotmp);
+			$prm_fec_geninicio=($prm_fec_geniniciotmp[2].'-'.$prm_fec_geniniciotmp[1].'-'.$prm_fec_geniniciotmp[0]);
+		}
+		if ($prm_fec_genfinaltmp=='')
+		{
+			$prm_fec_genfinal='';
+		}
+		else
+		{
+			$prm_fec_genfinaltmp=explode('/',$prm_fec_genfinaltmp);
+			$prm_fec_genfinal=$prm_fec_genfinaltmp[2].'-'.$prm_fec_genfinaltmp[1].'-'.$prm_fec_genfinaltmp[0];
 		}
 
-		public function Exportar_ExcelGeneral()
+
+		if ($prm_fec_emisiniciotmp=='')
 		{
-			if(!$this->Usuarioinicio_model->SessionExiste())
-			{
-				$this->load->view('usuario/login');
-				exit;
-			}
-			if (!isset($_GET['param1'])){	$prm_ruc_empr='';} else{$prm_ruc_empr=$_GET['param1'];}
-			if (!isset($_GET['param2'])){	$prm_cod_resum='';} else{$prm_cod_resum=$_GET['param2'];}
-			if (!isset($_GET['param3'])){	$prm_fec_geniniciotmp='';} else{$prm_fec_geniniciotmp=$_GET['param3'];}
-			if (!isset($_GET['param4'])){	$prm_fec_genfinaltmp='';} else{$prm_fec_genfinaltmp=$_GET['param4'];}
-			if (!isset($_GET['param5'])){	$prm_cod_estdoc=0;} else{$prm_cod_estdoc=$_GET['param5'];}
-			if (!isset($_GET['param6'])){	$prm_fec_emisiniciotmp='';} else{$prm_fec_emisiniciotmp=$_GET['param6'];}
-			if (!isset($_GET['param7'])){	$prm_fec_emisfinaltmp='';} else{$prm_fec_emisfinaltmp=$_GET['param7'];}
-			if (!isset($_GET['param8'])){	$prm_datosbuscar='';} else{$prm_datosbuscar=$_GET['param8'];}
-			if (!isset($_GET['param9'])){	$prm_bl_estadoproceso='';} else{$prm_bl_estadoproceso=$_GET['param9'];}
-
-
-
-			if ($prm_fec_geniniciotmp=='')
-			{
-				$prm_fec_geninicio='';
-			}
-			else
-			{
-				$prm_fec_geniniciotmp=explode('/',$prm_fec_geniniciotmp);
-				$prm_fec_geninicio=($prm_fec_geniniciotmp[2].'-'.$prm_fec_geniniciotmp[1].'-'.$prm_fec_geniniciotmp[0]);
-			}
-			if ($prm_fec_genfinaltmp=='')
-			{
-				$prm_fec_genfinal='';
-			}
-			else
-			{
-				$prm_fec_genfinaltmp=explode('/',$prm_fec_genfinaltmp);
-				$prm_fec_genfinal=$prm_fec_genfinaltmp[2].'-'.$prm_fec_genfinaltmp[1].'-'.$prm_fec_genfinaltmp[0];
-			}
-
-
-			if ($prm_fec_emisiniciotmp=='')
-			{
-				$prm_fec_emisinicio='';
-			}
-			else
-			{
-				$prm_fec_emisiniciotmp=explode('/',$prm_fec_emisiniciotmp);
-				$prm_fec_emisinicio=($prm_fec_emisiniciotmp[2].'-'.$prm_fec_emisiniciotmp[1].'-'.$prm_fec_emisiniciotmp[0]);
-			}
-			if ($prm_fec_emisfinaltmp=='')
-			{
-				$prm_fec_emisfinal='';
-			}
-			else
-			{
-				$prm_fec_emisfinaltmp=explode('/',$prm_fec_emisfinaltmp);
-				$prm_fec_emisfinal=$prm_fec_emisfinaltmp[2].'-'.$prm_fec_emisfinaltmp[1].'-'.$prm_fec_emisfinaltmp[0];
-			}
+			$prm_fec_emisinicio='';
+		}
+		else
+		{
+			$prm_fec_emisiniciotmp=explode('/',$prm_fec_emisiniciotmp);
+			$prm_fec_emisinicio=($prm_fec_emisiniciotmp[2].'-'.$prm_fec_emisiniciotmp[1].'-'.$prm_fec_emisiniciotmp[0]);
+		}
+		if ($prm_fec_emisfinaltmp=='')
+		{
+			$prm_fec_emisfinal='';
+		}
+		else
+		{
+			$prm_fec_emisfinaltmp=explode('/',$prm_fec_emisfinaltmp);
+			$prm_fec_emisfinal=$prm_fec_emisfinaltmp[2].'-'.$prm_fec_emisfinaltmp[1].'-'.$prm_fec_emisfinaltmp[0];
+		}
 
 		//$arr=NULL;
-			$consulta =$this->Resumenboletas_model->Listar_SummaryHeader($prm_ruc_empr,$prm_cod_resum,$prm_fec_geninicio,$prm_fec_genfinal,$prm_cod_estdoc,$prm_fec_emisinicio,$prm_fec_emisfinal,$prm_bl_estadoproceso);
+		$consulta =$this->Resumenboletas_model->Listar_SummaryHeader($prm_ruc_empr,$prm_cod_resum,$prm_fec_geninicio,$prm_fec_genfinal,$prm_cod_estdoc,$prm_fec_emisinicio,$prm_fec_emisfinal,$prm_bl_estadoproceso);
 
 
-			$estado_documento='';
-			$estado_documentosunat='';
+		$estado_documento='';
+		$estado_documentosunat='';
 
-			$arr=NULL;
+		$arr=NULL;
 		if(!empty($consulta))//SI NO ES NULO O VACIO
 		{
 			foreach($consulta as $key=>$v):
@@ -876,54 +876,54 @@ class Resumenboletas extends CI_Controller {
 					}
 
 				}
-				endforeach;
-			}
-
-
-			$prm['lista_datosdocumento']=$arr;
-			$prm['param1']=$prm_ruc_empr;
-			$prm['param2']=$prm_cod_resum;
-			$prm['param3']=$prm_fec_geninicio;
-			$prm['param4']=$prm_fec_genfinal;
-		//$prm['param5']=$prm_cod_estdoc;
-
-			if ($prm_cod_estdoc!='0'){ $prm['param5']=$estado_documento;}else{$prm['param5']='';}
-			if ($prm_bl_estadoproceso!='0'){$prm['param11']=$estado_documentosunat;}else{$prm['param11']='';}
-
-			$prm['param6']=$prm_fec_emisinicio;
-			$prm['param7']=$prm_fec_emisfinal;
-			$prm['param8']=date('d/m/Y h:i:s');
-			if ($prm_datosbuscar=='')
-			{
-				$prm['param9']='LISTADO GENERAL DE RESUMEN DE BOLETAS';
-			}
-			else
-			{
-				$prm['param9']='LISTADO SELECCIONADO DEL RESUMEN DE BOLETAS';
-			}
-			$prm['param10']=$prm_datosbuscar;
-
-
-
-			$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
-			$prm['datos_empresa']=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);
-
-			$this->load->view('reportes/resumenboletas/resumenboletas_listadogeneral',$prm);
+			endforeach;//fin
 		}
 
-		public function Descargar_ExcelDetalle()
+
+		$prm['lista_datosdocumento']=$arr;
+		$prm['param1']=$prm_ruc_empr;
+		$prm['param2']=$prm_cod_resum;
+		$prm['param3']=$prm_fec_geninicio;
+		$prm['param4']=$prm_fec_genfinal;
+		//$prm['param5']=$prm_cod_estdoc;
+
+		if ($prm_cod_estdoc!='0'){ $prm['param5']=$estado_documento;}else{$prm['param5']='';}
+		if ($prm_bl_estadoproceso!='0'){$prm['param11']=$estado_documentosunat;}else{$prm['param11']='';}
+
+		$prm['param6']=$prm_fec_emisinicio;
+		$prm['param7']=$prm_fec_emisfinal;
+		$prm['param8']=date('d/m/Y h:i:s');
+		if ($prm_datosbuscar=='')
 		{
-			if(!$this->Usuarioinicio_model->SessionExiste())
-			{
-				$this->load->view('usuario/login');
-				exit;
-			}
-			if (!isset($_GET['param1'])){	$prm_ruc_empr='';} else{$prm_ruc_empr=$_GET['param1'];}
-			if (!isset($_GET['param2'])){	$prm_resumenid='';} else{$prm_resumenid=$_GET['param2'];}
+			$prm['param9']='LISTADO GENERAL DE RESUMEN DE BOLETAS';
+		}
+		else
+		{
+			$prm['param9']='LISTADO SELECCIONADO DEL RESUMEN DE BOLETAS';
+		}
+		$prm['param10']=$prm_datosbuscar;
 
-			$consulta =$this->Resumenboletas_model->Listar_SummaryHeaderDetalle($prm_ruc_empr,$prm_resumenid);
 
-			$arr=NULL;
+
+		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
+		$prm['datos_empresa']=$this->Empresa_model->Listar_EmpresaId($prm_cod_empr);
+
+		$this->load->view('reportes/resumenboletas/resumenboletas_listadogeneral',$prm);
+	}
+
+	public function Descargar_ExcelDetalle()
+	{
+		if(!$this->Usuarioinicio_model->SessionExiste())
+		{
+			$this->load->view('usuario/login');
+			exit;
+		}
+		if (!isset($_GET['param1'])){	$prm_ruc_empr='';} else{$prm_ruc_empr=$_GET['param1'];}
+		if (!isset($_GET['param2'])){	$prm_resumenid='';} else{$prm_resumenid=$_GET['param2'];}
+
+		$consulta =$this->Resumenboletas_model->Listar_SummaryHeaderDetalle($prm_ruc_empr,$prm_resumenid);
+
+		$arr=NULL;
 		if(!empty($consulta))//SI NO ES NULO O VACIO
 		{
 			foreach($consulta as $key=>$v):
@@ -1237,33 +1237,33 @@ class Resumenboletas extends CI_Controller {
 					}
 					$cantidadbucle=0;
 				}
-				endforeach;
+			endforeach;//fin
 			//$this->zip->clear_data();
-				if ($cantidad>0)
-				{
-					$result['status']=1;
-				}
-				else
-				{
-					$result['status']=2;
-				}
+			if ($cantidad>0)
+			{
+				$result['status']=1;
 			}
-
-			echo json_encode($result);
+			else
+			{
+				$result['status']=2;
+			}
 		}
 
-		public function Descargar_DocumentoSeleccionado()
-		{
-			if (!isset($_GET['param1'])){	$prm_cod_documento='';} else{$prm_cod_documento=$_GET['param1'];}
+		echo json_encode($result);
+	}
+
+	public function Descargar_DocumentoSeleccionado()
+	{
+		if (!isset($_GET['param1'])){	$prm_cod_documento='';} else{$prm_cod_documento=$_GET['param1'];}
 
 
-			$prm_cod_documento = basename($_GET['param1']);
-			$prm_ruc_emisor = basename($_GET['param2']);
+		$prm_cod_documento = basename($_GET['param1']);
+		$prm_ruc_emisor = basename($_GET['param2']);
 
 
 		//$this->Crear_ArchivosDocumentoSeleccionado($prm_cod_documento,$prm_ruc_emisor);
 
-			$carpetaemisor='6-'.$prm_ruc_emisor;
+		$carpetaemisor='6-'.$prm_ruc_emisor;
 		$carpeta = ''; //keys/
 		$rutadescargar=$this->Catalogos_model->Listar_RutaDocumentoDescargar();
 		if(!empty($rutadescargar))//SI NO ES NULO O VACIO
@@ -1295,70 +1295,70 @@ class Resumenboletas extends CI_Controller {
 					$listadearchivos[$contador]=$carpetadescarga.'/'.$nombrecarpetadoc;
 					$contador++;
 				}
-				endforeach;
+			endforeach;//fin
 
 			//$listadearchivos=NULL;
 			//$listadearchivos=array ( 	"0"=> "././download/6-20100037689/bloquedescargar/2010003768901-F001-00000001","1"=> "././download/6-20100037689/bloquedescargar/2010003768901-F001-00000004");
 
-				foreach($listadearchivos as $key1=>$v1):
-					$this->zip->read_file($v1.'.zip');
-				endforeach;
+			foreach($listadearchivos as $key1=>$v1):
+				$this->zip->read_file($v1.'.zip');
+			endforeach;
 
 			//$fecha_actual = explode('/',date("d/m/Y"));
-				$fecha_actual=((date("Y-m-d H-i-s")).'.'.substr(microtime(),0,5)*1000);
+			$fecha_actual=((date("Y-m-d H-i-s")).'.'.substr(microtime(),0,5)*1000);
 			//$this->zip->download($prm_ruc_emisor.'-'.$fecha_actual[2].'-'.$fecha_actual[1].'-'.$fecha_actual[0].'.zip');
-				$this->zip->download($prm_ruc_emisor.'-'.$fecha_actual.'.zip');
-			}
+			$this->zip->download($prm_ruc_emisor.'-'.$fecha_actual.'.zip');
 		}
+	}
 
-		function EliminarDirecctorio($carpeta)
+	function EliminarDirecctorio($carpeta)
+	{
+		foreach(glob($carpeta . "/*") as $archivos_carpeta)
 		{
-			foreach(glob($carpeta . "/*") as $archivos_carpeta)
-			{
 			//echo $archivos_carpeta;
 
-				if (is_dir($archivos_carpeta))
-				{
-					EliminarDirecctorio($archivos_carpeta);
-				}
-				else
-				{
-					unlink($archivos_carpeta);
-				}
-			}
-			rmdir($carpeta);
-		}
-
-		function Declarar_Comprobante()
-		{
-
-			$result['status']=0;
-			if(!$this->Usuarioinicio_model->SessionExiste())
+			if (is_dir($archivos_carpeta))
 			{
-				$result['status']=1000;
-				echo json_encode($result);
-				exit;
-			}
-
-			$prm_comprobante=trim($this->input->post('var_comprobante'));
-			$prm_tipo_doc=trim($this->input->post('var_tipo_doc'));
-			$prm_ruc=trim($this->input->post('var_ruc'));
-
-
-			$consulta =$this->Resumenboletas_model->Declarar_Comprobante($prm_ruc,$prm_comprobante,$prm_tipo_doc);
-
-			if ($consulta['result']==1)
-			{
-				$result['status']=1;
-
+				EliminarDirecctorio($archivos_carpeta);
 			}
 			else
 			{
-				$result['status']=0;
-				$result['codigo_resumen']='';
+				unlink($archivos_carpeta);
 			}
+		}
+		rmdir($carpeta);
+	}
+
+	function Declarar_Comprobante()
+	{
+
+		$result['status']=0;
+		if(!$this->Usuarioinicio_model->SessionExiste())
+		{
+			$result['status']=1000;
 			echo json_encode($result);
+			exit;
 		}
 
+		$prm_comprobante=trim($this->input->post('var_comprobante'));
+		$prm_tipo_doc=trim($this->input->post('var_tipo_doc'));
+		$prm_ruc=trim($this->input->post('var_ruc'));
 
+
+		$consulta =$this->Resumenboletas_model->Declarar_Comprobante($prm_ruc,$prm_comprobante,$prm_tipo_doc);
+
+		if ($consulta['result']==1)
+		{
+			$result['status']=1;
+
+		}
+		else
+		{
+			$result['status']=0;
+			$result['codigo_resumen']='';
+		}
+		echo json_encode($result);
 	}
+
+
+}

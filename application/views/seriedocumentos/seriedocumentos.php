@@ -1,66 +1,66 @@
 <!doctype html>
 <html>
 <head>
-		<title>SFE Bizlinks - Serie Documentos</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-		
-		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/jquery-ui.css"/>
-		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/jquery-ui.min.css"/>
-		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/plugins/dataTable/css/dataTables-all.css" />
-		<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>application/helpers/jquery/flexigrid/flexigrid/flexigrid.css" />
+	<title>SFE Bizlinks - Serie Documentos</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 
-		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/css/inicio.css"/>
-		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/css/menusystem.css"/>
-		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/css/tabla_documento.css"/>
-		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/css/botones.css"/>
-		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/css/site.css"/>
-		
-		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/external/jquery/jquery.js"></script>
-		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/jquery-ui.js"></script>
-		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
-		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/plugins/jquery.alphanumeric.min.js"></script>
-		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/plugins/jquery.maskedinput.min.js"></script>		
-		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/plugins/dataTable/js/dataTables.min.js"></script>
-		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/plugins/jquery.ui.datepicker-es.js"></script> 
-		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/flexigrid/flexigrid/flexigrid.js"></script>
-		
-		<script>var urlexportardatos="<?php echo base_url();?>"</script>
-		
-		<script type="text/javascript">	
+	<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/jquery-ui.css"/>
+	<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/jquery-ui.min.css"/>
+	<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/plugins/dataTable/css/dataTables-all.css" />
+	<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>application/helpers/jquery/flexigrid/flexigrid/flexigrid.css" />
 
-			$(document).ready(function()
-			{
-				$('#txt_numerodocumento').numeric({allow:'.'});
-				
-				ncsistema.Listar_SeriedocumentosTabla('');	
-				ncsistema.Listar_SeriedocumentosxEmpresaTabla('');
-				
-				$("#tabs").tabs();
-				ListarConfiguracion_Tab1();
-			})
-			
-			$(function() 
-			{
-				$("#tabs").tabs({ 
-					activate: function(event ,ui)
-						{
+	<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/css/inicio.css"/>
+	<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/css/menusystem.css"/>
+	<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/css/tabla_documento.css"/>
+	<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/css/botones.css"/>
+	<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/css/site.css"/>
+
+	<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/external/jquery/jquery.js"></script>
+	<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/jquery-ui.js"></script>
+	<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/plugins/jquery.alphanumeric.min.js"></script>
+	<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/plugins/jquery.maskedinput.min.js"></script>		
+	<script type="text/javascript" src="<?php echo base_url();?>application/helpers/plugins/dataTable/js/dataTables.min.js"></script>
+	<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/plugins/jquery.ui.datepicker-es.js"></script> 
+	<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/flexigrid/flexigrid/flexigrid.js"></script>
+
+	<script>var urlexportardatos="<?php echo base_url();?>"</script>
+
+	<script type="text/javascript">	
+
+		$(document).ready(function()
+		{
+			$('#txt_numerodocumento').numeric({allow:'.'});
+
+			ncsistema.Listar_SeriedocumentosTabla('');	
+			ncsistema.Listar_SeriedocumentosxEmpresaTabla('');
+
+			$("#tabs").tabs();
+			ListarConfiguracion_Tab1();
+		})
+
+		$(function() 
+		{
+			$("#tabs").tabs({ 
+				activate: function(event ,ui)
+				{
 							//alert( ui.newTab.attr('li',"innerHTML")[0].getElementsByTagName("a")[0].innerHTML);
 							if (( ui.newTab.attr('li',"innerHTML")[0].getElementsByTagName("a")[0].innerHTML)=='SERIES POR USUARIOS')
 							{
 								ListarConfiguracion_Tab2();}
-						} });
-			});
-				
-			ncsistema=
+							} });
+		});
+
+		ncsistema=
+		{
+			Nuevo_Empresa:function()
 			{
-				Nuevo_Empresa:function()
-				{
-					Limpiar_DatosEmpresa();
-				},
-				Guadar_SerieNumeracion:function()
-				{
-					var txt_codconfser=$.trim($('#txt_codconfser').val());
-					var txt_cod_empr=$.trim($('#txt_cod_empr').val());	
+				Limpiar_DatosEmpresa();
+			},
+			Guadar_SerieNumeracion:function()
+			{
+				var txt_codconfser=$.trim($('#txt_codconfser').val());
+				var txt_cod_empr=$.trim($('#txt_cod_empr').val());	
 					var cmb_usuariodocumento=0;//$.trim($('#cmb_usuariodocumento').val());
 					var cmb_tipodocumento=$.trim($('#cmb_tipodocumento').val());
 					var txt_seriedocumento=$.trim($('#txt_seriedocumento').val()).toUpperCase();
@@ -106,7 +106,8 @@
 							setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
 							return;
 						}
-					}else{
+					}else
+					{
 						if (cmb_tipodocumento=='03')
 						{
 							if (txt_caracter!='B')
@@ -116,16 +117,27 @@
 								setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
 								return;
 							}
-						}else
+						}
+						else if (cmb_tipodocumento=='20')
+						{
+							if (txt_caracter!='R')
 							{
-								if (txt_caracter!='F' && txt_caracter!='B')
-								{
-									$('#div_MensajeValidacionEmpresa').fadeIn(0);
-									$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">La serie debe de iniciar con el caracter F o B.</div>');
-									setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
-									return;
-								}
+								$('#div_MensajeValidacionEmpresa').fadeIn(0);
+								$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">La serie debe de iniciar con el caracter R.</div>');
+								setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
+								return;
 							}
+						}
+						else
+						{
+							if (txt_caracter!='F' && txt_caracter!='B')
+							{
+								$('#div_MensajeValidacionEmpresa').fadeIn(0);
+								$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">La serie debe de iniciar con el caracter F o B.</div>');
+								setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
+								return;
+							}
+						}
 					}
 					if (txt_codconfser==0)//GUARDAR
 					{
@@ -154,7 +166,7 @@
 							{
 								if(result.status==1)
 								{
-								
+
 									$('#div_MensajeValidacionEmpresa').fadeIn(0);
 									$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/information.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">El registro de los datos se realiz&oacute; con &eacute;xito</div>');
 									setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
@@ -284,7 +296,7 @@
 						{
 							if(result.status==1)
 							{
-							
+
 								$('#div_MensajeValidacion').fadeIn(0);
 								$('#div_MensajeValidacion').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/information.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">El registro de los datos se realiz&oacute; con &eacute;xito</div>');
 								setTimeout(function(){ $("#div_MensajeValidacion").fadeOut(1500);},3000);
@@ -366,29 +378,29 @@
 					newHtml+='<table width="100%"  cellpadding="0" cellspacing="0" class="display" id="Tab_ListaEmpresa">';
 					newHtml+='<thead>';
 					newHtml+='<tr>';						
-						newHtml+='<th style="width:3%">Nro.</td>';						
-						newHtml+='<th style="width:5%">Editar</td>';
+					newHtml+='<th style="width:3%">Nro.</td>';						
+					newHtml+='<th style="width:5%">Editar</td>';
 						//newHtml+='<th style="width:10%">Usuario</td>';
 						newHtml+='<th style="width:35%">Tipo Doc.</td>';
 						newHtml+='<th style="width:25%">Serie</td>';
 						newHtml+='<th style="width:25%">N&uacute;mero</td>';						
 						newHtml+='<th style="width:7%">Eliminar</td>';	
-					newHtml+='</tr>';
-					newHtml+='</thead>';
-        			newHtml+='<tbody>';
+						newHtml+='</tr>';
+						newHtml+='</thead>';
+						newHtml+='<tbody>';
 					//<input style="height:20px;width:95%" id="txt_login" type="text" value="'+rs.cantidadproducto+'"/>
 					contador=0;
 					$.each(data,function(key,rs)
 					{
 						contador++;
 						newHtml+='<tr>';							
-							newHtml+='<td style="text-align:center">'+rs.nro_secuencia+'</td>';							
-							newHtml+='<td style="text-align:center"><a href="javascript:VerDatosCliente_Modificar('+rs.cod_confser+')" ><img align="center" src="<?php echo base_url();?>application/helpers/image/ico/Editar.png" title="Imprimir" width="15"  height="15" border="0" ></a></td>';
+						newHtml+='<td style="text-align:center">'+rs.nro_secuencia+'</td>';							
+						newHtml+='<td style="text-align:center"><a href="javascript:VerDatosCliente_Modificar('+rs.cod_confser+')" ><img align="center" src="<?php echo base_url();?>application/helpers/image/ico/Editar.png" title="Imprimir" width="15"  height="15" border="0" ></a></td>';
 							//newHtml+='<td style="text-align:left">'+rs.cod_usu+'</td>';
 							newHtml+='<td style="text-align:left">'+rs.nomb_tipdoc+'</td>';
 							newHtml+='<td style="text-align:left">'+rs.ser_doc+'</td>';
 							newHtml+='<td style="text-align:left">'+rs.num_doc+'</td>';							
-														
+
 							if (rs.est_reg==0)//ANULADO
 							{
 								newHtml+='<td style="text-align:left"></td>';								
@@ -398,8 +410,8 @@
 								newHtml+='<td style="text-align:center"><a href="javascript:Eliminar_SerieDocumentos('+rs.cod_confser+')" ><img align="center" src="<?php echo base_url();?>application/helpers/image/ico/nceliminar.png" title="Eliminar" width="15"  height="15" border="0" ></a></td>';
 							}
 							
-						newHtml+='</tr>';						
-					});	
+							newHtml+='</tr>';						
+						});	
 					newHtml+='</tbody>';
 					newHtml+='</table>';
 					
@@ -412,7 +424,7 @@
 						"bScrollCollapse": true,
 						"bJQueryUI": true
 					});
-				 
+
 					$("#Tab_ListaEmpresa tbody").click(function(event) 
 					{
 						$(oTable.fnSettings().aoData).each(function (){
@@ -462,24 +474,24 @@
 					newHtml+='<table width="100%"  cellpadding="0" cellspacing="0" class="display" id="Tab_ListaSeriesEmpresa">';
 					newHtml+='<thead>';
 					newHtml+='<tr>';						
-						newHtml+='<th style="width:3%">Nro.</td>';						
-						newHtml+='<th style="width:20%">Usuario</td>';
-						newHtml+='<th style="width:40%">Tipo Doc.</td>';
-						newHtml+='<th style="width:17%">Serie</td>';				
-						newHtml+='<th style="width:20%">Eliminar</td>';	
+					newHtml+='<th style="width:3%">Nro.</td>';						
+					newHtml+='<th style="width:20%">Usuario</td>';
+					newHtml+='<th style="width:40%">Tipo Doc.</td>';
+					newHtml+='<th style="width:17%">Serie</td>';				
+					newHtml+='<th style="width:20%">Eliminar</td>';	
 					newHtml+='</tr>';
 					newHtml+='</thead>';
-        			newHtml+='<tbody>';
+					newHtml+='<tbody>';
 					//<input style="height:20px;width:95%" id="txt_login" type="text" value="'+rs.cantidadproducto+'"/>
 					contador=0;
 					$.each(data,function(key,rs)
 					{
 						contador++;
 						newHtml+='<tr>';							
-							newHtml+='<td style="text-align:center">'+rs.nro_secuencia+'</td>';							
-							newHtml+='<td style="text-align:left">'+rs.apell_usu+' '+rs.nom_usu+'</td>';
-							newHtml+='<td style="text-align:left">'+rs.nomb_tipdoc+'</td>';
-							newHtml+='<td style="text-align:left">'+rs.ser_doc+'</td>';
+						newHtml+='<td style="text-align:center">'+rs.nro_secuencia+'</td>';							
+						newHtml+='<td style="text-align:left">'+rs.apell_usu+' '+rs.nom_usu+'</td>';
+						newHtml+='<td style="text-align:left">'+rs.nomb_tipdoc+'</td>';
+						newHtml+='<td style="text-align:left">'+rs.ser_doc+'</td>';
 							if (rs.est_reg==0)//ANULADO
 							{
 								newHtml+='<td style="text-align:left"></td>';								
@@ -489,8 +501,8 @@
 								newHtml+='<td style="text-align:center"><a href="javascript:Eliminar_SerieDocumentosxUsuario('+rs.cod_confserusu+')" ><img align="center" src="<?php echo base_url();?>application/helpers/image/ico/nceliminar.png" title="Eliminar" width="15"  height="15" border="0" ></a></td>';
 							}
 							
-						newHtml+='</tr>';						
-					});	
+							newHtml+='</tr>';						
+						});	
 					newHtml+='</tbody>';
 					newHtml+='</table>';
 					
@@ -503,7 +515,7 @@
 						"bScrollCollapse": true,
 						"bJQueryUI": true
 					});
-				 
+
 					$("#Tab_ListaSeriesEmpresa tbody").click(function(event) 
 					{
 						$(oTable.fnSettings().aoData).each(function (){
@@ -556,10 +568,10 @@
 						{
 							$.each(result.data,function(key,rs)
 							{
-									$("#cmb_tipodocumento").prop('disabled', true);
-									$("#txt_seriedocumento").prop('disabled', true);
-									
-									$.trim($('#txt_codconfser').val(rs.cod_confser));									
+								$("#cmb_tipodocumento").prop('disabled', true);
+								$("#txt_seriedocumento").prop('disabled', true);
+
+								$.trim($('#txt_codconfser').val(rs.cod_confser));									
 									//$.trim($('#cmb_usuariodocumento').val(rs.cod_usu));
 									$.trim($('#cmb_tipodocumento').val(rs.tip_doc));
 									$.trim($('#txt_seriedocumento').val(rs.ser_doc));									
@@ -567,7 +579,7 @@
 									
 									$("#txt_numerodocumento").prop('disabled', false);
 								});
-			
+
 						}
 						else if (result.status==1000)
 						{
@@ -607,7 +619,7 @@
 								ncsistema.Listar_Seriedocumentos(txt_cod_empr);
 								return;							
 								
-	
+
 							}
 							else if (result.status==1000)
 							{
@@ -684,12 +696,17 @@
 					if (item_tabla=='03')
 					{
 						$('#txt_seriedocumento').val('B');
-					}else{
+					}
+					else if (item_tabla=='20')
+					{
+						$('#txt_seriedocumento').val('R');
+					}
+					else{
 						$('#txt_seriedocumento').val('');
-					 }
-				 }
+					}
+				}
 			}
-						
+
 			function Listar_TipoDocumentoPorEmisor()
 			{
 				var cod_emisor=$.trim($('#txt_cod_EmisorSerieUsuario').val());
@@ -740,13 +757,13 @@
 			{
 				var txt_cod_empr=$.trim($('#txt_cod_empr').val());
 				var txt_RazonSocialEmpresa=$.trim($('#txt_RazonSocialEmpresa').val());
-				var txt_tipo_confunid=$.trim($('#txt_tipo_confunid').val());
-				if(txt_tipo_confunid==1)//UNIDADES DE SUNAT
+				var txt_tipo_confserie=$.trim($('#txt_tipo_confserie').val());
+				if(txt_tipo_confserie==1)
 				{
 					$('#div_tipoconfiguracion').empty().append('SERIES POR EMPRESA');
 					
 				}
-				else if(txt_tipo_confunid==2)//UNIDADES PROPIAS
+				else if(txt_tipo_confserie==2)
 				{
 					$('#div_tipoconfiguracion').empty().append('SERIES POR USUARIO');	
 					
@@ -758,6 +775,7 @@
 				var txt_cod_empr=$.trim($('#txt_cod_empr').val());
 				var txt_RazonSocialEmpresa=$.trim($('#txt_RazonSocialEmpresa').val());
 				var txt_tipo_confserie=$.trim($('#txt_tipo_confserie').val());
+				//alert(txt_cod_empr);
 				if (txt_tipo_confserie==2)//
 				{
 					$('#txt_cod_EmisorSerieUsuario').val(txt_cod_empr);
@@ -769,8 +787,11 @@
 					$('#txt_cod_EmisorSerieUsuario').val('');
 					$('#txt_desc_EmisorSerieUsuario').val('');
 					//alert('conf else');
-					Listar_Tipodocumentoseries('');
+					//$('#cmb_tipodocumentoseries').val('0');
+					//$('#Cmb_TipoDocumentoSunat').val('0');	
+					Listar_Tipodocumentoseries("0");
 				}
+				
 			}
 			
 			
@@ -869,9 +890,9 @@
 			}
 
 		</script>
-    </head>   
-    <body>
-<?php header('Content-Type: text/html; charset=ISO-8859-1');?>
+	</head>   
+	<body>
+		<?php header('Content-Type: text/html; charset=ISO-8859-1');?>
 		<div id="Div_HeadSistema"><?php $this->load->view('inicio/head',$Listar_UsuarioAccesos,$Listar_Empresas,$pagina_ver); ?></div>
 		
 		<div id="tabs" style="width:99.7%;float:left;text-align:center;margin-top:5px">
@@ -891,7 +912,7 @@
 							<td style="text-align:right;width:30%"><label class="columna">Emisor:</label></td>
 							<td style="text-align:left;;width:70%" >
 								<input style="width:98%" type="text" id="txt_RazonSocialEmpresa" value="<?php echo trim(utf8_decode($Razon_Social));?>"
-									disabled="disabled" />
+								disabled="disabled" />
 							</td>
 						</tr>	
 						<tr>
@@ -927,124 +948,124 @@
 									<div id="div_MensajeValidacionEmpresa" style="width:100%;float:left;font-size:9px;color:#FF0000"></div>
 								</div>
 							</td></tr>
-						<tr>
-							<td><label class="columna"></label></td>
-							<td style="text-align:left">
-								<table style="width:50%" >
-								  <tbody>
-									<tr>
-										<td style="text-align:right; width:50%">
-											<a href="javascript:ncsistema.Nuevo_Empresa()" >
-												<button id="" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" style="width:105px; height:32px"  type="submit">
-														<span class="ui-button-icon-left ui-icon ui-icon-document"></span>
-														<span class="ui-button-text">Nuevo</span></button>
-											</a>
+							<tr>
+								<td><label class="columna"></label></td>
+								<td style="text-align:left">
+									<table style="width:50%" >
+										<tbody>
+											<tr>
+												<td style="text-align:right; width:50%">
+													<a href="javascript:ncsistema.Nuevo_Empresa()" >
+														<button id="" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" style="width:105px; height:32px"  type="submit">
+															<span class="ui-button-icon-left ui-icon ui-icon-document"></span>
+															<span class="ui-button-text">Nuevo</span></button>
+														</a>
+													</td>
+													<td style="text-align:left;width:50%">
+														<a href="javascript:ncsistema.Guadar_SerieNumeracion()" >
+															<button id="" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" style="width:105px; height:32px"  type="submit">
+																<span class="ui-button-icon-left ui-icon ui-icon-disk"></span>
+																<span class="ui-button-text">Guardar</span></button>
+															</a>
+														</td>
+													</tr>
+												</tbody>
+											</table>
 										</td>
-										<td style="text-align:left;width:50%">
-											<a href="javascript:ncsistema.Guadar_SerieNumeracion()" >
-												<button id="" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" style="width:105px; height:32px"  type="submit">
-														<span class="ui-button-icon-left ui-icon ui-icon-disk"></span>
-														<span class="ui-button-text">Guardar</span></button>
-											</a>
+									</tr>		
+								</table>
+
+							</div>
+							<div id="div_ListadoSeriedocumentos" style="width:100%;border:solid 0px;float:left;text-align:center;margin-top:10px">
+							</div>	
+						</div>
+
+						<div id="tabs-2" style="width:95%;float:left">
+							<div id="div_datosempresa" style="width:100%;border:solid 1px;float:left;margin-top:10px;border: 1px solid #a6c9e2;border-radius:5px;">
+								<input style="width:15%" type="hidden" id="txt_codconfser"  value="0" />
+								<table border="0" width="40%" style="border-collapse:separate; border-spacing:1px 1px;" cellpadding="3" class="tablaFormulario">
+									<tr><td><label class="columna"></label></td></tr>
+
+									<tr>
+										<td style="text-align:right;width:30%"><label class="columna">Emisor:</label></td>
+										<td style="text-align:left;width:70%" >
+											<table width="100%" border="0">
+												<tr>
+													<td>
+														<input style="width:98%" type="hidden" id="txt_cod_EmisorSerieUsuario" value="" />
+														<input style="width:98%" type="text" id="txt_desc_EmisorSerieUsuario" value=""
+														disabled="disabled" />
+													</td>
+													<td>
+														<div>Serie por Usuario</div>
+													</td>
+												</tr>
+											</table>
 										</td>
 									</tr>
-								  </tbody>
-								</table>
-							</td>
-						</tr>		
-					</table>
-					
-				</div>
-				<div id="div_ListadoSeriedocumentos" style="width:100%;border:solid 0px;float:left;text-align:center;margin-top:10px">
-				</div>	
-			</div>
-			
-			<div id="tabs-2" style="width:95%;float:left">
-				<div id="div_datosempresa" style="width:100%;border:solid 1px;float:left;margin-top:10px;border: 1px solid #a6c9e2;border-radius:5px;">
-					<input style="width:15%" type="hidden" id="txt_codconfser"  value="0" />
-					<table border="0" width="40%" style="border-collapse:separate; border-spacing:1px 1px;" cellpadding="3" class="tablaFormulario">
-						<tr><td><label class="columna"></label></td></tr>
-						
-						<tr>
-							<td style="text-align:right;width:30%"><label class="columna">Emisor:</label></td>
-							<td style="text-align:left;width:70%" >
-								<table width="100%" border="0">
+
 									<tr>
-										<td>
-											<input style="width:98%" type="hidden" id="txt_cod_EmisorSerieUsuario" value="" />
-											<input style="width:98%" type="text" id="txt_desc_EmisorSerieUsuario" value=""
-												disabled="disabled" />
-										</td>
-										<td>
-											<div>Serie por Usuario</div>
+										<td style="text-align:right;"><label class="columna">Tipo Documento:</label></td>
+										<td style="text-align:left;">
+											<div id="div_tipodocumentoseries">
+												<select id="cmb_tipodocumentoseries" style="width:80%;height:22px" >
+													<option value="0">[SELECCIONAR]</option>
+												</select>
+											</div>
 										</td>
 									</tr>
-								</table>
-							</td>
-						</tr>
-
-						<tr>
-							<td style="text-align:right;"><label class="columna">Tipo Documento:</label></td>
-							<td style="text-align:left;">
-								<div id="div_tipodocumentoseries">
-									<select id="cmb_tipodocumentoseries" style="width:80%;height:22px" >
-										<option value="0">[SELECCIONAR]</option>
-									</select>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td style="text-align:right;"><label class="columna">Usuario:</label></td>
-							<td style="text-align:left;">
-								<div id="div_usuarioempresa">
-									<select id="cmb_usuarioempresa" style="width:80%;height:22px" >
-										<option value="0">[SELECCIONAR]</option>
-									</select>
-								</div>
-							</td>
-						</tr>
-
-						<tr><!--<td><label class="columna"></label></td>-->
-							<td colspan="2" align="center">
-								<div style="width:90%;height:15px;border:solid 0px;margin-left:4px;margin-right:20px;margin-top:0px;text-align:center;float:left">
-									<div id="div_MensajeValidacion" style="width:100%;float:left;font-size:9px;color:#FF0000"></div>
-								</div>
-							</td></tr>
-						<tr>
-							<td><label class="columna"></label></td>
-							<td style="text-align:left">
-								<table style="width:50%" >
-								  <tbody>
 									<tr>
-										<td style="text-align:right; width:50%">
-											<a href="javascript:Nuevo_SeriesUsuarioxEmpresa()" >
-												<button id="" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" style="width:105px; height:32px"  type="submit">
-														<span class="ui-button-icon-left ui-icon ui-icon-document"></span>
-														<span class="ui-button-text">Nuevo</span></button>
-											</a>
-										</td>
-										<td style="text-align:left;width:50%">
-											<a href="javascript:ncsistema.Guadar_SerieNumeracionxEmpresa()" >
-												<button id="" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" style="width:105px; height:32px"  type="submit">
-														<span class="ui-button-icon-left ui-icon ui-icon-disk"></span>
-														<span class="ui-button-text">Guardar</span></button>
-											</a>
+										<td style="text-align:right;"><label class="columna">Usuario:</label></td>
+										<td style="text-align:left;">
+											<div id="div_usuarioempresa">
+												<select id="cmb_usuarioempresa" style="width:80%;height:22px" >
+													<option value="0">[SELECCIONAR]</option>
+												</select>
+											</div>
 										</td>
 									</tr>
-								  </tbody>
-								</table>
-							</td>
-						</tr>		
-					</table>
-					
-				</div>
-				<div id="div_ListadoSeriedocumentosxEmpresa" style="width:100%;border:solid 0px;float:left;text-align:center;margin-top:10px">
-				</div>	
-			</div>
-			
-			
 
-		</div>
+									<tr><!--<td><label class="columna"></label></td>-->
+										<td colspan="2" align="center">
+											<div style="width:90%;height:15px;border:solid 0px;margin-left:4px;margin-right:20px;margin-top:0px;text-align:center;float:left">
+												<div id="div_MensajeValidacion" style="width:100%;float:left;font-size:9px;color:#FF0000"></div>
+											</div>
+										</td></tr>
+										<tr>
+											<td><label class="columna"></label></td>
+											<td style="text-align:left">
+												<table style="width:50%" >
+													<tbody>
+														<tr>
+															<td style="text-align:right; width:50%">
+																<a href="javascript:Nuevo_SeriesUsuarioxEmpresa()" >
+																	<button id="" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" style="width:105px; height:32px"  type="submit">
+																		<span class="ui-button-icon-left ui-icon ui-icon-document"></span>
+																		<span class="ui-button-text">Nuevo</span></button>
+																	</a>
+																</td>
+																<td style="text-align:left;width:50%">
+																	<a href="javascript:ncsistema.Guadar_SerieNumeracionxEmpresa()" >
+																		<button id="" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" style="width:105px; height:32px"  type="submit">
+																			<span class="ui-button-icon-left ui-icon ui-icon-disk"></span>
+																			<span class="ui-button-text">Guardar</span></button>
+																		</a>
+																	</td>
+																</tr>
+															</tbody>
+														</table>
+													</td>
+												</tr>		
+											</table>
 
-    </body>	
-</html>
+										</div>
+										<div id="div_ListadoSeriedocumentosxEmpresa" style="width:100%;border:solid 0px;float:left;text-align:center;margin-top:10px">
+										</div>	
+									</div>
+
+
+
+								</div>
+
+							</body>	
+							</html>

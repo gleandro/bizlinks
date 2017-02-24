@@ -24,7 +24,7 @@
 	<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/plugins/jquery.ui.datepicker-es.js"></script>
 	<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/flexigrid/flexigrid/flexigrid.js"></script>
 
-	<script type="text/javascript">var urlexportardatos="<?php echo base_url();?>"</script>
+	<script>var urlexportardatos="<?php echo base_url();?>"</script>
 
 	<script type="text/javascript">
 
@@ -425,6 +425,8 @@
 						{
 							$('#div_MensajeValidacionEmpresa').fadeIn(0);
 							$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/procesando.gif" width="27" height="27"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Procesando, Espere por favor...</div>');
+							setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(300);},1000);
+
 						},
 						success:function(result)
 						{
@@ -432,9 +434,6 @@
 							{
 								ncsistema.Listar_DocumentosdeResumen(1);
 								ncsistema.Mostrar_Modal();
-								setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(300);},1000);
-
-								
 								return;
 							}
 							else if(result.status==1)
@@ -444,8 +443,7 @@
 								$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/information.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Se gener� el resumen '+result.codigo_baja+'</div>');
 								setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
 								*/
-								alert('Se generó el '+result.codigo_resumen);
-
+								alert('Se gener\u00F3 el '+result.codigo_resumen);
 								Limpiar_DatosRegistroDocBajas();
 								//ncsistema.Listar_DocumentosdeResumen();
 								ncsistema.Listar_DocumentosdeResumenTabla("",'');
@@ -460,7 +458,6 @@
 							{
 								$('#div_MensajeValidacionEmpresa').fadeIn(0);
 								$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:lefts"><img src="<?php echo base_url();?>application/helpers/image/ico/error.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Error con el registro de los datos</div>');
-								setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
 								return;
 							}
 						}

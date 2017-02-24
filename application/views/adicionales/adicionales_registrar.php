@@ -451,8 +451,8 @@
 							<input style="width:70%" type="text" id="txt_Observacion" /></td>
 					</tr>
 					<tr>
-						<td align="right"><label class="columna"></label></td>
-						<td colspan="3" align="center">
+						<!--<td align="right"><label class="columna"></label></td>-->
+						<td colspan="4" align="center">
 							<div style="width:100%;height:20px;border:solid 0px;margin-left:4px;margin-right:20px;margin-top:0px;text-align:center;float:left">
 								<div id="div_MensajeValidacionEmpresa" style="width:100%;float:left;font-size:9px; color:#FF0000"></div>
 							</div>

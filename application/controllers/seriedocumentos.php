@@ -69,7 +69,7 @@ class Seriedocumentos extends CI_Controller {
 			}
 			
 			$prm['Listar_Departamentos']=$this->Catalogos_model->Listar_Departamentos();
-			$prm['Listar_TipodeDocumento']=$this->Catalogos_model->Listar_TipodeDocumento();
+			$prm['Listar_TipodeDocumento']=$this->Catalogos_model->Listar_TipodeDocumento(1);
 			$prm['Listar_EmpresaPermisosUsuario']=$Listar_EmpresaPermisosUsuario;	
 			$prm['pagina_ver']='seriedocumentos';
 			

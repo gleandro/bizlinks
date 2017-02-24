@@ -30,8 +30,10 @@
 		$(document).ready(function()
 		{
 			$.datepicker.setDefaults($.datepicker.regional["es"]);
+			$("#txt_numero_relacionado").mask("****-99999999");
+			$("#txt_tipo_cambio").mask("9.9999");			
 			$("#tabs").tabs();
-			ncsistema.Listar_ProductosDocumento();				
+			ncsistema.Listar_ProductosDocumento();	
 			$('#txt_FechaEmision').datepicker({
 				showOn: 'button',					
 				buttonImage: "<?php echo base_url()?>application/helpers/image/ico/calendar_icon.gif",
@@ -43,53 +45,133 @@
 				changeYear: true
 			});
 			$('#txt_FechaEmision').datepicker('setDate', 'today');	
-			$('#txt_cantidad, #txt_valorunitario,#txt_descuento, #txt_isc,#txt_descuentoglobal, #txt_porcentajedetraccion, #txt_montodetraccionreferencial, #txt_porcentajepercepcion, #txt_baseimponiblepercepcion').numeric({allow:'.'});
+
+			$('#txt_FechaEmision_Relacionado').datepicker({
+				showOn: 'button',					
+				buttonImage: "<?php echo base_url()?>application/helpers/image/ico/calendar_icon.gif",
+				buttonImageOnly: true,
+				dateFormat: 'dd/mm/yy',
+				buttonText: "##/##/####",
+				maxDate: 'today',
+				changeMonth: true ,
+				changeYear: true
+			});	
+			$('#txt_FechaEmision_Relacionado').datepicker('setDate', 'today');	
+
+			$('#txt_FechaPago').datepicker({
+				showOn: 'button',					
+				buttonImage: "<?php echo base_url()?>application/helpers/image/ico/calendar_icon.gif",
+				buttonImageOnly: true,
+				dateFormat: 'dd/mm/yy',
+				buttonText: "##/##/####",
+				maxDate: 'today',
+				changeMonth: true ,
+				changeYear: true
+			});	
+			$('#txt_FechaPago').datepicker('setDate', 'today');	
+
+			$('#txt_fechaRetencion').datepicker({				
+				buttonImage: "<?php echo base_url()?>application/helpers/image/ico/calendar_icon.gif",
+				buttonImageOnly: true,
+				dateFormat: 'dd/mm/yy',
+				buttonText: "##/##/####",
+				maxDate: 'today',
+				changeMonth: true ,
+				changeYear: true
+			});	
+			$('#txt_fechaRetencion').datepicker('setDate', 'today');
+
+			$('#txt_fechaCambio').datepicker({
+				showOn: 'button',					
+				buttonImage: "<?php echo base_url()?>application/helpers/image/ico/calendar_icon.gif",
+				buttonImageOnly: true,
+				dateFormat: 'dd/mm/yy',
+				buttonText: "##/##/####",
+				maxDate: 'today',
+				changeMonth: true ,
+				changeYear: true
+			});	
+			$('#txt_fechaCambio').datepicker('setDate', 'today');	
+
+			$("#txt_FechaPago").change(function(event) {
+				var dato = $("#txt_FechaPago").val();
+				$("#txt_fechaRetencion").val(dato);
+			});
+
+			$("#txt_numero_relacionado").change(function(e) {
+
+				var upper = $("#txt_numero_relacionado").val().toUpperCase();
+				$("#txt_numero_relacionado").val(upper);
+				var codigo = $("#cmb_tipodocumentosunat").val();
+				var letra = $("#txt_numero_relacionado").val().substring(0,1)
+
+
+				if (codigo == "01") 
+				{
+					if (!$("#txt_numero_relacionado").val().match(/^[F0-9]{1}[A-Z0-9]{3}-[0-9]{8}$/) && $("#txt_numero_relacionado").val() != "")
+					{
+
+						alert("No esta ingresando el formato correcto para una Factura fisica o electronica.");
+						$("#txt_numero_relacionado").val("");
+
+					}
+				}
+				if (codigo == "07") 
+				{
+					if (!$("#txt_numero_relacionado").val().match(/^[F0-9]{1}[A-Z0-9]{3}-[0-9]{8}$/) && $("#txt_numero_relacionado").val() != "")
+					{
+
+						alert("No esta ingresando el formato correcto para una Nota de Credito fisica o electronica.");
+						$("#txt_numero_relacionado").val("");
+
+					}
+				}
+				if (codigo == "08") 
+				{
+					if (!$("#txt_numero_relacionado").val().match(/^[F0-9]{1}[A-Z0-9]{3}-[0-9]{8}$/) && $("#txt_numero_relacionado").val() != "")
+					{
+
+						alert("No esta ingresando el formato correcto para una Nota de Debito fisica o electronica.");
+						$("#txt_numero_relacionado").val("");
+
+					}
+				}
+
+			});
+
+			$("#txt_numero_relacionado").focus(function(event) { 
+				if($("#cmb_tipodocumentosunat").val() == 0){	$("#cmb_tipodocumentosunat").focus();	}	
+			});			
+
+			$("#txt_importepago_sin_retencion,#txt_tipo_cambio").keyup(function(event) {
+				var factor_cargo = 1;
+				var importe_retenido = 0;
+				if ($("#cmb_Monedas option:selected")[0].innerText == "US Dollar")
+				{
+					factor_cargo = $("#txt_tipo_cambio").val();
+				}
+				var txt_importepago_sin_retencion = $("#txt_importepago_sin_retencion").val() * factor_cargo;
+				var importe = ((txt_importepago_sin_retencion /100)*3).toFixed(2);
+				var txt_importetotal_pagar = (txt_importepago_sin_retencion - importe).toFixed(2);
+				$('#txt_importe_retenido').val(importe);
+				$('#txt_importetotal_pagar').val(txt_importetotal_pagar);
+			});
+
+			$('#txt_cantidad, #txt_valorunitario,#txt_descuento, #txt_isc,#txt_descuentoglobal, #txt_porcentajedetraccion, #txt_montodetraccionreferencial, #txt_porcentajepercepcion, #txt_baseimponiblepercepcion, #txt_importepago_sin_retencion, #txt_importe_total_relacionado,txt_importe_retenido,#txt_importetotal_pagar,#txt_tipo_cambio').numeric({allow:'.'});
+			$('#txt_numero_pago').numeric();
 
 			Tipo_Afectacion();
 			Datos_Emisor();
-				OcultarFilaTabla('row3',0);//MUESTRA FILA
-				OcultarFilaTabla('row4',0);//MUESTRA FILA
-				ncsistema.Buscar_Clientes();
-				OcultarOtrosCargos();
-				ncsistema.FormatoDecimales();
-			})
+			ncsistema.Buscar_Clientes();
+			Listar_SeriesDocumentos('20','','','');
 
-		ncsistema=
-		{
-			FormatoDecimales:function ()
-			{
-				var txt_config_valorprecio=$.trim($('#txt_config_valorprecio').val());
-				if (txt_config_valorprecio==0)
-				{
-					$('#txt_cantidad').attr('placeholder','0.0000000000');
-					$('#txt_valorunitario').attr('placeholder','0.0000000000');
-					$('#txt_descuento').attr('placeholder','0.0000000000');
-					$('#txt_isc').attr('placeholder','0.0000000000');
-					$('#txt_igv').attr('placeholder','0.0000000000');
-					$('#txt_valortotal').attr('placeholder','0.0000000000');
+		})
 
-					$('#txt_preciounitario').attr('placeholder','0.0000000000');
-					$('#txt_precio').attr('placeholder','0.0000000000');
-					$('#txt_descuentoIGV').attr('placeholder','0.0000000000');
-					$('#txt_preciototal').attr('placeholder','0.0000000000');
-				}else
-				{
-					$('#txt_cantidad').attr('placeholder','0.00');
-					$('#txt_valorunitario').attr('placeholder','0.00');
-					$('#txt_descuento').attr('placeholder','0.00');
-					$('#txt_isc').attr('placeholder','0.00');
-					$('#txt_igv').attr('placeholder','0.00');
-					$('#txt_valortotal').attr('placeholder','0.00');
+ncsistema=
+{
 
-					$('#txt_preciounitario').attr('placeholder','0.00');
-					$('#txt_precio').attr('placeholder','0.00');
-					$('#txt_descuentoIGV').attr('placeholder','0.00');
-					$('#txt_preciototal').attr('placeholder','0.00');
-				}
-			},
-
-			Buscar_Clientes:function ()
-			{
+	Buscar_Clientes:function ()
+	{
 					//var lista_clientes = {};
 					$('#txt_razonsocialcliente').attr('readonly', false);
 					$('#txt_razonsocialcliente').autocomplete
@@ -100,15 +182,8 @@
 						{
 							var lista_clientes = {};
 							var term = request.term;
-							var cmb_tipodocumentocliente=$.trim($('#cmb_tipodocumentocliente').val());
-
-							if (cmb_tipodocumentocliente == '') 
-							{
-								$('#div_MensajeValidacionEmpresa').fadeIn(0);
-								$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Debe seleccionar un tipo de documento</div>');
-								setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
-							}
-							
+							//var cmb_tipodocumentocliente=$.trim($('#cmb_tipodocumentocliente').val());
+							var cmb_tipodocumentocliente='6';
 							$('#txt_numerodoccliente').val('');
 							Datos_ClienteBusqueda('');
 							//alert($('#txt_razonsocialcliente').val());
@@ -144,14 +219,12 @@
 				Listar_ProductosDocumento:function()
 				{
 					$.ajax({
-						url:'<?php echo base_url()?>comprobante/Listar_ProductosDocumento',
+						url:'<?php echo base_url()?>retencion/Listar_ProductosDocumento',
 						type: 'post',
 						dataType: 'json',
 						data:
 						{
-							/*tipo_busqueda:tipo_busqueda,
-							txt_RucEmpresa:txt_RucEmpresa,
-							txt_FechaEmision:txt_FechaEmision*/
+
 						},
 						beforeSend:function()
 						{
@@ -171,6 +244,7 @@
 							else
 							{
 								ncsistema.Listar_ProductosDocumentoTabla("","");
+								ncsistema.Listar_AdicionalesDocumentoTabla("","");
 							}
 						}
 					});					
@@ -180,8 +254,91 @@
 				Listar_ProductosDocumentoTabla:function(data,variable)
 				{	
 					$('#div_ListadoEmpresa').empty().append('');
+
+					contador=0;
+					newHtml='';
+					newHtml+='<table width="100%"  cellpadding="0" cellspacing="0" class="display" id="Tab_ListaEmpresa">';
+					newHtml+='<thead>';
+					newHtml+='<tr>';						
+					newHtml+='<th width:3%>Nro.</td>';						
+					newHtml+='<th width:10%>Eliminar</td>';					
+					newHtml+='<th width:8%>Tipo Documento</td>';
+					newHtml+='<th width:10%>Numero Documento</td>';
+					newHtml+='<th width:20%>Fecha de Emision</td>';
+					newHtml+='<th width:40%>Fecha de Pago</td>';
+					newHtml+='<th width:10%>Nro de Pago</td>';	
+					newHtml+='<th width:10%>Moneda Origen</td>';	
+					newHtml+='<th width:10%>Importe Operacion/Origen</td>';	
+					newHtml+='<th width:10%>Importe de Pago sin Retencion</td>';
+					newHtml+='<th width:10%>Importe Total Retenido S/.</td>';	
+					newHtml+='<th width:10%>Importe Total a Pagar S/.</td>';	
+						//$('#txt_valorigv').val()
+						newHtml+='</tr>';
+						newHtml+='</thead>';
+						newHtml+='<tbody>';
+					//<input style="height:20px;width:95%" id="txt_login" type="text" value="'+rs.cantidadproducto+'"/>
+
+					$.each(data,function(key,rs)
+					{
+						
+						newHtml+='<tr>';
+						newHtml+='<td style="text-align:center">'+rs.nro_secuencia+'</td>';
+						newHtml+='<td style="text-align:center"><a href="javascript:Eliminar_Retenciontemporal('+rs.tmp_ret+')" ><img align="center" src="<?php echo base_url();?>application/helpers/image/ico/nceliminar.png" title="Eliminar" width="15"  height="15" border="0" ></a></td>';
+						newHtml+='<td style="text-align:left">'+rs.tipo_doc+'</td>';
+						newHtml+='<td style="text-align:left">'+rs.num_doc+'</td>';
+						newHtml+='<td style="text-align:left">'+rs.fec_emision+'</td>';
+						newHtml+='<td style="text-align:right">'+rs.fec_pago+'</td>';
+						newHtml+='<td style="text-align:right">'+rs.num_pago+'</td>';
+						newHtml+='<td style="text-align:right">'+rs.moneda_origen+'</td>';
+						newHtml+='<td style="text-align:right">'+(parseFloat(rs.imp_origen)).toFixed(2);+'</td>';
+						newHtml+='<td style="text-align:right">'+(parseFloat(rs.imp_pago_sin_ret)).toFixed(2);+'</td>';
+						newHtml+='<td style="text-align:right">'+rs.imp_retenido+'</td>';
+						newHtml+='<td style="text-align:right">'+rs.imp_total_pagar+'</td>';
+						//$('#txt_tipdocemisor').val(rs.tip_docemisor);							
+						newHtml+='</tr>';	
+						contador++;					
+					});	
+					newHtml+='</tbody>';
+					newHtml+='</table>';
+
+					$.trim($('#numeroitem').val(contador));
+					contador++;
+					$.trim($('#txt_numeroitem').val(contador));	
+
+					$('#txt_importe_retenido_footer').val('0.00');
+					$('#txt_importetotal_pagar_footer').val('0.00');
+
+					if (variable!="")
+					{
+						$('#txt_importe_retenido_footer').val(variable.importeretenido_footer);
+						$('#txt_importetotal_pagar_footer').val(variable.importetotal_footer);
+					}
+					$('#div_ListadoEmpresa').empty().append(newHtml);	
+					oTable=$('#Tab_ListaEmpresa').dataTable({
+						"bPaginate": true,
+						"sScrollX": "100%",
+						"sScrollXInner": "100%",
+						"bScrollCollapse": true,
+						"bJQueryUI": true
+					});
+
+					$("#Tab_ListaEmpresa tbody").click(function(event) 
+					{
+						$(oTable.fnSettings().aoData).each(function (){
+							$(this.nTr).removeClass('row_selected');
+						});
+						$(event.target.parentNode).addClass('row_selected');
+					});
+
+				},	
+
+				//ADICIONALES
+				Listar_AdicionalesDocumentoTabla:function(data,variable)
+				{	
+					$('#div_ListadoAdicional').empty().append('');
 					var txt_valorigv=$.trim($('#txt_valorigv').val());
-					var txt_config_valorprecio=$.trim($('#txt_config_valorprecio').val());
+					//$('#txt_tipdocemisor').val('');					
+					//$('#txt_datosseleccionados').val('');
 					var tipo_registro=0;				
 					if ($("#cbox_exportaciondocumento").is(":checked"))//EXPORTACION
 					{
@@ -198,20 +355,13 @@
 
 						contador=0;
 						newHtml='';
-						newHtml+='<table width="100%"  cellpadding="0" cellspacing="0" class="display" id="Tab_ListaEmpresa">';
+						newHtml+='<table width="100%"  cellpadding="0" cellspacing="0" class="display" id="Tab_ListaAdicional">';
 						newHtml+='<thead>';
-						newHtml+='<tr>';						
-						newHtml+='<th width:3%>Nro.</td>';						
-						newHtml+='<th width:10%>Eliminar</td>';					
-						newHtml+='<th width:10%>Codigo</td>';
+						newHtml+='<tr>';	
+						newHtml+='<th width:5%>N°</td>';					
+						newHtml+='<th width:10%>Numero Adicional</td>';						
+						newHtml+='<th width:10%>Adicional</td>';					
 						newHtml+='<th width:20%>Descripcion</td>';
-						newHtml+='<th width:20%>Unidad</td>';
-						newHtml+='<th width:40%>Cantidad</td>';
-						newHtml+='<th width:10%>Valor Unit.</td>';	
-						newHtml+='<th width:10%>Impuesto</td>';	
-						newHtml+='<th width:10%>Precio Unit.</td>';	
-						newHtml+='<th width:10%>Descuento</td>';
-						newHtml+='<th width:10%>Valor Total</td>';	
 						//$('#txt_valorigv').val()
 						newHtml+='</tr>';
 						newHtml+='</thead>';
@@ -223,56 +373,10 @@
 						
 						newHtml+='<tr>';
 						newHtml+='<td style="text-align:center">'+rs.nro_secuencia+'</td>';
-						newHtml+='<td style="text-align:center"><a href="javascript:Eliminar_Productotemporal('+rs.tmp_prod+')" ><img align="center" src="<?php echo base_url();?>application/helpers/image/ico/nceliminar.png" title="Eliminar" width="15"  height="15" border="0" ></a></td>';
+						newHtml+='<td style="text-align:center"><a href="javascript:Eliminar_Retenciontemporal('+rs.tmp_prod+')" ><img align="center" src="<?php echo base_url();?>application/helpers/image/ico/nceliminar.png" title="Eliminar" width="15"  height="15" border="0" ></a></td>';
 						newHtml+='<td style="text-align:left">'+rs.cod_prod+'</td>';
-						newHtml+='<td style="text-align:left">'+rs.desc_prod+'</td>';
-						newHtml+='<td style="text-align:left">'+rs.uni_med+'</td>';
-						newHtml+='<td style="text-align:right">'+rs.cant_prod+'</td>';
-						if (txt_config_valorprecio==0)
-						{
-							newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_unitario)).toFixed(10)+'</td>';
-							newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_igv)).toFixed(10)+'</td>';
-							if (tipo_registro=='1')
-							{
-								if (rs.tip_afectacion=='10'){
-									newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_unitario)*parseFloat(1+txt_valorigv/100)).toFixed(10)+'</td>';
-								}else{
-									newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_unitario)).toFixed(10)+'</td>';
-								}
-							}else
-							{
-								if (rs.tip_afectacion=='40'){
-									newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_unitario)).toFixed(10)+'</td>';
-								}else{
-									newHtml+='<td style="text-align:right">0.00</td>';
-								}
-							}
-
-							newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_descuento)).toFixed(10)+'</td>';
-							newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_total)).toFixed(10)+'</td>';		
-						}else
-						{
-							newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_unitario)).toFixed(2)+'</td>';
-							newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_igv)).toFixed(2)+'</td>';
-							if (tipo_registro=='1')
-							{
-								if (rs.tip_afectacion=='10'){
-									newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_unitario)*parseFloat(1+txt_valorigv/100)).toFixed(2)+'</td>';
-								}else{
-									newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_unitario)).toFixed(2)+'</td>';
-								}
-							}else
-							{
-								if (rs.tip_afectacion=='40'){
-									newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_unitario)).toFixed(2)+'</td>';
-								}else{
-									newHtml+='<td style="text-align:right">0.00</td>';
-								}
-							}
-
-							newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_descuento)).toFixed(2)+'</td>';
-							newHtml+='<td style="text-align:right">'+(parseFloat(rs.val_total)).toFixed(2)+'</td>';		
-						}			
+						newHtml+='<td style="text-align:left">'+rs.desc_prod+'</td>';		
+						//$('#txt_tipdocemisor').val(rs.tip_docemisor);							
 						newHtml+='</tr>';	
 						contador++;					
 					});	
@@ -307,16 +411,16 @@
 						$('#txt_otroscargos').val(variable.otroscargos);
 						$('#txt_importetotal').val(variable.importetotal);
 					}
-					$('#div_ListadoEmpresa').empty().append(newHtml);	
-					oTable=$('#Tab_ListaEmpresa').dataTable({
-						"bPaginate": true,
+					$('#div_ListadoAdicional').empty().append(newHtml);	
+					oTable=$('#Tab_ListaAdicional').dataTable({
+						"bPaginate": false,
 						"sScrollX": "100%",
 						"sScrollXInner": "100%",
 						"bScrollCollapse": true,
 						"bJQueryUI": true
 					});
 
-					$("#Tab_ListaEmpresa tbody").click(function(event) 
+					$("#Tab_ListaAdicional tbody").click(function(event) 
 					{
 						$(oTable.fnSettings().aoData).each(function (){
 							$(this.nTr).removeClass('row_selected');
@@ -325,6 +429,7 @@
 					});
 					
 				},	
+				//ADICIONALES
 				
 				Filtro_producto_tabla:function(data)
 				{	
@@ -343,7 +448,7 @@
 						newHtml+='<th style="width:25%">ValorVenta</td>';	
 					}else
 					{
-						newHtml+='<th style="width:25%">PrecioCobro</td>';	
+						newHtml+='<th style="width:25%">Precio</td>';	
 					}				
 					newHtml+='<th style="width:10%">U.N.Sunat</td>';
 						//a.id, a.cod_producto, a.nom_corto, a.precio, d.cod_unidmedsunat
@@ -464,7 +569,7 @@
 							if(result.status==1)
 							{
 								ncsistema.filtro_datosAdicionales_Tabla(result.data);
-								$('#txt_dato_adicional_condicion').val(1);
+								
 							}
 							else if (result.status==1000)
 							{
@@ -474,7 +579,6 @@
 							else
 							{
 								ncsistema.filtro_datosAdicionales_Tabla("");
-								$('#txt_dato_adicional_condicion').val(0);
 							}
 						}
 					});	
@@ -534,19 +638,19 @@
 
 				Guardar_Einvoiceheader:function(tipo_registro)
 				{
-					var txt_documentomodificar=$.trim($('#txt_documentomodificar').val());
-					
 					var txt_RucEmpresa=$.trim($('#txt_RucEmpresa').val());
-					var cmb_tipodocumentosunat=$.trim($('#cmb_tipodocumentosunat').val());
+					var cmb_tipodocumentosunat='20';// codigo retencion
 					var txt_RazonSocialEmpresa=$.trim($('#txt_RazonSocialEmpresa').val());
-					var cmb_seriedocumentosunat=$.trim($('#cmb_seriedocumentosunat').val()).toUpperCase();
-					var txt_numerodocumentosunat=$.trim($('#txt_numerodocumentosunat').val());
+					var txt_seriedocumento=$.trim($("#cmb_seriedocumentosunat").val());
+					var txt_correlativodocumento=$.trim($("#txt_correlativodocumento").val());
 					var txt_fecemisiondoc=$.trim($('#txt_FechaEmision').val());					
 					var txt_numerodoccliente=$.trim($('#txt_numerodoccliente').val());
-					var cmb_tipodocumentocliente=$.trim($('#cmb_tipodocumentocliente').val());
+					var cmb_tipodocumentocliente='6';//RUC
 					var txt_razonsocialcliente=$.trim($('#txt_razonsocialcliente').val());					
 					var txt_correocliente=$.trim($('#txt_correocliente').val());
 					var txt_direccioncliente=$.trim($('#txt_direccioncliente').val());
+					var cantidadproduct=$.trim($('#numeroitem').val());
+					/*	
 
 					var cmb_monedadocumento=$.trim($('#cmb_monedadocumento').val());
 					var cmb_monedadocumentonombre = $("#cmb_monedadocumento option:selected").html();
@@ -566,7 +670,7 @@
 					
 					var txt_importetotal=$.trim($('#txt_importetotal').val());	
 					txt_importetotal=txt_importetotal.replace(",","");				
-					var cantidadproduct=$.trim($('#numeroitem').val());
+					
 					
 					var txt_operacionexportacion=$.trim($('#txt_operacionexportacion').val());
 					txt_operacionexportacion=txt_operacionexportacion.replace(",","");
@@ -581,6 +685,15 @@
 					var txt_leyendadetraccion=$.trim($('#txt_leyendadetraccion').val());					
 					var txt_descuentoglobal=$.trim($('#txt_descuentoglobal').val()); 					
 					
+					*/
+
+
+					var txt_importe_retenido_footer=$.trim($('#txt_importe_retenido_footer').val());	
+					txt_importe_retenido_footer=txt_importe_retenido_footer.replace(",","");				
+					
+					var txt_importetotal_pagar_footer=$.trim($('#txt_importetotal_pagar_footer').val());	
+					txt_importetotal_pagar_footer=txt_importetotal_pagar_footer.replace(",","");				
+					
 					var txt_emisorcorreo=$.trim($('#txt_emisorcorreo').val()); 
 					var txt_emisorubigeo=$.trim($('#txt_emisorubigeo').val()); 
 					var txt_emisordireccion=$.trim($('#txt_emisordireccion').val()); 
@@ -590,23 +703,29 @@
 					var txt_emisordistrito=$.trim($('#txt_emisordistrito').val()); 
 					var txt_emisorpaiscodigo=$.trim($('#txt_emisorpaiscodigo').val()); 
 					
-					
+					/*
+
 					var txt_porcentajepercepcion=$.trim($('#txt_porcentajepercepcion').val());
 					var txt_baseimponiblepercepcion=$.trim($('#txt_baseimponiblepercepcion').val());
 					var txt_totalpercepcion=$.trim($('#txt_totalpercepcion').val());
 					txt_totalpercepcion=txt_totalpercepcion.replace(",","");
 					var txt_totalventapercepcion=$.trim($('#txt_totalventapercepcion').val());
 					txt_totalventapercepcion=txt_totalventapercepcion.replace(",","");
-					
+
+					*/
+
 					var txt_clienteubigeo=$.trim($('#txt_clienteubigeo').val());
 					var txt_clientedireccion=$.trim($('#txt_clientedireccion').val());
-					var txt_clienteubanizacion=$.trim($('#txt_clienteubanizacion').val());
+					var txt_clienteurbanizacion=$.trim($('#txt_clienteubanizacion').val());
 					var txt_clienteprovincia=$.trim($('#txt_clienteprovincia').val());
 					var txt_clientedepartamento=$.trim($('#txt_clientedepartamento').val());
 					var txt_clientedistrito=$.trim($('#txt_clientedistrito').val());
 					var txt_clientepaiscodigo=$.trim($('#txt_clientepaiscodigo').val());
 					
-					
+					var txt_observacion=$.trim($('#txt_observacion').val());
+					var txt_moneda_final=$.trim($('#txt_moneda_final').val());
+					/*
+
 					var cmb_tipodocumentoreferencia=$.trim($('#cmb_tipodocumentoreferencia').val());
 					var txt_numerodocumentoreferencia=$.trim($('#txt_numerodocumentoreferencia').val());
 					var cmb_tiponotadecredito=$.trim($('#cmb_tiponotadecredito').val());
@@ -629,6 +748,8 @@
 						cod_tipregistrogeneral=1;
 					}
 
+					*/
+
 					if (txt_RucEmpresa=='')
 					{
 						$('#div_MensajeValidacionEmpresa').fadeIn(0);
@@ -637,79 +758,16 @@
 						return;
 					}
 
-					if (cmb_tipodocumentosunat=='' || cmb_tipodocumentosunat=='0')
-					{
-						$('#div_MensajeValidacionEmpresa').fadeIn(0);
-						$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Debe seleccionar el tipo de documento de SUNAT</div>');
-						setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
-						return;
-					}
-					
-					if (cmb_tipodocumentosunat=='07' || cmb_tipodocumentosunat=='08')
-					{
-						if (cmb_tipodocumentoreferencia!='-')
-						{
-							if (txt_numerodocumentoreferencia=='')
-							{
-								$('#div_MensajeValidacionEmpresa').fadeIn(0);
-								$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Ingrese el número de documento de referencia</div>');
-								setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
-								return;
-							}
-						}
-
-						if (txt_motivodenotacredito=='')
-						{
-							$('#div_MensajeValidacionEmpresa').fadeIn(0);
-							$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Ingrese el motivo del documento</div>');
-							setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
-							return;
-						}
-						
-						if (cmb_tiponotadecredito=='0')
-						{
-							if (cmb_tipodocumentosunat=='07')
-							{
-								$('#div_MensajeValidacionEmpresa').fadeIn(0);
-								$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Seleccione el tipo de nota crédito</div>');
-								setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
-								return;
-							}
-							else
-							{
-								$('#div_MensajeValidacionEmpresa').fadeIn(0);
-								$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Seleccione el tipo de nota de débito</div>');
-								setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
-								return;
-							}
-						}		
-						
-						if (cmb_tiponotadecredito=='0')
-						{
-							$('#div_MensajeValidacionEmpresa').fadeIn(0);
-							$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Seleccione el tipo de documento</div>');
-							setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
-							return;
-						}					
-						
-					}					
-					
-					if (cmb_seriedocumentosunat=='' || cmb_seriedocumentosunat=='0')
-					{
-						$('#div_MensajeValidacionEmpresa').fadeIn(0);
-						$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Debe seleccionar la serie del documento</div>');
-						setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
-						return;
-					}
-					
-					if (txt_numerodocumentosunat=='')
+					if (txt_seriedocumento=='0')
 					{
 						$('#div_MensajeValidacionEmpresa').fadeIn(0);
 						$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Debe ingresar el número para el documento</div>');
 						setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
 						return;
 					}
-					
+
+					/*
+
 					if (cmb_monedadocumento=='')
 					{
 						$('#div_MensajeValidacionEmpresa').fadeIn(0);
@@ -717,7 +775,9 @@
 						setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
 						return;
 					}
-					
+
+					*/
+
 					if (cmb_tipodocumentocliente=='')
 					{
 						$('#div_MensajeValidacionEmpresa').fadeIn(0);
@@ -757,7 +817,7 @@
 						setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
 						return;
 					}
-					
+
 					if (cantidadproduct==0)
 					{
 						$('#div_MensajeValidacionEmpresa').fadeIn(0);
@@ -765,7 +825,7 @@
 						setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
 						return;
 					}
-					
+					/*
 					if (parseFloat(txt_importetotal)>700)
 					{					
 						
@@ -781,6 +841,8 @@
 						}
 					}
 					
+					
+
 					var validando_detraccion=0;
 					if (txt_porcentajedetraccion!='')
 					{
@@ -836,8 +898,10 @@
 						return;
 					}
 					
+					*/
+
 					$.ajax({
-						url:'<?php echo base_url()?>comprobante/Guardar_Einvoiceheader',
+						url:'<?php echo base_url()?>retencion/Guardar_RetentionHeader',
 						type: 'post',
 						dataType: 'json',
 						data:
@@ -845,31 +909,16 @@
 							txt_RucEmpresa:txt_RucEmpresa,
 							cmb_tipodocumentosunat:cmb_tipodocumentosunat,
 							txt_RazonSocialEmpresa:txt_RazonSocialEmpresa,
-							cmb_seriedocumentosunat:cmb_seriedocumentosunat,
-							txt_numerodocumentosunat:txt_numerodocumentosunat,
+							txt_seriedocumento:txt_seriedocumento,
+							txt_correlativodocumento:txt_correlativodocumento,
 							txt_fecemisiondoc:txt_fecemisiondoc,			
-							txt_numerodoccliente:txt_numerodoccliente,
+							txt_numerodocumentoproveedor:txt_numerodoccliente,
 							cmb_tipodocumentocliente:cmb_tipodocumentocliente,
-							txt_razonsocialcliente:txt_razonsocialcliente,
-							cmb_monedadocumento:cmb_monedadocumento,
-							cmb_monedadocumentonombre:cmb_monedadocumentonombre,
-							txt_operaciongravadas:txt_operaciongravadas,
-							txt_operacioninafectos:txt_operacioninafectos,
-							txt_operacionexoneradas:txt_operacionexoneradas,
-							txt_igvtotal:txt_igvtotal,
-							txt_descuentototal:txt_descuentototal,
-							
-							txt_importetotal:txt_importetotal,
-							txt_operacionexportacion:txt_operacionexportacion,
-							txt_operaciongratuitas:txt_operaciongratuitas,
-							
-							txt_porcentajedetraccion:txt_porcentajedetraccion,
-							txt_montodetraccion:txt_montodetraccion,
-							txt_montodetraccionreferencial:txt_montodetraccionreferencial,
-							txt_descripciondetraccion:txt_descripciondetraccion,
-							txt_leyendadetraccion:txt_leyendadetraccion,
-							
-							txt_descuentoglobal:txt_descuentoglobal,
+							txt_razonsocialproveedor:txt_razonsocialcliente,
+
+							txt_importe_retenido_footer:txt_importe_retenido_footer,
+							txt_importetotal_pagar_footer:txt_importetotal_pagar_footer,
+
 							txt_correocliente:txt_correocliente,
 
 							txt_emisorcorreo:txt_emisorcorreo,
@@ -879,31 +928,24 @@
 							txt_emisorprovincia:txt_emisorprovincia,
 							txt_emisordepartamento:txt_emisordepartamento,
 							txt_emisordistrito:txt_emisordistrito,
-							txt_emisorpaiscodigo:txt_emisorpaiscodigo,
-							cod_tipregistrogeneral:cod_tipregistrogeneral,
+							txt_emisorpaiscodigo:txt_emisorpaiscodigo, 
 							
-							txt_porcentajepercepcion:txt_porcentajepercepcion,
-							txt_baseimponiblepercepcion:txt_baseimponiblepercepcion,
-							txt_totalpercepcion:txt_totalpercepcion,
-							txt_totalventapercepcion:txt_totalventapercepcion,
-							
-							txt_clienteubigeo:txt_clienteubigeo,
-							txt_clientedireccion:txt_clientedireccion,
-							txt_clienteubanizacion:txt_clienteubanizacion,
-							txt_clienteprovincia:txt_clienteprovincia,
-							txt_clientedepartamento:txt_clientedepartamento,
-							txt_clientedistrito:txt_clientedistrito,
-							txt_clientepaiscodigo:txt_clientepaiscodigo,
-							
-							cmb_tipodocumentoreferencia:cmb_tipodocumentoreferencia,
-							txt_numerodocumentoreferencia:txt_numerodocumentoreferencia,
-							cmb_tiponotadecredito:cmb_tiponotadecredito,
-							txt_motivodenotacredito:txt_motivodenotacredito,
+							txt_proveedorubigeo:txt_clienteubigeo,
+							txt_proveedordireccion:txt_clientedireccion,
+							txt_proveedorurbanizacion:txt_clienteurbanizacion,
+							txt_proveedorprovincia:txt_clienteprovincia,
+							txt_proveedordepartamento:txt_clientedepartamento,
+							txt_proveedordistrito:txt_clientedistrito,
+							txt_proveedorpaiscodigo:txt_clientepaiscodigo,
+							txt_observacion:txt_observacion,
+							//cmb_tipodocumentoreferencia,
+							//txt_numerodocumentoreferencia,
+							//cmb_tiponotadecredito,
+							//txt_motivodenotacredito,
 							
 							tipo_registro:tipo_registro,
-							txt_documentomodificar:txt_documentomodificar,
-							txt_otroscargos:txt_otroscargos,
-							txt_porcentajeotroscargos:txt_porcentajeotroscargos,
+							txt_moneda_final:txt_moneda_final,
+							
 							arr_adicional_Cantidad:datoadicional_Cantidad,
 							arr_adicional_Codigo:datoadicional_Codigo,
 							arr_adicional_Valor:datoadicional_Valor
@@ -914,12 +956,6 @@
 							$('#div_MensajeValidacionEmpresa').fadeIn(0);
 							$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/procesando.gif" width="27" height="27"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Procesando. Espere por favor...</div>');
 						},
-						//error:function()
-						//{
-							//alert('Ocurrió un error en el registro de este comprobante.\n Comunicarse con Bizlinks para su revisión');	
-							//document.location.href= '<?php echo base_url()?>comprobante';							
-							//return;
-						//},
 						success:function(result)
 						{
 							if(result.status==1)
@@ -931,80 +967,22 @@
 								
 								if (tipo_registro==0)//GUARDADO
 								{
-									if (cmb_tipodocumentosunat=='01')//FACTURA
+									if (cmb_tipodocumentosunat=='20')//RETENCION
 									{
 										$('#txt_numerodocumento_respuesta').val(result.numero);
 										$('#txt_estadodocumento_respuesta').val('BORRADOR');
 										$('#txt_descripciondocumento_respuesta').val('PENDIENTE DE DECLARAR');
 										dialogregistrofactura.dialog( "open" );
 									}
-									else if (cmb_tipodocumentosunat=='03')//BOLETA DE VENTA
-									{
-										$('#txt_numerodocumentoboleta_respuesta').val(result.numero);
-										$('#txt_estadoboleta_respuesta').val('BORRADOR');
-										$('#txt_mensajeboleta_respuesta').val('PENDIENTE DE PUBLICAR');
-										dialogregistroboleta.dialog( "open" );
-									}
-									else
-									{
-										if (cmb_tipodocumentosunat=='07')
-										{
-											$('#div_etiquetencynd').empty().append('Numero de Nota Credito :');
-										}
-										else
-										{
-											$('#div_etiquetencynd').empty().append('Numero de Nota Debito :');
-										}
-										$('#txt_numerodocumentoncynd_respuesta').val(result.numero);										
-										$('#txt_estadodocumentoncynd_respuesta').val('BORRADOR');
-										if (cmb_tipodocumentoreferencia=='03')//REFERENCIA ES BOLETA
-										{
-											$('#txt_mensajencynd_respuesta').val('PENDIENTE DE PUBLICAR');
-										}
-										else //ES FACTURA O -
-										{
-											$('#txt_mensajencynd_respuesta').val('PENDIENTE DE DECLARAR');
-										}										
-										dialogregistroncynd.dialog( "open" );
-									}
 								}
 								else //DECLARADO
 								{								
-									if (cmb_tipodocumentosunat=='01')//FACTURA
+									if (cmb_tipodocumentosunat=='20')//RETENCION
 									{
 										$('#txt_numerodocumento_respuesta').val(result.numero);
 										$('#txt_estadodocumento_respuesta').val('POR PROCESAR');
 										$('#txt_descripciondocumento_respuesta').val('ENVIADO A DECLARAR');
 										dialogregistrofactura.dialog( "open" );
-									}
-									else if (cmb_tipodocumentosunat=='03')//BOLETA DE VENTA
-									{
-										$('#txt_numerodocumentoboleta_respuesta').val(result.numero);
-										$('#txt_estadoboleta_respuesta').val('POR PROCESAR');
-										$('#txt_mensajeboleta_respuesta').val('PENDIENTE DE DECLARAR');
-										dialogregistroboleta.dialog( "open" );
-									}
-									else
-									{
-										if (cmb_tipodocumentosunat=='07')
-										{
-											$('#div_etiquetencynd').empty().append('Numero de Nota Credito :');
-										}
-										else
-										{
-											$('#div_etiquetencynd').empty().append('Numero de Nota Debito :');
-										}
-										$('#txt_numerodocumentoncynd_respuesta').val(result.numero);									
-										$('#txt_estadodocumentoncynd_respuesta').val('POR PROCESAR');
-										if (cmb_tipodocumentoreferencia=='03')//REFERENCIA ES BOLETA
-										{
-											$('#txt_mensajencynd_respuesta').val('PENDIENTE DE DECLARAR');
-										}
-										else //ES FACTURA O -
-										{
-											$('#txt_mensajencynd_respuesta').val('ENVIADO A DECLARAR');
-										}
-										dialogregistroncynd.dialog( "open" );
 									}
 								}
 								/*
@@ -1013,7 +991,7 @@
 								"07";"NOTA DE CREDITO"
 								"08";"NOTA DE DEBITO"
 								*/
-								Limpiar_DatosRegistroDocumento();
+								Limpiar_DatosRegistroDocumento(1);
 
 								if ($('#txt_modificarregistro').val()==1)
 								{
@@ -1057,6 +1035,10 @@
 var datoadicional_Cantidad = 0;
 var datoadicional_Codigo = [];
 var datoadicional_Valor = [];
+var array_numpago = [];
+var n=0;
+
+
 function Registrar_DatosAdicionales()
 {
 	i=0; 
@@ -1074,7 +1056,7 @@ function Registrar_DatosAdicionales()
 		}
 		i++;
 	});
-	if (datoadicional_Cantidad>55)
+	if (datoadicional_Cantidad>56)
 	{
 		alert("Solo está permitido seleccionar 56 Campos Adicionales!");
 		return;
@@ -1105,9 +1087,13 @@ function Seleccionar_DatoAdicional(key)
 				$('#txt_descripcion').val(nom_corto);
 				$('#cmb_unidadmedida').val(cod_unidmedsunat);
 				
+				//$('#txt_valorunitario').val(valor_venta);
+				//$('#txt_precio').val(precio_venta);
+				
 				if (txt_config_valorprecio==0)
 				{
-					$('#txt_valorunitario').val(parseFloat(vv_precio).toFixed(10));
+					$('#txt_valorunitario').val(vv_precio);
+					$('#txt_precio').val(txt_cero.toFixed(10));
 					
 					$("#txt_valorunitario").prop('disabled', false);
 					$("#txt_descuento").prop('disabled', false);
@@ -1115,8 +1101,8 @@ function Seleccionar_DatoAdicional(key)
 					$("#txt_descuentoIGV").prop('disabled', true);
 				}else
 				{
-					$('#txt_precio').val(parseFloat(vv_precio).toFixed(2));
-					
+					$('#txt_precio').val(vv_precio);
+					$('#txt_valorunitario').val(txt_cero.toFixed(10));
 					$("#txt_valorunitario").prop('disabled', true);
 					$("#txt_descuento").prop('disabled', true);
 					$("#txt_precio").prop('disabled', false);
@@ -1138,13 +1124,13 @@ function Seleccionar_DatoAdicional(key)
 				document.location.href= '<?php echo base_url()?>comprobante';
 			}
 
-			function Eliminar_Productotemporal(tmp_prod)
+			function Eliminar_Retenciontemporal(tmp_prod)
 			{
 				if(confirm("¿ Esta Seguro de Eliminar el Producto ?"))
 				{
 					$.ajax
 					({
-						url:'<?php echo base_url()?>comprobante/Eliminar_Productotemporal',type:'post',dataType:'json',
+						url:'<?php echo base_url()?>retencion/Eliminar_Retenciontemporal',type:'post',dataType:'json',
 						data:
 						{
 							tmp_prod:tmp_prod,
@@ -1181,122 +1167,115 @@ function Seleccionar_DatoAdicional(key)
 						}			
 					});
 				}
+				
 			}
+
 			
 			$(function() 
 			{
+
 				function Registrar_Producto() 
 				{
 					var valid = true;
 
-					var txt_codigoprod=$.trim($('#txt_codigoprod').val());	
-					var txt_cantidad=$.trim($('#txt_cantidad').val());	
-					var cmb_unidadmedida=$.trim($('#cmb_unidadmedida').val());	
-					var txt_descripcion=$.trim($('#txt_descripcion').val());	
-					var txt_valorunitario=$.trim($('#txt_valorunitario').val());
-					var txt_descuento=$.trim($('#txt_descuento').val());	
-					var txt_isc=$.trim($('#txt_isc').val());	
-					var cmb_tipoafectacion=$.trim($('#cmb_tipoafectacion').val());	
-					var txt_igv=$.trim($('#txt_igv').val());	
-					var txt_valortotal=$.trim($('#txt_valortotal').val());
-					var txt_preciocobro=$.trim($('#txt_precio').val());
-					var txt_RucEmpresa=$.trim($('#txt_RucEmpresa').val());	
-					var txt_descuentoIGV=$.trim($('#txt_descuentoIGV').val());
-					
-					allFields = $([]).add( $('#txt_codigoprod') ).add( $('#txt_cantidad') ).add( $('#cmb_unidadmedida') ).add( $('#txt_descuento') ).add( $('#txt_descripcion') ).add( $('#txt_valorunitario') ).add( $('#cmb_tipoafectacion') );
+					var txt_tipo_comprobante=$.trim($('#cmb_tipodocumentosunat option:selected')[0].innerText);
+					var txt_codigo_documento=$.trim($('#cmb_tipodocumentosunat option:selected').val());
+					var txt_numero_relacionado=$.trim($('#txt_numero_relacionado').val());
+					var txt_FechaEmision_Relacionado=$.trim($('#txt_FechaEmision_Relacionado').val());
+					var txt_FechaPago=$.trim($('#txt_FechaPago').val());
+					var txt_numero_pago=$.trim($('#txt_numero_pago').val());
+					var txt_moneda=$.trim($('#txt_moneda_pago').val());
+					var txt_moneda_code=$("#cmb_Monedas option:selected").val();
+					var txt_importe_origen=$.trim($('#txt_importe_total_relacionado').val());
+					var txt_importepago_sin_retencion=$.trim($('#txt_importepago_sin_retencion').val());
+					var txt_importe_retenido=$.trim($('#txt_importe_retenido').val());
+					var txt_importetotal_pagar=$.trim($('#txt_importetotal_pagar').val());
+
+					allFields = $([]).add( $('#cmb_tipodocumentosunat')).add( $('#txt_numero_relacionado') ).add( $('#txt_importe_total_relacionado') ).add( $('#txt_numero_pago') ).add( $('#txt_importepago_sin_retencion') ).add( $('#txt_importe_retenido') ).add( $('#txt_importetotal_pagar') ).add( $('#cmb_Monedas') );
 					
 					allFields.removeClass( "ui-state-error" );
 					
-					if (txt_codigoprod=="")
+					if (txt_codigo_documento == '01')
+					{
+
+					}
+
+					
+					if (txt_tipo_comprobante=="[SELECCIONAR]")
 					{					
-						$('#txt_codigoprod').addClass( "ui-state-error" );
+						$('#cmb_tipodocumentosunat').addClass( "ui-state-error" );
+						return;
+					}
+
+					if (txt_numero_relacionado=="")
+					{					
+						$('#txt_numero_relacionado').addClass( "ui-state-error" );
 						return;
 					}
 					
-					if (txt_cantidad=="" || isNaN(txt_cantidad))
+					if (txt_importe_origen=="" || isNaN(txt_importe_origen))
 					{					
-						$('#txt_cantidad').addClass( "ui-state-error" );
+						$('#txt_importe_total_relacionado').addClass( "ui-state-error" );
 						
 						return;
 					}
-					if (parseFloat(txt_cantidad)<=0)
+
+					if (txt_moneda=="")
 					{					
-						$('#txt_cantidad').addClass( "ui-state-error" );
+						$('#cmb_Monedas').addClass( "ui-state-error" );
 						return;
 					}
-					
-					if (cmb_unidadmedida=="")
+
+					if (txt_numero_pago=="" || isNaN(txt_numero_pago))
 					{					
-						$('#cmb_unidadmedida').addClass( "ui-state-error" );
+						$('#txt_numero_pago').addClass( "ui-state-error" );
+						
 						return;
 					}
-					if (txt_descripcion=="")
+
+					if (txt_importepago_sin_retencion=="" || isNaN(txt_importepago_sin_retencion))
 					{					
-						$('#txt_descripcion').addClass( "ui-state-error" );
+						$('#txt_importepago_sin_retencion').addClass( "ui-state-error" );
+						
 						return;
 					}
-					
-					if (txt_valorunitario=="" || isNaN(txt_valorunitario))
+
+					if (txt_importe_retenido=="" || isNaN(txt_importe_retenido))
 					{					
-						$('#txt_valorunitario').addClass( "ui-state-error" );
+						$('#txt_importe_retenido').addClass( "ui-state-error" );
+						
 						return;
 					}
-					if (parseFloat(txt_valorunitario)<=0)
+
+					if (txt_importetotal_pagar=="" || isNaN(txt_importetotal_pagar))
 					{					
-						$('#txt_valorunitario').addClass( "ui-state-error" );
+						$('#txt_importetotal_pagar').addClass( "ui-state-error" );
+						
 						return;
 					}
-					if (parseFloat(txt_precio)<=0)
-					{					
-						$('#txt_precio').addClass( "ui-state-error" );
-						return;
-					}
-					
-					if (cmb_tipoafectacion=="")
-					{					
-						$('#cmb_tipoafectacion').addClass( "ui-state-error" );
-						return;
-					}
-					
-					var cod_tipregist=0;					
-					if ($("#cbox_exportaciondocumento").is(":checked"))//EXPORTACION
-					{
-						cod_tipregist=2;
-					}
-					else if ($("#cbox_opergratisdocumento").is(":checked"))//OPERACIONES GRATUITAS
-					{
-						cod_tipregist=3;
-					}
-					else
-					{
-						cod_tipregist=1;
-					}
-					
+
 					$.ajax({
-						url:'<?php echo base_url()?>comprobante/Guardar_Registroproductos',
+						url:'<?php echo base_url()?>Retencion/Guardar_Registroretenciones',
 						type: 'post',
 						dataType: 'json',
 						data:
 						{
-							txt_codigoprod:txt_codigoprod,
-							txt_cantidad:txt_cantidad,
-							cmb_unidadmedida:cmb_unidadmedida,
-							txt_descripcion:txt_descripcion,
-							txt_valorunitario:txt_valorunitario,
-							txt_descuento:txt_descuento,
-							txt_isc:txt_isc,
-							cmb_tipoafectacion:cmb_tipoafectacion,
-							txt_igv:txt_igv,
-							txt_valortotal:txt_valortotal,
-							txt_RucEmpresa:txt_RucEmpresa,
-							cod_tipregist:cod_tipregist,
-							txt_preciocobro:txt_preciocobro,
-							txt_descuentoIGV:txt_descuentoIGV
+							txt_tipo_comprobante:txt_tipo_comprobante,
+							txt_codigo_documento:txt_codigo_documento,
+							txt_numero_relacionado:txt_numero_relacionado,
+							txt_FechaEmision_Relacionado:txt_FechaEmision_Relacionado,
+							txt_FechaPago:txt_FechaPago,
+							txt_numero_pago:txt_numero_pago,
+							txt_moneda:txt_moneda_code,
+							txt_importe_origen:txt_importe_origen,
+							txt_importepago_sin_retencion:txt_importepago_sin_retencion,
+							txt_importe_retenido:txt_importe_retenido,
+							txt_importetotal_pagar:txt_importetotal_pagar
 						},
 						beforeSend:function()
 						{
 							/*$('#div_MensajeValidacionEmpresa').fadeIn(0);
-							$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/procesando.gif" width="27" height="27"/></div><div style="font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Procesando, Espere por favor...</div>');*/
+							$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/procesando.gif" width="27" height="27"/></div><div style="">Procesando, Espere por favor...</div>');*/
 						},
 						success:function(result)
 						{
@@ -1319,18 +1298,33 @@ function Seleccionar_DatoAdicional(key)
 							}
 						}
 					});
+					$("#txt_moneda_final").val(txt_moneda_code);
 					//dialog.dialog( "close" );
+
+					if (txt_numero_pago == 1)
+					{
+						array_numpago[n]=[];
+						array_numpago[n]['serie']=txt_numero_relacionado;
+						array_numpago[n]['num_pago']=1;
+						n++;
+					}
+					else{
+						for (var i = 0; i < array_numpago.length; i++) {
+							if (array_numpago[i]['serie'] == txt_numero_relacionado)
+							{
+								array_numpago[i]['num_pago']=txt_numero_pago;
+							}
+						}
+					}
+					$("#txt_numero_pago").val(parseFloat(txt_numero_pago)+1);
+
 					return valid;
 				}
 				
 				//Ventana para registrar nuevos adicionales
 				$("#create-aditional" ).button().on("click", function() 
 				{
-					var txt_dato_adicional_condicion=$.trim($('#txt_dato_adicional_condicion').val());
-					if (txt_dato_adicional_condicion==0)
-					{
-						ncsistema.filtro_datosAdicionales();
-					}
+					ncsistema.filtro_datosAdicionales();
 					dialogAdicional.dialog( "open" );
 				});
 				
@@ -1360,8 +1354,7 @@ function Seleccionar_DatoAdicional(key)
 				
 				dialog = $("#dialog-form").dialog({
 					autoOpen: false,
-					height: 450,
-					width: 550,
+					width: 410,
 					modal: true,
 					buttons: 
 					{
@@ -1390,76 +1383,11 @@ function Seleccionar_DatoAdicional(key)
 				{
 					var cantidad=$.trim($('#numeroitem').val());
 
-					var cod_tipregistrogeneral=0;					
-					if ($("#cbox_exportaciondocumento").is(":checked"))//EXPORTACION
-					{
-						cod_tipregistrogeneral=2;
-					}
-					else if ($("#cbox_opergratisdocumento").is(":checked"))//OPERACIONES GRATUITAS
-					{
-						cod_tipregistrogeneral=3;
-					}
-					else
-					{
-						cod_tipregistrogeneral=1;
-					}
-
-					if (cantidad==0)
-					{
-						$('#txt_tipoderegistrodocumento').val(cod_tipregistrogeneral)
-					}
-					else
-					{
-						var txt_tipoderegistrodocumento=$.trim($('#txt_tipoderegistrodocumento').val());
-						if (txt_tipoderegistrodocumento!=cod_tipregistrogeneral)
-						{
-							alert('No puede combinar productos para diferentes tipos de registros');
-							return;
-						}
-					}
-					
 					cantidad++;
-					$.trim($('#txt_numeroitem').val(cantidad));						
-					
-					var txt_config_valorprecio=$.trim($('#txt_config_valorprecio').val());
-					if (txt_config_valorprecio==0)
-					{
-						
-						$("#txt_valorunitario").prop('disabled', false);
-						$("#txt_precio").prop('disabled', true);
-						$("#txt_descuento").prop('disabled', false);
-						$("#txt_descuentoIGV").prop('disabled', true);
+					$.trim($('#txt_numeroitem').val(cantidad));		
 
-						if ($("#cbox_opergratisdocumento").is(":checked"))
-						{
-							$("#txt_descuento").prop('disabled', true);
-						}else
-						{
-							if ($("#cbox_exportaciondocumento").is(":checked"))
-							{
-								$("#txt_descuento").prop('disabled', false);
-							}
-						}
-					}else
-					{
-						$("#txt_valorunitario").prop('disabled', true);
-						$("#txt_precio").prop('disabled', false);
-						
-						$("#txt_descuento").prop('disabled', true);
-						$("#txt_descuentoIGV").prop('disabled', false);
-						
-						if ($("#cbox_opergratisdocumento").is(":checked"))
-						{
-							$("#txt_descuentoIGV").prop('disabled', true);
-						}else
-						{
-							if ($("#cbox_exportaciondocumento").is(":checked"))
-							{
-								$("#txt_descuentoIGV").prop('disabled', false);
-							}
-						}
-					}
-					
+					Limpiar_DatosRegistroDocumento();
+
 					dialog.dialog( "open" );
 				});
 				
@@ -1689,6 +1617,65 @@ function Seleccionar_DatoAdicional(key)
 				});	
 			});
 
+function Moneda_Relacionado(moneda){
+	$("#txt_importepago_sin_retencion").keyup();
+	var texto_moneda = $("#cmb_Monedas option:selected")[0].innerText;
+
+	if (moneda == 'USD') {
+		$("#txt_moneda_pago").val('Sol');
+		$("#txt_moneda_referencia").val(texto_moneda);
+		$("#txt_item_hidden").show();	
+		
+	}
+	else if (moneda == 'PEN') {
+		$("#txt_moneda_pago").val(texto_moneda);
+		$("#txt_item_hidden").hide();	
+	}else
+	{
+		$("#txt_moneda_pago").val('');
+		$("#txt_item_hidden").hide();	
+	}
+}
+
+function validaMonto(importe_pago_sin_ret)
+{
+	var importe_total_relacionado = parseFloat($("#txt_importe_total_relacionado").val());
+
+	if (isNaN(importe_total_relacionado))
+	{
+		$("#txt_importepago_sin_retencion").val('');
+		$("#txt_importe_retenido").val('0.00');
+		$("#txt_importetotal_pagar").val('0.00');
+		$("#txt_importe_total_relacionado").focus();
+	}
+
+	else if (importe_total_relacionado < importe_pago_sin_ret && !isNaN(importe_total_relacionado))
+	{
+		alert("El importe de pago sin retencion no puede ser mayor que el importe total del documento relacionado");		
+		$("#txt_importe_retenido").val('0.00');
+		$("#txt_importetotal_pagar").val('0.00');
+		$("#txt_importepago_sin_retencion").val('');
+		$("#txt_importepago_sin_retencion").focus();
+	}
+	
+}
+
+function Numero_Pago_Ret(serienumero)
+{
+	var existe = 'NO';
+	for (var i = 0; i < array_numpago.length; i++) {
+		if (array_numpago[i]['serie'] == serienumero)
+		{
+			existe = 'SI';
+			$("#txt_numero_pago").val(parseFloat(array_numpago[i]['num_pago'])+1);
+		}
+	}
+	if (existe == 'NO')
+	{
+		$("#txt_numero_pago").val('1');
+	}
+}
+
 function ver_datosemisor()
 {
 	Datos_Emisor();
@@ -1726,18 +1713,14 @@ function Calcular_Montos()
 
 	var txt_cantidad=$.trim($('#txt_cantidad').val());
 	var txt_descuento=($.trim($('#txt_descuento').val())).replace(',', '');
-	var cod_tipafect=$.trim($('#cmb_tipoafectacion').val());
+				//alert(txt_descuento);
+				var cod_tipafect=$.trim($('#cmb_tipoafectacion').val());
 				var txt_valorigv=$.trim($('#txt_valorigv').val());//captura valor de 18
 				var txt_valorotroscargos=$.trim($('#txt_valorotroscargos').val());
-				
-				//var txt_valorigv=(parseFloat($('#txt_valorigv').val())/100).toFixed(2);//captura valor de 18//0.18
-				//var txt_valorotroscargos=(parseFloat($('#txt_valorotroscargos').val())/100).toFixed(2);//0.10
-				
-				if (txt_valorotroscargos=="" || isNaN(txt_valorotroscargos)){
-					txt_valorotroscargos=0;
-				}
-				
-				var tipo_registro=0;				
+				if (txt_valorotroscargos=="" || isNaN(txt_valorotroscargos))
+					{ txt_valorotroscargos=0;
+					}
+					var tipo_registro=0;				
 				if ($("#cbox_exportaciondocumento").is(":checked"))//EXPORTACION
 				{
 					tipo_registro=2;
@@ -1746,14 +1729,17 @@ function Calcular_Montos()
 					{
 						tipo_registro=3;
 					}
-					else{
+					else
+					{
 						tipo_registro=1;
 					}
 					$('#div_mensajereferencia').empty().append('');
-					if (txt_cantidad=="" || isNaN(txt_cantidad)){
+					if (txt_cantidad=="" || isNaN(txt_cantidad))
+					{
 						txt_cantidad=0;
 					}
-					if (txt_descuento=="" || isNaN(txt_descuento)){
+					if (txt_descuento=="" || isNaN(txt_descuento))
+					{
 						txt_descuento=0;
 					}
 
@@ -1763,64 +1749,40 @@ function Calcular_Montos()
 					var txt_descuentoIGV=0;
 					var txt_preciototal=0;
 					var txt_valorunitario=0;
-					var txt_preciounitario=0;
 
-				if (txt_config_valorprecio==0)//Tipo de configuración es por valor venta
-				{
-					txt_valorunitario=($.trim($('#txt_valorunitario').val())).replace(',', '');
-					if (txt_valorunitario=="" || isNaN(txt_valorunitario)){
-						txt_valorunitario=0;
-					}
-					
+
+					if (txt_config_valorprecio==0)
+					{
+						txt_valorunitario=($.trim($('#txt_valorunitario').val())).replace(',', '');
+						if (txt_valorunitario=="" || isNaN(txt_valorunitario))
+						{
+							txt_valorunitario=0;
+						}
+
 					if (tipo_registro==1)//NORMAL
 					{
 						if (cod_tipafect=='10')//GRAVADO - OPERACION ONEROSA
-						{	
-							txt_preciounitario=parseFloat(parseFloat(txt_valorunitario)*(1+parseFloat(txt_valorigv)/100)).toFixed(10);
+						{				
+							txt_igv=(((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100));
+							txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
 							
-							txt_precio=parseFloat(parseFloat(txt_valorunitario)*(1+parseFloat(txt_valorigv)/100).toFixed(10));
-							txt_descuentoIGV=parseFloat(parseFloat(txt_descuento)*(1+parseFloat(txt_valorigv)/100)).toFixed(10);
-							
-							if (txt_cantidad==0){
-								txt_igv=0;
-								txt_valortotal=0;
-								txt_preciototal=0;
-							}
-							else{
-								txt_igv=parseFloat(( (parseFloat(txt_cantidad)*parseFloat(txt_valorunitario)) -parseFloat(txt_descuento)) * parseFloat(txt_valorigv/100)).toFixed(10);
-								txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(10);
-								txt_preciototal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV)).toFixed(10);
-							}
+							txt_precio=parseFloat(txt_valorunitario)*parseFloat(1+txt_valorigv/100);
+							txt_descuentoIGV=parseFloat(txt_descuento)*parseFloat(1+txt_valorigv/100);
+							txt_preciototal=(parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV);
 						}else 
 							if (cod_tipafect=='20')//EXONERADO - OPERACION ONEROSA
-							{	
-								txt_preciounitario=parseFloat(txt_valorunitario).toFixed(10);
-								txt_precio=parseFloat(txt_valorunitario).toFixed(10);
-								txt_descuentoIGV=parseFloat(txt_descuento).toFixed(10);
-								
-								if (txt_cantidad==0){
-									txt_valortotal=0;
-									txt_preciototal=0;
-								}
-								else{
-									txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(10);
-									txt_preciototal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV)).toFixed(10);
-								}
+							{				
+								//txt_igv=(((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100));
+								txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
+								txt_precio=parseFloat(txt_valorunitario);
+								txt_preciototal=txt_valortotal;
 							}else 
 								if (cod_tipafect=='30')//INAFECTO - OPERACION ONEROSA
 								{				
-									txt_preciounitario=parseFloat(txt_valorunitario).toFixed(10);
-									txt_precio=parseFloat(txt_valorunitario).toFixed(10);
-									txt_descuentoIGV=parseFloat(txt_descuento).toFixed(10);
-									
-									if (txt_cantidad==0){
-										txt_valortotal=0;
-										txt_preciototal=0;
-									}
-									else{
-										txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(10);
-										txt_preciototal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV)).toFixed(10);
-									}
+									//txt_igv=(((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100));
+									txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
+									txt_precio=parseFloat(txt_valorunitario);
+									txt_preciototal=txt_valortotal;
 								}
 							}
 							else 
@@ -1829,79 +1791,61 @@ function Calcular_Montos()
 						{				
 							if (cod_tipafect=='40')//EXPORTACION
 							{				
-								txt_preciounitario=parseFloat(txt_valorunitario).toFixed(10);
-								txt_precio=parseFloat(txt_valorunitario).toFixed(10);
-								txt_descuentoIGV=parseFloat(txt_descuento).toFixed(10);
-								
-								if (txt_cantidad==0){
-									txt_valortotal=0;
-									txt_preciototal=0;
-								}
-								else{
-									txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(10);
-									txt_preciototal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV)).toFixed(10);
-								}
+								//txt_igv=(((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100));
+								txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
+								txt_precio=parseFloat(txt_valorunitario)
+								txt_preciototal=txt_valortotal;
 							}
 						}else 
 							if (tipo_registro==3)//OPERACIONES GRATUITAS
 							{				
-								if (cod_tipafect=='11' || cod_tipafect=='12' || cod_tipafect=='13' || cod_tipafect=='14' || cod_tipafect=='15' || cod_tipafect=='16')//
+								if (cod_tipafect=='11' || cod_tipafect=='12' || cod_tipafect=='13' || cod_tipafect=='14' || cod_tipafect=='15' || cod_tipafect=='16')//EXPORTACION
 								{				
-									txt_descuentoIGV=0;
-									txt_descuento=0;
-									//VALIDAR EL CALCULO DEL IGV
-									txt_igv=parseFloat((( parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100)).toFixed(10);
-									txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(10);
-									
+									txt_igv=(((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100));
+									txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
 									txt_precio=0;
-									txt_preciounitario=0;
+									txt_descuentoIGV=0;
 									txt_preciototal=0;
 									
 									$('#div_mensajereferencia').empty().append('IGV Referencial');
 								}else 
 									if (cod_tipafect=='21' || cod_tipafect=='31' || cod_tipafect=='32' || cod_tipafect=='33' || cod_tipafect=='34' || cod_tipafect=='35' || cod_tipafect=='36')//EXPORTACION
-									{	
-										txt_descuentoIGV=0;
-										txt_descuento=0;	
-										//VALIDAR EL CALCULO DEL IGV
+									{				
 										//txt_igv=(((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100));
-										txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(10);
-										
+										txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
 										txt_precio=0;
-										txt_preciounitario=0;
+										txt_descuentoIGV=0;
 										txt_preciototal=0;
 									}
 								}
 							}
-							$('#txt_igv').val(parseFloat(txt_igv).toFixed(10));
-							$('#txt_valortotal').val(parseFloat(txt_valortotal).toFixed(10));
+							$('#txt_igv').val(txt_igv.toFixed(10));
+							$('#txt_valortotal').val(txt_valortotal.toFixed(10));
 
-							$('#txt_precio').val(parseFloat(txt_precio).toFixed(10));
-							$('#txt_preciounitario').val(parseFloat(txt_preciounitario).toFixed(10));
-							$('#txt_descuentoIGV').val(parseFloat(txt_descuentoIGV).toFixed(10));
-							$('#txt_preciototal').val(parseFloat(txt_preciototal).toFixed(10));
-						}
-				else//Tipo de configuración es por Precio de Cobro
-				{
-					txt_precio=($.trim($('#txt_precio').val())).replace(',', '');//es precio por cobro
-					txt_descuentoIGV=($.trim($('#txt_descuentoIGV').val())).replace(',', '');
-					//txt_valorigv=18
-					//txt_valorotroscargos=10=jala de parametros iniciales el %
-					if (txt_precio=="" || isNaN(txt_precio)){
+							$('#txt_precio').val(txt_precio.toFixed(10));
+							$('#txt_descuentoIGV').val(txt_descuentoIGV.toFixed(10));
+							$('#txt_preciototal').val(txt_preciototal.toFixed(10));
+						}else
+						{
+							txt_precio=($.trim($('#txt_precio').val())).replace(',', '');
+							txt_descuentoIGV=($.trim($('#txt_descuentoIGV').val())).replace(',', '');
+					//txt_valorotroscargos: 10
+					//txt_valorigv: 18 (1+igv/100)
+					
+					if (txt_precio=="" || isNaN(txt_precio))
+					{
 						txt_precio=0;
 					}
-					if (txt_descuentoIGV==""  || isNaN(txt_descuentoIGV)){
+					if (txt_descuentoIGV==""  || isNaN(txt_descuentoIGV))
+					{
 						txt_descuentoIGV=0;
 					}
 					if (tipo_registro==1)//NORMAL
 					{
 						if (cod_tipafect=='10')//GRAVADO - OPERACION ONEROSA
 						{				
-							txt_valorunitario=parseFloat(parseFloat(txt_precio)/(1+(parseFloat(txt_valorigv)/100)+(parseFloat(txt_valorotroscargos)/100))).toFixed(2);
-							txt_descuento=parseFloat(parseFloat(txt_descuentoIGV)/(1+(parseFloat(txt_valorigv)/100)+(parseFloat(txt_valorotroscargos)/100))).toFixed(2);
-							txt_preciounitario=parseFloat(parseFloat(txt_valorunitario)*(1+(parseFloat(txt_valorigv)/100))).toFixed(2);
-							
-							//txt_precio=parseFloat(txt_valorunitario)*parseFloat(1+txt_valorigv/100+txt_valorotroscargos/100);
+							txt_valorunitario=(parseFloat(txt_precio)/(1+(parseFloat(txt_valorigv)/100)+(parseFloat(txt_valorotroscargos)/100)));
+							txt_descuento=(parseFloat(txt_descuentoIGV)/(1+(parseFloat(txt_valorigv)/100)+(parseFloat(txt_valorotroscargos)/100)));
 							if (txt_cantidad==0)
 							{
 								txt_igv=0;
@@ -1909,53 +1853,50 @@ function Calcular_Montos()
 								txt_preciototal=0;
 							}
 							else{
-								txt_igv=parseFloat(((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100)).toFixed(2);
-								txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(2);
-								txt_preciototal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV)).toFixed(2);
+								txt_igv=(((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100));
+								txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
+								txt_preciototal=(parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV);
 							}
 						}else 
 							if (cod_tipafect=='20')//EXONERADO - OPERACION ONEROSA
 							{	
 								//alert(txt_precio);
-								txt_valorunitario=parseFloat(parseFloat(txt_precio)/(1+(parseFloat(txt_valorotroscargos)/100))).toFixed(2);
-								txt_preciounitario=parseFloat(txt_valorunitario).toFixed(2);
-								txt_descuento=parseFloat(parseFloat(txt_descuentoIGV)/(1+(parseFloat(txt_valorotroscargos)/100))).toFixed(2);	
-								if (txt_cantidad==0){
+								txt_valorunitario=parseFloat(txt_precio);
+								txt_descuento=parseFloat(txt_descuentoIGV);	
+								if (txt_cantidad==0)
 									txt_valortotal=0;
-									txt_preciototal=0;
-								}
-								else{
-									txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(2);
-									txt_preciototal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV)).toFixed(2);
-								}
+								else
+									txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
+								
+								txt_preciototal=parseFloat(txt_valortotal);
+								
 							}else 
 								if (cod_tipafect=='30')//INAFECTO - OPERACION ONEROSA
 								{	
-									txt_valorunitario=parseFloat(parseFloat(txt_precio)/(1+(parseFloat(txt_valorotroscargos)/100))).toFixed(2);
-									txt_preciounitario=parseFloat(txt_valorunitario).toFixed(2);
-									txt_descuento=parseFloat(parseFloat(txt_descuentoIGV)/(1+(parseFloat(txt_valorotroscargos)/100))).toFixed(2);
-									if (txt_cantidad==0){
+									txt_valorunitario=parseFloat(txt_precio);
+									txt_descuento=parseFloat(txt_descuentoIGV);	
+									if (txt_cantidad==0)
 										txt_valortotal=0;
-										txt_preciototal=0;
-									}
-									else{
-										txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(2);
-										txt_preciototal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV)).toFixed(2);
-									}
+									else
+										txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
+									
+									txt_preciototal=parseFloat(txt_valortotal);
 								}
-							//alert(txt_valorunitario);
-						}else
-						{
+							}else
+							{
 						if (tipo_registro==2)//EXPORTACION
 						{
 							if (cod_tipafect=='40')//EXPORTACION
 							{				
 								txt_valorunitario=parseFloat(txt_precio);//(parseFloat(txt_precio)/(1+(parseFloat(txt_valorigv)/100)+(parseFloat(txt_valorotroscargos)/100)));
 								txt_descuento=parseFloat(txt_descuentoIGV);
-								txt_preciounitario=parseFloat(txt_valorunitario).toFixed(2);
-								
-								txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(2);
-								txt_preciototal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_precio))-parseFloat(txt_descuentoIGV)).toFixed(2);
+								txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
+								//txt_precio=parseFloat(txt_valorunitario)
+								txt_preciototal=txt_valortotal;
+								/*//txt_igv=(((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100));
+								txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
+								txt_precio=parseFloat(txt_valorunitario)
+								txt_preciototal=txt_valortotal;*/
 							}
 						}else
 							if (tipo_registro==3)//OPERACIONES GRATUITAS
@@ -1963,10 +1904,10 @@ function Calcular_Montos()
 								
 								if (cod_tipafect=='11' || cod_tipafect=='12' || cod_tipafect=='13' || cod_tipafect=='14' || cod_tipafect=='15' || cod_tipafect=='16')//EXPORTACION
 								{				
-									txt_valorunitario=parseFloat(parseFloat(txt_precio)/(1+(parseFloat(txt_valorigv)/100)+(parseFloat(txt_valorotroscargos)/100))).toFixed(2);
+									txt_valorunitario=(parseFloat(txt_precio)/(1+(parseFloat(txt_valorigv)/100)+(parseFloat(txt_valorotroscargos)/100)));
 									txt_descuento=0;
-									txt_igv=parseFloat(((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100)).toFixed(2);
-									txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(2);
+									txt_igv=(((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento))*parseFloat(txt_valorigv/100));
+									txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
 									txt_precio=0;
 									txt_descuentoIGV=0;
 									txt_preciototal=0;
@@ -1974,22 +1915,21 @@ function Calcular_Montos()
 								}else 
 									if (cod_tipafect=='21' || cod_tipafect=='31' || cod_tipafect=='32' || cod_tipafect=='33' || cod_tipafect=='34' || cod_tipafect=='35' || cod_tipafect=='36')//EXPORTACION
 									{		
-										txt_valorunitario=parseFloat(parseFloat(txt_precio)/(1+(parseFloat(txt_valorigv)/100)+(parseFloat(txt_valorotroscargos)/100))).toFixed(2);
+										txt_valorunitario=(parseFloat(txt_precio)/(1+(parseFloat(txt_valorigv)/100)+(parseFloat(txt_valorotroscargos)/100)));
 										txt_descuento=0;
-										txt_valortotal=parseFloat((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento)).toFixed(2);
+										txt_valortotal=((parseFloat(txt_cantidad)*parseFloat(txt_valorunitario))-parseFloat(txt_descuento));
 										txt_precio=0;
 										txt_descuentoIGV=0;
 										txt_preciototal=0;
 									}
 								}
 							}
-							$('#txt_igv').val(parseFloat(txt_igv).toFixed(2));
-							$('#txt_valortotal').val(parseFloat(txt_valortotal).toFixed(2));
+							$('#txt_valorunitario').val(txt_valorunitario.toFixed(10));
+							$('#txt_descuento').val(txt_descuento.toFixed(10));
 
-							$('#txt_valorunitario').val(parseFloat(txt_valorunitario).toFixed(2));
-							$('#txt_descuento').val(parseFloat(txt_descuento).toFixed(2));
-							$('#txt_preciounitario').val(parseFloat(txt_preciounitario).toFixed(2));
-							$('#txt_preciototal').val(parseFloat(txt_preciototal).toFixed(2));
+							$('#txt_igv').val(txt_igv.toFixed(10));
+							$('#txt_valortotal').val(txt_valortotal.toFixed(10));
+							$('#txt_preciototal').val(txt_preciototal.toFixed(10));
 						}
 
 					}
@@ -2053,7 +1993,6 @@ function Calcular_Montos()
 						$('#txt_valortotal').val('');
 
 						$('#txt_precio').val('');
-						$('#txt_preciounitario').val('');
 						$('#txt_descuentoIGV').val('');
 						$('#txt_preciototal').val('');
 
@@ -2062,87 +2001,89 @@ function Calcular_Montos()
 					$('#cmb_tipoafectacion').val('40');}
 				}
 
-				function Limpiar_DatosRegistroDocumento()
+				function Limpiar_DatosRegistroDocumento(codigo = 0)
 				{
-					$('#cmb_tipodocumentosunat').val('0');
-					$('#cmb_seriedocumentosunat').val('0');
-					$('#txt_numerodocumentosunat').val('');
 					$('#txt_FechaEmision').datepicker('setDate', 'today');	
-					$('#txt_numerodoccliente').val('');
-					$('#cmb_tipodocumentocliente').val('');
-					$('#txt_razonsocialcliente').val('');
-					$('#cmb_monedadocumento').val('PEN');
-					$('#txt_descuentototal').val('0.00');
+					$('#txt_FechaEmision_Relacionado').datepicker('setDate', 'today');	
+					$('#txt_FechaPago').datepicker('setDate', 'today');	
+					$('#txt_fechaRetencion').datepicker('setDate', 'today');
+					$('#txt_fechaCambio').datepicker('setDate', 'today');	
 
-					$('#txt_correocliente').val('');
-					$('#txt_direccioncliente').val('');
-
-					$('#txt_porcentajepercepcion').val('0.00');
-					$('#txt_baseimponiblepercepcion').val('0.00');
-					$('#txt_totalpercepcion').val('0.00');
-					$('#txt_totalventapercepcion').val('0.00');
-
-					$('#txt_porcentajedetraccion').val('0.00');
-					$('#txt_montodetraccion').val('0.00');
-					$('#txt_montodetraccionreferencial').val('0.00');
-					$('#txt_descripciondetraccion').val('');
-					$('#txt_leyendadetraccion').val('');
-
-					$('#cmb_tipodocumentoreferencia').val('');
-					$('#txt_numerodocumentoreferencia').val('');
-					$('#cmb_tiponotadecredito').val('');
-					$('#txt_motivodenotacredito').val('');
-					$('#txt_documentomodificar').val('');
-					$('#txt_dato_adicional_condicion').val(0);
-
-				OcultarFilaTabla('row3',0);//OCULTA FILA
-				OcultarFilaTabla('row4',0);//OCULTA FILA
-			}
-			
-			function Numero_Documento(cod_seriedoc)
-			{
-				var cmb_tipodocumentosunat=$.trim($('#cmb_tipodocumentosunat').val());
-				$.trim($('#txt_numerodocumentosunat').val('0'));
-				$.ajax({
-					url:'<?php echo base_url()?>catalogos/Listar_SeriesDocumentos',
-					type: 'post',
-					dataType: 'json',
-					data:
+					if (codigo == 1) 
 					{
-						cod_tipodocumento:cmb_tipodocumentosunat
-					},
-					beforeSend:function()
-					{
-					},
-					success:function(result)
-					{							
-						if(result.status==1)
-						{
-							$.each(result.data,function(key,rs)
-							{
-								if (rs.ser_doc==cod_seriedoc)
-								{
-									$.trim($('#txt_numerodocumentosunat').val(rs.num_doc));
-								}
-							});	
-							return;
-						}
-						else if (result.status==1000)
-						{
-							document.location.href= '<?php echo base_url()?>usuario';
-							return;
-						}
-						else
-						{
-							$.trim($('#txt_numerodocumentosunat').val('0'));
-							return;
-						}
+						$('#cmb_seriedocumentosunat').val('0');
+						$('#txt_correlativodocumento').val('-');
+						$('#txt_FechaEmision').datepicker('setDate', 'today');	
+						$('#txt_numerodoccliente').val('');
+						$('#txt_correocliente').val('');
+						$('#txt_observacion').val('');
+						$('#txt_razonsocialcliente').val('');
+						$('#txt_direccioncliente').val('');
+
+
+						$('#txt_clientenombrecomercial').val('');
+						$('#txt_clientecorreo').val('');
+						$('#txt_clientepais').val('');
+						$('#txt_clientepaiscodigo').val('');
+						$('#txt_clientedepartamento').val('');
+						$('#txt_clienteprovincia').val('');
+						$('#txt_clientedistrito').val('');
+
+						$('#txt_clienteubanizacion').val('');
+						$('#txt_clientedireccion').val('');
 					}
-				});
-			}
-			
-			function Serie_Documento(cod_tipodocumento,cod_serie,tipodocreferencia,codserafectado,tipodocumentoadquiriente)
-			{
+				}
+
+				function Numero_Documento(cod_seriedoc)
+				{
+					if (cod_seriedoc == 0)
+					{
+						$('#txt_correlativodocumento').val("-");
+						return;
+					}
+					var cmb_tipodocumentosunat='20';
+					$('#txt_seriedocumento').val('0');
+					$.ajax({
+						url:'<?php echo base_url()?>catalogos/Listar_SeriesDocumentos',
+						type: 'post',
+						dataType: 'json',
+						data:
+						{
+							cod_tipodocumento:cmb_tipodocumentosunat
+						},
+						beforeSend:function()
+						{
+						},
+						success:function(result)
+						{							
+							if(result.status==1)
+							{
+
+								$.each(result.data,function(key,rs)
+								{
+									if (rs.ser_doc==cod_seriedoc)
+									{
+										$('#txt_correlativodocumento').val(rs.num_doc);
+									}
+								});	
+								return;
+							}
+							else if (result.status==1000)
+							{
+								document.location.href= '<?php echo base_url()?>usuario';
+								return;
+							}
+							else
+							{
+								$.trim($('#txt_correlativodocumento').val('-'));
+								return;
+							}
+						}
+					});
+				}
+
+				function Serie_Documento(cod_tipodocumento,cod_serie,tipodocreferencia,codserafectado,tipodocumentoadquiriente)
+				{
 				/*
 				"01""FACTURA"
 				"03""BOLETA DE VENTA"
@@ -2161,7 +2102,7 @@ function Calcular_Montos()
 				$('#txt_numerodoccliente').val('');
 				Datos_ClienteBusqueda('');
 				
-				$('#txt_numerodocumentosunat').val('');
+				$('#txt_seriedocumento').val('');
 				
 				//$("#cbox_exportaciondocumento").prop('disabled', false);	
 				
@@ -2172,12 +2113,14 @@ function Calcular_Montos()
 				{
 					//create-detraccion
 					//$("#create-detraccion").prop('disabled', true);
-					OcultarFilaPassword('row1',0);
+					alert('borraste algo');
+					//OcultarFilaPassword('row1',0);
 				}
 				else
 				{
 					//$("#create-detraccion").prop('disabled', false);
-					OcultarFilaPassword('row1',1);
+					alert('borraste algo');
+					//OcultarFilaPassword('row1',1);
 				}
 
 				if ($("#cbox_exportaciondocumento").is(":checked"))
@@ -2255,7 +2198,7 @@ function Calcular_Montos()
 						}
 						
 						newHtml='';
-						newHtml+='<select id="cmb_seriedocumentosunat" style="width:95%;height:25px" onChange="javascript:Numero_Documento(this.value)">';
+						newHtml+='<select id="cmb_seriedocumentosunat" style="width:100%;height:25px" onChange="javascript:Numero_Documento(this.value)>';
 						newHtml+='<option value="0">[SELECCIONAR]</option>';
 						newHtml+='</select>';		
 						$('#div_seriedocumento').empty().append(newHtml);	
@@ -2279,7 +2222,7 @@ function Calcular_Montos()
 						}
 						
 						newHtml='';
-						newHtml+='<select id="cmb_seriedocumentosunat" style="width:95%;height:25px" onChange="javascript:Numero_Documento(this.value)">';
+						newHtml+='<select id="cmb_seriedocumentosunat" style="width:100%;height:25px" onChange="javascript:Numero_Documento(this.value)>';
 						newHtml+='<option value="0">[SELECCIONAR]</option>';
 						newHtml+='</select>';		
 						$('#div_seriedocumento').empty().append(newHtml);	
@@ -2374,7 +2317,7 @@ function Calcular_Montos()
 						$('#div_tipodocumentocliente').empty().append(newHtml);	
 						
 						newHtml='';
-						newHtml+='<select id="cmb_seriedocumentosunat" style="width:95%;height:25px" onChange="javascript:Numero_Documento(this.value)">';
+						newHtml+='<select id="cmb_seriedocumentosunat" style="width:100%;height:25px" onChange="javascript:Numero_Documento(this.value)">';
 						newHtml+='<option value="0">[SELECCIONAR]</option>';
 						newHtml+='</select>';		
 						$('#div_seriedocumento').empty().append(newHtml);	
@@ -2394,7 +2337,7 @@ function Calcular_Montos()
 						$('#div_tipodocumentocliente').empty().append(newHtml);	
 						
 						newHtml='';
-						newHtml+='<select id="cmb_seriedocumentosunat" style="width:95%;height:25px" onChange="javascript:Numero_Documento(this.value)">';
+						newHtml+='<select id="cmb_seriedocumentosunat" style="width:100%;height:25px" onChange="javascript:Numero_Documento(this.value)">';
 						newHtml+='<option value="0">[SELECCIONAR]</option>';
 						newHtml+='</select>';		
 						$('#div_seriedocumento').empty().append(newHtml);	
@@ -2407,6 +2350,7 @@ function Calcular_Montos()
 				//Seleccionar_CheckExportacion();
 
 			}
+			
 
 			function Etiquetas_TipoDocumento(cod_tipodocumento)
 			{
@@ -2428,166 +2372,58 @@ function Calcular_Montos()
 
 			function Listar_SeriesDocumentos(cod_tipodocumento,cod_serie,tipodocreferencia,codserafectado)
 			{
-				$('#div_tipodocumentoreferencia').empty().append('');
-
-				if(cod_tipodocumento=='07' || cod_tipodocumento=='08')//ES NOTA DE CREDITO Y NOTA DE DEBITO
-				{
-					OcultarFilaTabla('row3',1);//MUESTRA FILA
-					OcultarFilaTabla('row4',1);//MUESTRA FILA
-					newHtml='';
-					newHtml+='<select id="cmb_tipodocumentoreferencia" style="width:95%;height:25px" onChange="javascript:Serie_DocumentoReferencia(this.value,\''+cod_serie+'\')">';
-					newHtml+='<option value="0">[SELECCIONAR]</option>';
-					newHtml+='<option value="01">FACTURA</option>';
-					newHtml+='<option value="03">BOLETA DE VENTA</option>';
-					newHtml+='</select>';		
-					$('#div_tipodocumentoreferencia').empty().append(newHtml);
-
-					newHtml='';
-					newHtml+='<select id="cmb_seriedocumentosunat" style="width:95%;height:25px" onChange="javascript:Numero_Documento(this.value)">';
-					newHtml+='<option value="0">[SELECCIONAR]</option>';
-					newHtml+='</select>';		
-					$('#div_seriedocumento').empty().append(newHtml);
-
-					//alert(tipodocreferencia);
-					if (tipodocreferencia!='')
+				$.ajax({
+					url:'<?php echo base_url()?>catalogos/Listar_SeriesDocumentos',
+					type: 'post',
+					dataType: 'json',
+					data:
 					{
-						$('#cmb_tipodocumentoreferencia').val(tipodocreferencia);	
-						$("#cmb_tipodocumentoreferencia").prop('disabled', true);
-						Serie_DocumentoReferencia(tipodocreferencia,cod_serie);
-					}
-					if(cod_tipodocumento=='07')
+						cod_tipodocumento:cod_tipodocumento
+					},
+					beforeSend:function()
 					{
-						
-						$('#div_etiquetetipodenota').empty().append('Tipo Nota de Crédito:');
-						$url='<?php echo base_url()?>catalogos/Tipo_NotaCredito';
-					}
-					else
+
+					},
+					success:function(result)
 					{
-						$('#div_etiquetetipodenota').empty().append('Tipo Nota de Débito:');
-						$url='<?php echo base_url()?>catalogos/Tipo_NotaDebito';
-					}
-					
-					$('#div_tiponotadecredito').empty().append('');					
-					$.ajax({
-						url:$url,
-						type: 'post',
-						dataType: 'json',
-						data:
+						if(result.status==1)
 						{
-						},
-						beforeSend:function()
-						{
+							newHtml='';
+							newHtml+='<select id="cmb_seriedocumentosunat" style="width:100%;height:25px" onChange="javascript:Numero_Documento(this.value)">';
+							newHtml+='<option value="0">[SELECCIONAR]</option>';
 
-						},
-						success:function(result)
-						{
+							$.each(result.data,function(key,rs)
+							{
+								newHtml+='<option value="'+rs.ser_doc+'">'+rs.ser_doc+'</option>';
+							});	
 
-							if(result.status==1)
+							newHtml+='</select>';		
+							$('#div_seriedocumento').empty().append(newHtml);	
+
+							if (cod_serie!='')
 							{
-								newHtml='';
-								newHtml+='<select id="cmb_tiponotadecredito" style="width:60%;height:25px" onChange="javascript:Seleccionar_Tiponotadebito(this.value)">';
-								newHtml+='<option value="0">[SELECCIONAR]</option>';								
-								$.each(result.data,function(key,rs)
-								{
-									newHtml+='<option value="'+rs.codigo+'">'+rs.nombre+'</option>';
-								});	
-								newHtml+='</select>';		
-								$('#div_tiponotadecredito').empty().append(newHtml);	
-								
-								if (codserafectado!='')
-								{
-									$('#cmb_tiponotadecredito').val(codserafectado);
-									
-									if (codserafectado=='03')//NOTA DE CREDITO
-									{
-										$("#cmb_tiponotadecredito").prop('disabled', true);
-									}
-									
-								}
-								
-							}
-							else if (result.status==1000)
-							{
-								document.location.href= '<?php echo base_url()?>usuario';
-								return;
-							}
-							else
-							{
-								newHtml='';
-								newHtml+='<select id="cmb_tiponotadecredito" style="width:60%;height:25px" onChange="javascript:Seleccionar_Tiponotadebito(this.value)">';
-								newHtml+='<option value="0">[SELECCIONAR]</option>';
-								newHtml+='</select>';		
-								$('#div_tiponotadecredito').empty().append(newHtml);	
+								$('#cmb_seriedocumentosunat').val(cod_serie);
+								$("#cmb_seriedocumentosunat").prop('disabled', true);
 							}
 						}
-					});
-
-				}
-				else
-				{
-					OcultarFilaTabla('row3',0);//OCULTA
-					OcultarFilaTabla('row4',0);//OCULTA
-					
-					newHtml='';
-					newHtml+='<select id="cmb_tipodocumentoreferencia" style="width:95%;height:25px" >';
-					newHtml+='<option value="0">[SELECCIONAR]</option>';
-					newHtml+='</select>';		
-					$('#div_tipodocumentoreferencia').empty().append(newHtml);
-					
-					$.ajax({
-						url:'<?php echo base_url()?>catalogos/Listar_SeriesDocumentos',
-						type: 'post',
-						dataType: 'json',
-						data:
+						else if (result.status==1000)
 						{
-							cod_tipodocumento:cod_tipodocumento
-						},
-						beforeSend:function()
+							document.location.href= '<?php echo base_url()?>usuario';
+							return;
+						}
+						else
 						{
-
-						},
-						success:function(result)
-						{
-							if(result.status==1)
-							{
-								newHtml='';
-								newHtml+='<select id="cmb_seriedocumentosunat" style="width:95%;height:25px" onChange="javascript:Numero_Documento(this.value)">';
-								newHtml+='<option value="0">[SELECCIONAR]</option>';
-								
-								$.each(result.data,function(key,rs)
-								{
-									newHtml+='<option value="'+rs.ser_doc+'">'+rs.ser_doc+'</option>';
-								});	
-								newHtml+='</select>';		
-								$('#div_seriedocumento').empty().append(newHtml);	
-								
-								if (cod_serie!='')
-								{
-									$('#cmb_seriedocumentosunat').val(cod_serie);
-									$("#cmb_seriedocumentosunat").prop('disabled', true);
-								}
-								
-								//return;
-							}
-							else if (result.status==1000)
-							{
-								document.location.href= '<?php echo base_url()?>usuario';
-								return;
-							}
-							else
-							{
-								newHtml='';
-								newHtml+='<select id="cmb_seriedocumentosunat" style="width:95%;height:25px" onChange="javascript:Numero_Documento(this.value)">';
-								newHtml+='<option value="0">[SELECCIONAR]</option>';
-								newHtml+='</select>';		
-								$('#div_seriedocumento').empty().append(newHtml);	
+							newHtml='';
+							newHtml+='<select id="cmb_seriedocumentosunat" style="width:100%;height:25px" onChange="javascript:Numero_Documento(this.value)">';
+							newHtml+='<option value="0">[SELECCIONAR]</option>';
+							newHtml+='</select>';		
+							$('#div_seriedocumento').empty().append(newHtml);	
 								//return;
 							}
 						}
 					});
-				}
 			}
-			
+
 			function Seleccionar_Tiponotadebito(cod_tipond)
 			{
 				//$('#div_tipodocumentoreferencia').empty().append('');
@@ -2629,12 +2465,12 @@ function Calcular_Montos()
 						
 						$('#div_seriedocumento').empty().append('');
 						newHtml='';
-						newHtml+='<select id="cmb_seriedocumentosunat" style="width:95%;height:25px" onChange="javascript:Numero_Documento(this.value)">';
+						newHtml+='<select id="cmb_seriedocumentosunat" style="width:100%;height:25px" onChange="javascript:Numero_Documento(this.value)">';
 						newHtml+='<option value="0">[SELECCIONAR]</option>';
 						newHtml+='</select>';		
 						$('#div_seriedocumento').empty().append(newHtml);
 						
-						$('#txt_numerodocumentosunat').val('');
+						$('#txt_seriedocumento').val('');
 					}
 					
 				}
@@ -2663,7 +2499,7 @@ function Calcular_Montos()
 						if(result.status==1)
 						{
 							newHtml='';
-							newHtml+='<select id="cmb_seriedocumentosunat" style="width:95%;height:25px" onChange="javascript:Numero_Documento(this.value)">';
+							newHtml+='<select id="cmb_seriedocumentosunat" style="width:100%;height:25px" onChange="javascript:Numero_Documento(this.value)">';
 							newHtml+='<option value="0">[SELECCIONAR]</option>';
 							
 							$.each(result.data,function(key,rs)
@@ -2702,7 +2538,7 @@ function Calcular_Montos()
 						else
 						{
 							newHtml='';
-							newHtml+='<select id="cmb_seriedocumentosunat" style="width:95%;height:25px" onChange="javascript:Numero_Documento(this.value)">';
+							newHtml+='<select id="cmb_seriedocumentosunat" style="width:100%;height:25px" onChange="javascript:Numero_Documento(this.value)">';
 							newHtml+='<option value="0">[SELECCIONAR]</option>';
 							newHtml+='</select>';		
 							$('#div_seriedocumento').empty().append(newHtml);	
@@ -3326,6 +3162,8 @@ function Calcular_Montos()
 					$("#chekbox_opeinafecta").prop('checked', false);
 				}
 
+
+
 				function Seleccionar_CheckOperacionGratuitas()
 				{
 					if ($("#cbox_opergratisdocumento").is(":checked"))
@@ -3346,17 +3184,46 @@ function Calcular_Montos()
 					OcultarOtrosCargos_Checked(0);
 				}else
 				{
-					//OcultarFilaTabla('row_cargos',1);
+
 					OcultarOtrosCargos_Checked(1);
 				}
-				
+				//var cmb_tipodocumentosunat=$.trim($('#cmb_tipodocumentosunat').val());			
+				/*
+				if ($("#cbox_exportaciondocumento").is(":checked"))
+				{
+					$('#div_titulodocumento').empty().append('Documento Cliente:');
+					$("#cmb_tipodocumentocliente").prop('disabled', false);
+					$("#txt_razonsocialcliente").prop('disabled', true);	
+					$("#txt_direccioncliente").prop('disabled', true);
+					$('#div_verdatoscliente').empty().append('<a href="javascript:ver_datoscliente()"><img align="center" src="<?php echo base_url();?>application/helpers/image/ico/nc_buscar.png" title="Ver Detalle" width="15"  height="15" border="0" ></a>');	
+										
+					//$("#txt_descuento").prop('disabled', true);
+					
+					//Serie_Documento(cmb_tipodocumentosunat,'','','','');
+					Tipo_Afectacion();						 
+				}
+				else
+				{					
+					$('#div_titulodocumento').empty().append('Documento Cliente:');
+					$("#cmb_tipodocumentocliente").prop('disabled', false);
+					$("#txt_razonsocialcliente").prop('disabled', true);	
+					$("#txt_direccioncliente").prop('disabled', true);
+					$('#div_verdatoscliente').empty().append('<a href="javascript:ver_datoscliente()"><img align="center" src="<?php echo base_url();?>application/helpers/image/ico/nc_buscar.png" title="Ver Detalle" width="15"  height="15" border="0" ></a>');	
+					
+					//$("#txt_descuento").prop('disabled', false);
+					
+					//Serie_Documento(cmb_tipodocumentosunat,'','','','');
+					Tipo_Afectacion();					
+				}*/			
 			}
 			
 			function Seleccionar_TipoDocumento(codigo_tipodoc)
 			{
-				//if (codigo_tipodoc=='')	{
-				//	return;
-				//}
+
+				if (codigo_tipodoc=='')
+				{
+					
+				}
 
 				if ($("#cbox_exportaciondocumento").is(":checked"))
 				{
@@ -3391,217 +3258,24 @@ function Calcular_Montos()
 				}
 			}
 			
-			function OcultarFilaTabla(id,opcion) 
-			{
-				if (!document.getElementById) return false;
-				fila = document.getElementById(id);
-				
-				if (opcion==0)//OCULTA LA FILA
-				{
-					if (fila.style.display != "none") 
-					{
-						fila.style.display = "none"; //ocultar fila
-					}
-				}
-				else
-				{
-					if (fila.style.display == "none") 
-					{
-						fila.style.display = ""; //mostrar fila
-					}
-				}
-			}
-			
-			function OcultarOtrosCargos()
-			{
-				var txt_config_valorprecio=$.trim($('#txt_config_valorprecio').val());
-				if (txt_config_valorprecio==0)
-				{
-					OcultarFilaTabla('row_cargos',1);
-				}else
-				{
-					OcultarFilaTabla('row_cargos',0);
-				}
-			}
-			
 			function OcultarOtrosCargos_Checked(valor)
 			{
 				var txt_config_valorprecio=$.trim($('#txt_config_valorprecio').val());
 				if (txt_config_valorprecio==1)
 				{
-					OcultarFilaTabla('row_cargos',0);
+					alert("algo esta mal xD");
+					//OcultarFilaTabla('row_cargos',0);
 				}else
 				{
-					OcultarFilaTabla('row_cargos',valor);
+					alert("algo esta mal xD");
+					//OcultarFilaTabla('row_cargos',valor);
 				}
 			}
-			
-			function Listar_DatosDocumentoModificar()
+
+			function OcultarFilaPassword(id,opcion) 
 			{
-				var txt_documentomodificar=$.trim($('#txt_documentomodificar').val());
-				var txt_rucempresa=$.trim($('#txt_RucEmpresa').val());
-				if (txt_documentomodificar!='')
-				{
-					$.ajax({
-						url:'<?php echo base_url()?>comprobante/Listar_DatosDocumentoModificar',
-						type: 'post',
-						dataType: 'json',
-						data:
-						{	
-							txt_rucempresa:txt_rucempresa,
-							txt_documentomodificar:txt_documentomodificar
-						},
-						beforeSend:function()
-						{
-						},
-						/*
-						error:function()
-						{
-							alert('Ocurrió un error en la edición de este comprobante.\n Comunicarse con Bizlinks para su revisión');	
-							document.location.href= '<?php echo base_url()?>comprobante';							
-										return;
-									},*/
-									success:function(result)
-									{
-										if(result.status==1)
-										{
-											$("#cmb_tipodocumentosunat").prop('disabled', true);
-											$('#cmb_tipodocumentosunat').val(result.data['tipodocumento']);	
-											var tipodocumentoreferenciaprincip=result.data['tipodocumentoreferenciaprincip']
-											if (tipodocumentoreferenciaprincip=='' &&  result.data['tipodocumento']=='08')
-											{
-												tipodocumentoreferenciaprincip='01';
-											}
-											Serie_Documento(result.data['tipodocumento'],result.data['seriedocumento'],tipodocumentoreferenciaprincip,result.data['codigoserienumeroafectado'],result.data['tipodocumentoadquiriente']);
-								//$('#cmb_seriedocumentosunat').val(result.data['seriedocumento']);	
-								$('#txt_numerodocumentosunat').val(result.data['numerodocumento']);
-								
-								if (result.data['tipodocumentoreferenciaprincip']!='')
-								{
-									$('#txt_numerodocumentoreferencia').val(result.data['numerodocumentoreferenciaprinc']);
-									$('#txt_motivodenotacredito').val(result.data['motivodocumento']);
-								}
-								
-								$('#txt_numerodoccliente').val(result.data['numerodocumentoadquiriente']);
-								$('#txt_razonsocialcliente').val(result.data['razonsocialadquiriente']);
-								$('#txt_correocliente').val(result.data['correoadquiriente']);
-								$('#txt_direccioncliente').val('');
-								$('#cmb_monedadocumento').val(result.data['tipomoneda']);
-								$('#txt_FechaEmision').val(result.data['fechaemision']);
-								
-								
-								//CASO DETRACCION
-								if (result.data['totaldetraccion']!='')
-								{
-									//$('#totaldetraccion').val((result.data['totaldetraccion']);
-									$('#txt_porcentajedetraccion').val(result.data['porcentajedetraccion']);
-									$('#txt_montodetraccion').val(result.data['totaldetraccion']);
-									$('#txt_montodetraccionreferencial').val(result.data['valorreferencialdetraccion']);
-									$('#txt_descripciondetraccion').val(result.data['descripciondetraccion']);
-									$('#txt_leyendadetraccion').val(result.data['textoleyenda_2']);
-									
-								}
-								
-								
-								//CASO PERCEPCION
-								if (result.data['porcentajepercepcion']!='')
-								{
-
-									$('#txt_porcentajepercepcion').val(result.data['porcentajepercepcion']);
-									$('#txt_baseimponiblepercepcion').val(result.data['baseimponiblepercepcion']);
-									$('#txt_totalpercepcion').val(result.data['totalpercepcion']);
-									$('#txt_totalventapercepcion').val(result.data['totalventaconpercepcion']);
-								}
-								if (result.data['descuentosglobales']!='')
-								{
-									$('#txt_descuentoglobal').val(result.data['descuentosglobales']);
-								}
-								else
-								{
-									$('#txt_descuentoglobal').val('');
-								}
-								
-								$('#txt_tipoderegistrodocumento').val(result.data['cod_tipregist'])
-								
-								//SE DEBE TRAER EL CODIGO DEL CLIENTE, SINO CAGAO
-								//Datos_ClienteBusqueda('');
-								Datos_ClienteBusquedaModificar(result.data['tipodocumentoadquiriente'],result.data['numerodocumentoadquiriente'],result.data['razonsocialadquiriente']);
-								
-								
-								ncsistema.Listar_ProductosDocumento();
-								
-								if (result.data['cod_tipregist']==2)
-								{
-									document.getElementsByName('cbox_exportaciondocumento')[0].checked=true;
-								}
-								else if (result.data['cod_tipregist']==3)
-								{
-									document.getElementsByName('cbox_opergratisdocumento')[0].checked=true;
-								}
-
-								if (result.data['codigoserienumeroafectado']=='03' &&  result.data['tipodocumento']=='08')
-								{
-									$('#div_tipodocumentoreferencia').empty().append('');
-									newHtml='';
-									newHtml+='<select id="cmb_tipodocumentoreferencia" style="width:95%;height:25px" >';
-									newHtml+='<option value="-">-</option>';
-									newHtml+='</select>';		
-									$('#div_tipodocumentoreferencia').empty().append(newHtml);
-									$("#cmb_tipodocumentoreferencia").prop('disabled', true);
-									
-									$("#txt_numerodocumentoreferencia").prop('disabled', true);
-									//$("#cmb_tiponotadecredito").prop('disabled', true);
-									
-								}
-								//alert(result.data['primera_fecha']);
-								//alert(result.data['ultima_fecha']);
-								$('#txt_FechaEmision') .datepicker('option', 'minDate', result.data['primera_fecha']) .datepicker('refresh'); 
-								$('#txt_FechaEmision') .datepicker('option', 'maxDate', result.data['ultima_fecha']) .datepicker('refresh'); 
-								
-								$('#txt_modificarregistro').val(1);
-								
-								Tipo_Afectacion();	
-
-								return;
-							}else 
-							if (result.status==1000)
-							{
-								document.location.href= '<?php echo base_url()?>usuario';
-								return;
-							}
-							else
-							{
-									/*
-									$('#txt_emisornombrecomercial').val(rs.nom_comercial);
-									$('#txt_emisorcorreo').val(rs.correo_usuario);
-									$('#txt_emisorpais').val(rs.nomb_pais);
-									$('#txt_emisorpaiscodigo').val(rs.cod_pais);
-									$('#txt_emisorubigeo').val(rs.cod_ubigeo);
-									$('#txt_emisordepartamento').val(rs.nomb_depa);
-									$('#txt_emisorprovincia').val(rs.nomb_prov);
-									$('#txt_emisordistrito').val(rs.nomb_dist);
-									$('#txt_emisorrubanizacion').val(rs.urbaniz_empresa);
-									$('#txt_emisordireccion').val(rs.direcc_empresa);
-									*/
-									alert('Error Entendible');								
-									return;
-								}
-								if (result.status==3)
-								{
-									alert('Error Entendible');								
-									return;
-								}
-							}
-
-						});
-}
-
-}
-
-function OcultarFilaPassword(id,opcion) 
-{
-	if (!document.getElementById) return false;
-	fila = document.getElementById(id);
+				if (!document.getElementById) return false;
+				fila = document.getElementById(id);
 
 				if (opcion==0)//OCULTA LA FILA
 				{
@@ -3619,44 +3293,7 @@ function OcultarFilaPassword(id,opcion)
 				}
 			}
 			
-			function NumCheck(e, field) {
-				key = e.keyCode ? e.keyCode : e.which
-				// backspace
-				if (key == 8 || key == 9 || key == 35 || key == 36 || key == 37 || key == 39) return true
-			 	//if (key == 9) return true
-				// 0-9 a partir del .decimal  
-				if (field.value != "") {
-					if ((field.value.indexOf(".")) > 0) {
-						//si tiene un punto valida dos digitos en la parte decimal
-						if (key > 47 && key < 58) {
-							if (field.value == "") return true
-							//regexp = /[0-9]{1,10}[\.][0-9]{1,3}$/
-						var txt_config_valorprecio=$.trim($('#txt_config_valorprecio').val());
-						if (txt_config_valorprecio==0){
-							regexp = /[0-9]{10}$/
-						}else
-						{
-							regexp = /[0-9]{2}$/
-						}
-						return !(regexp.test(field.value))
-					}
-				}
-			}
-				// 0-9 
-				if (key > 47 && key < 58) {
-					if (field.value == "") return true
-						regexp = /[0-9]{10}/
-					return !(regexp.test(field.value))
-				}
-				// .
-				if (key == 46) {
-					if (field.value == "") return false
-						regexp = /^[0-9]+$/
-					return regexp.test(field.value)
-				}
-				// other key
-				return false
-			}
+			
 			
 		</script>
 		
@@ -3680,22 +3317,51 @@ function OcultarFilaPassword(id,opcion)
 		
 		<div id="tabs" style="width:99.7%;float:left;text-align:center;margin-top:5px">
 			<ul>
-				<li><a href="#tabs-1">REGISTRO DE COMPROBANTES</a></li>
+				<li><a href="#tabs-1">REGISTRO RETENCIONES</a></li>
 			</ul>
 			<div id="tabs-1" style="width:95%;float:left">
 				<div id="div_datosempresa" style="width:100%; float:left; margin-top:10px; border: 1px solid #a6c9e2; border-radius:5px;">
-					<input type="hidden" id="txt_documentomodificar" value="<?php echo $documentomodificar;?>"  />
 					<input type="hidden" id="txt_tipoderegistrodocumento" value="0"  />					
 					<input type="hidden" id="txt_valorigv" value="<?php echo $valor_igv;?>"  />
 					<input type="hidden" id="txt_valorotroscargos" value="<?php echo $valor_otroscargos;?>"  />
 					<input type="hidden" id="txt_modificarregistro" value="0"  />
 					<input type="hidden" id="txt_config_valorprecio" value="<?php echo $Config_ValorPrecio;?>"  />
-					<input type="hidden" id="txt_dato_adicional_condicion" value="0"  />
+					
 					<table border="0" width="80%" style="border-collapse:separate; border-spacing:1px 1px;" cellpadding="3" class="tablaFormulario">
 						<tr><td><label class="columna"></label></td></tr>
 						<tr>
+							<td style="text-align:right;width:12%" ><label class="columna">Serie:</label></td>
+							<td>
+								<table>
+									<tr>
+										<td style="text-align:left;width:15%">
+											<div id="div_seriedocumento">
+												<select id="cmb_seriedocumentosunat" style="width:100%;height:25px" onChange="javascript:Numero_Documento(this.value)">
+													<option value="0">[SELECCIONAR]</option>
+												</select>
+											</div>
+										</td>
+
+										<td style="text-align:right;width:12%" ><label class="columna">Numero:</label></td>
+										<td style="text-align:left;width:15%">
+											<input style="width:96%" id="txt_correlativodocumento" type="text" value="-" disabled="disabled">
+										</td>
+									</tr>
+								</table>
+							</td>
+							<td style="text-align:right;width:20%"><label class="columna">Fec. Emisión:</label></td>
+							<td style="text-align:left;width:6%">
+								<input id="txt_FechaEmision" disabled="disabled" type="text" value="" style="width:70px"/>
+							</td>
+							<td style="text-align:right;width:10%" >
+								<label class="columna">Tasa (%): </label>
+								<input style="width:35%" type="text" id="txt_tasa" value="3.00"  disabled="disabled" />
+							</td>
+						</tr>
+
+						<tr>
 							<td style="text-align:right;width:12%" ><label class="columna">Ruc Proveedor:</label></td>
-							<td style="text-align:left;width:15%"><input style="width:90%" type="text" id="txt_RucEmpresa" value="<?php echo trim(utf8_decode($Ruc_Empresa));?>"  disabled="disabled" /></td>
+							<td style="text-align:left;width:15%"><input style="width:98%" type="text" id="txt_RucEmpresa" value="<?php echo trim(utf8_decode($Ruc_Empresa));?>"  disabled="disabled" /></td>
 							<td style="text-align:right;width:17%"><label class="columna">Razón Social Proveedor:</label></td>
 							<td style="text-align:left;width:46%; vertical-align:top" colspan="2" >
 								<input style="width:98%" type="text" id="txt_RazonSocialEmpresa" value="<?php echo trim(utf8_decode($Razon_Social));?>"
@@ -3713,304 +3379,119 @@ function OcultarFilaPassword(id,opcion)
 							</td>
 						</tr>
 						<tr>
-							<td style="text-align:right"><label class="columna">Tipo Documento:</label></td>
-							<td style="text-align:left">
-								<select id="cmb_tipodocumentosunat" style="width:95%;height:25px" onChange="javascript:Serie_Documento(this.value,'','','','')" >
-									<option value="0">[SELECCIONAR]</option>
-									<?php foreach ( $Listar_TipodeDocumento as $v):	?>
-										<option value="<?php echo trim($v['co_item_tabla']); ?>"><?php echo trim(utf8_decode($v['no_corto']));?> </option>
-									<?php  endforeach; ?>
-								</select>
+							<td style="text-align:right" class="columna"><div id="div_titulodocumento">Documento Cliente:</div></td>
+
+							<td style="width:25%;text-align:left">
+								<input style="width:98%" id="txt_numerodoccliente" type="text" value="" disabled="disabled" width="95%" >
 							</td>
-							<td style="text-align:right"><label class="columna">Serie:</label></td>
-							<td style="text-align:left" colspan="3">
-								<table width="100%" border="0">
-									<tr>
-										<td style="width:20%">
-											<div id="div_seriedocumento">
-												<select id="cmb_seriedocumentosunat" style="height:25px" >
-													<option value="0">[SELECCIONAR]</option>
-												</select>
-											</div>
-										</td>
-										<td style="text-align:right;width:7%"><label class="columna">Número:</label></td>
-										<td style="width:14%">
-											<input style="width:100%;text-align:center" type="text" id="txt_numerodocumentosunat" disabled="disabled" value="" >
-										</td>
-										<td style="text-align:right;width:20%"><label class="columna">Fec. Emisión:</label></td>
-										<td style="text-align:left;width:39%">
-											<input id="txt_FechaEmision" disabled="disabled" type="text" value="" style="width:70px"/>
-										</td>
-										
-									</tr>
-								</table>
-							</td>
-						</tr>
-						<tr id="row3">
-							<td style="text-align:right"><label class="columna">Tipo Doc.Refer.:</label></td>
-							<td style="text-align:left">
-								<div id="div_tipodocumentoreferencia">
-									<select id="cmb_tipodocumentoreferencia" style="width:95%;height:25px" >
-										<option value="">[SELECCIONAR]</option>
-									</select>
-								</div>
-							</td>
-							<td style="text-align:right"><label class="columna"><div id="div_etiquetedocumentoreferencia">Factura Referenciada:</div></label></td>
+
+							<td style="text-align:right"><label class="columna"><div id="div_catalogonombcliente">Razón Social Cliente:</div></label></td>
 							<td style="text-align:left" colspan="2">
-								<table width="100%" border="0">
-									<tr>
-										<td style="width:25%">
-											<input id="txt_numerodocumentoreferencia" style="text-transform:uppercase" type="text" value="" maxlength="13" style="width:95%;" />
-										</td>
-										<td style="text-align:right;width:35%" >
-											<label class="columna"><div id="div_etiquetetipodenota">Tipo Nota de Crédito:</div></label></td>
-											<td style="width:40%;text-align:left"  >
-												<div id="div_tiponotadecredito">
-													<select id="cmb_tiponotadecredito" style="width:100%;height:25px" 
-													onChange="javascript:Seleccionar_Tiponotadebito(this.value)">
-													<option value="">[SELECCIONAR]</option>
-												</select>											
-											</div>
-										</td>
-										
-									</tr>
-								</table>
+								<input id="txt_razonsocialcliente" type="text" value="" style="width:98%;" >
 							</td>
-						</tr>
-						<tr id="row4">
-							<td style="text-align:right"><label class="columna">Motivo del Doc.:</label></td>
-							<td style="text-align:left" colspan="3">
-								<input id="txt_motivodenotacredito" type="text" value="" style="width:80%" >
+							<td align="left" style="text-align:left;width:5%; vertical-align:middle" >
+								<div id="div_verdatoscliente">
+									<a href="javascript:ver_datoscliente()">
+										<img align="center" src="<?php echo base_url();?>application/helpers/image/ico/nc_buscar.png" title="Ver Detalle" width="15"  height="15" border="0" >	
+									</a>
+								</div>
 							</td>
 						</tr>
 						<tr>
-							<td style="text-align:right"><label class="columna">Tipo Doc.Cliente:</label></td>
+							<td style="text-align:right"><label class="columna">Correo Cliente:</label></td>
 							<td style="text-align:left">
-								<div id="div_tipodocumentocliente">
-									<select id="cmb_tipodocumentocliente" style="width:95%;height:25px" >
-										<option value="">[SELECCIONAR]</option>
-										<!--<option value="6">RUC</option>
-										<option value="1">DNI</option>-->
-									</select>
+								<input id="txt_correocliente" type="text" value="" style="width:98%;">
+							</td>
+							<td style="text-align:right"><label class="columna">Dirección Cliente:</label></td>
+							<td style="text-align:left" colspan="2">
+								<input id="txt_direccioncliente" type="text" value="" disabled="disabled" style="width:98%;">
+							</td>
+						</tr>
+						<tr>
+							<td style="text-align: right; bottom: 3em; position: relative;"><label class="columna">Observación: </label></td>
+							<td style="text-align:left;">
+								<textarea id="txt_observacion" type="text" value="" style="width:98%;" ></textarea>
+							</td>
+						</tr>
+						<tr>
+							<td style="text-align:right" colspan="2" >
+								<button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
+								style="width:160px; height:30px" id="create-aditional" title="" >
+								<span class="ui-button-icon-left ui-icon ui-icon-newwin"></span>
+								<span class="ui-button-icon-left ui-icon ui-icon-document"></span>Datos Adicionales</button>
+							</td>
+							<td style="text-align:left" colspan="3">
+								<div style="width:100%;height:15px;border:solid 0px;margin-left:4px;margin-right:20px;margin-top:0px;text-align:center;float:left">
+									<div id="div_MensajeValidacionEmpresa" style="width:100%;float:left;font-size:9px; color:#FF0000"></div>
 								</div>
 							</td>
-							<td style="text-align:right"><label class="columna"><div id="div_catalogonombcliente">Razón Social Cliente:</div></label></td>
-							<td style="text-align:left" colspan="2">
-								<table width="100%" border="0">
+						</tr>				
+					</table>	
+				</div> 
+				<div id="div_ListadoEmpresa" style="width:100%;border:solid 0px;float:left;text-align:center;margin-top:1px">
+				</div>	
+				<div id="div_datosdevalidacion" style="width:100%; float:left; margin-top:2px; border: 1px solid #a6c9e2; border-radius:5px;">
+					<table border="0" width="100%" class="tablaFormulario" >						
+						<tr valign="top">
+							<td style="text-align:left;width:70%" valign="top">							
+								<table border="0" width="100%" >		
 									<tr>
-										<td style="width:40%">
-											<input id="txt_razonsocialcliente" type="text" value="" style="width:90%;" >
-										</td>
-										<td align="left" style="text-align:left;width:5%; vertical-align:middle" >
-											<div id="div_verdatoscliente">
-												<a href="javascript:ver_datoscliente()">
-													<img align="center" src="<?php echo base_url();?>application/helpers/image/ico/nc_buscar.png" title="Ver Detalle" width="15"  height="15" border="0" >	
-												</a>
-											</div>
-										</td>
-										<td style="text-align:right;width:30%">
-											<label class="columna"><div id="div_titulodocumento">Documento Cliente:</div></label></td>
-											<td style="width:25%">
-												<input id="txt_numerodoccliente" type="text" value="" disabled="disabled" width="95%" >
-											</td>
-										</tr>
-									</table>
-								</td>
-							</tr>
-							<tr>
-								<td style="text-align:right"><label class="columna">Correo Cliente:</label></td>
-								<td style="text-align:left">
-									<input id="txt_correocliente" type="text" value="" style="width:90%;">
-								</td>
-								<td style="text-align:right"><label class="columna">Dirección Cliente:</label></td>
-								<td style="text-align:left" colspan="2">
-									<input id="txt_direccioncliente" type="text" value="" disabled="disabled" style="width:98%;">
-								</td>
-							</tr>
-							<tr>
-								<td style="text-align:right"><label class="columna">Moneda:</label></td>
-								<td style="text-align:left">
-									<select id="cmb_monedadocumento" style="width:95%;height:25px" >
-										<option value="PEN">SOLES</option>
-										<option value="USD">DOLAR</option>
-									</select>
-								</td>
-								<td style="text-align:right"></td><!--<label class="columna">Tipo de Operación:</label>-->
-								<td style="text-align:left" colspan="2">
-									<table width="100%" border="0">
-										<tr>
-											<td style="text-align:right;width:40%;vertical-align:middle">
-												<label class="columna"><div id="div_etiqueteexportacion">Exportación:</div></label>
-											</td>
-											<td style="width:10%">
-												<div id="div_checkexportacion">
-													<input id="cbox_exportaciondocumento" type="checkbox" value="" name="cbox_exportaciondocumento" onClick="javascript:Seleccionar_CheckExportacion()" >
-												</div>
-											</td>
-											<td style="text-align:right;width:40%;vertical-align:middle">
-												<label class="columna">Operaciones Gratuitas:</label></td>
-												<td style="width:10%">
-													<input id="cbox_opergratisdocumento" type="checkbox" value="" name="cbox_opergratisdocumento" onClick="javascript:Seleccionar_CheckOperacionGratuitas()">
-												</td>
+										<td style="text-align:left;width:65%" >							
+											<button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
+											style="width:160px; height:30px" id="create-user" title="" >
+											<span class="ui-button-icon-left ui-icon ui-icon-document"></span>Nuevo Producto</button>	
+										</td>										
+									</tr>
+									<tr>
+										<td style="text-align:left;height:110px" >							
 
-											</tr>
-										</table>
-									</td>
-								</tr>
-								<tr>
-									<td style="text-align:right" colspan="2" >
-										<button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
-										style="width:160px; height:30px" id="create-aditional" title="" >
-										<span class="ui-button-icon-left ui-icon ui-icon-newwin"></span>
-										<span class="ui-button-icon-left ui-icon ui-icon-document"></span>Datos Adicionales</button>
-									</td>
-									<td style="text-align:left" colspan="3">
-										<div style="width:100%;height:15px;border:solid 0px;margin-left:4px;margin-right:20px;margin-top:0px;text-align:center;float:left">
-											<div id="div_MensajeValidacionEmpresa" style="width:100%;float:left;font-size:9px; color:#FF0000"></div>
-										</div>
-									</td>
-								</tr>			
-							</table>	
-						</div> 
-						<div id="div_ListadoEmpresa" style="width:100%;border:solid 0px;float:left;text-align:center;margin-top:1px">
-						</div>	
-						<div id="div_datosdevalidacion" style="width:100%; float:left; margin-top:2px; border: 1px solid #a6c9e2; border-radius:5px;">
-							<table border="0" width="100%" class="tablaFormulario" >						
-								<tr valign="top">
-									<td style="text-align:left;width:70%" valign="top">							
-										<table border="0" width="100%" >		
-											<tr>
-												<td style="text-align:left;width:65%" >							
-													<button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
-													style="width:160px; height:30px" id="create-user" title="" >
-													<span class="ui-button-icon-left ui-icon ui-icon-document"></span>Nuevo Producto</button>	
-												</td>										
-											</tr>
-											<tr>
-												<td style="text-align:left;height:110px" >							
+										</td>										
+									</tr>
+								</table>
 
-												</td>										
-											</tr>
-											<tr id="row1">
-												<td  style="text-align:left">
-													<button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
-													style="width:160px; height:30px" id="create-detraccion" title="" >
-													<span class="ui-button-icon-left ui-icon ui-icon-plusthick"></span>Ingresar Detracción</button>
-												</td>												
-											</tr>
-											<tr>
-												<td style="text-align:left">
-													<button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
-													style="width:160px; height:30px" id="create-percepcion" title="" >
-													<span class="ui-button-icon-left ui-icon ui-icon-plusthick"></span>Ingresar Percepción</button>
-												</td>												
-											</tr>
-											<tr id="row_cargos">
-												<td style="text-align:left">												
-													<button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
-													style="width:160px; height:30px" id="create-otros-cargos" title="" >
-													<span class="ui-button-icon-left ui-icon ui-icon-plusthick"></span>Ingresar Otro Cargo</button>
-												</td>												
-											</tr>
-										</table>
-
-									</td>
-									<td style="text-align:right;width:30%" valign="top">
-										<table width="100%" border="0" >
-											<tr>							
-												<td style="text-align:right;width:20%">Operación Gravadas :</td>
-												<td style="text-align:right;width:15%" >
-													<input type="text" id="txt_operaciongravadas" value="0.00" disabled="disabled" style="width:80%;text-align:right" >
-												</td>			
-											</tr>
-											<tr>
-												<td style="text-align:right">Operación Inafectos :</td>
-												<td style="text-align:right" >
-													<input type="text" id="txt_operacioninafectos" value="0.00" disabled="disabled" style="width:80%;text-align:right">
-												</td>					
-											</tr>
-											<tr>
-												<td style="text-align:right">Operación Exportacion :</td>
-												<td style="text-align:right" >
-													<input type="text" id="txt_operacionexportacion" value="0.00" disabled="disabled" style="width:80%;text-align:right">
-												</td>
-											</tr>
-											<tr>
-												<td style="text-align:right">Operación Exoneradas :</td>
-												<td style="text-align:right" >
-													<input type="text" id="txt_operacionexoneradas" value="0.00" disabled="disabled" style="width:80%;text-align:right">
-												</td>
-											</tr>
-											<tr>
-												<td style="text-align:right">Operación Gratuitas :</td>
-												<td style="text-align:right" >
-													<input type="text" id="txt_operaciongratuitas" value="0.00" disabled="disabled" style="width:80%;text-align:right">
-												</td>
-											</tr>
-											<tr>
-												<td style="text-align:right">Descuentos :</td>
-												<td style="text-align:right" >
-													<input type="text" id="txt_descuentototal" value="0.00" disabled="disabled" style="width:80%;text-align:right">
-												</td>	
-											</tr>
-											<tr>
-												<td style="text-align:right">I.S.C 0% :</td>
-												<td style="text-align:right" >
-													<input type="text" id="txt_isctotal" value="0.00" disabled="disabled" style="width:80%;text-align:right">
-												</td>
-											</tr>
-											<tr>
-												<td style="text-align:right">IGV <?php echo $valor_igv;?>% :</td>
-												<td style="text-align:right" >
-													<input type="text" id="txt_igvtotal" value="0.00" disabled="disabled" style="width:80%;text-align:right">
-												</td>
-											</tr>
-											<tr>
-												<td style="text-align:right">Otros Cargos :</td>
-												<td style="text-align:right" >
-													<input type="text" id="txt_otroscargos" value="0.00" disabled="disabled" style="width:80%;text-align:right">
-												</td>
-											</tr>
-											<tr>
-												<td style="text-align:right">Importe Total :</td>
-												<td style="text-align:right" >
-													<input type="text" id="txt_importetotal" value="0.00" disabled="disabled" style="width:80%;text-align:right">
-												</td>	
-											</tr>
-											<tr>
-												<td style="text-align:right">Descuento Global :</td>
-												<td style="text-align:right" >
-													<input type="text" id="txt_descuentoglobal" value=""  style="width:80%;text-align:right">
-												</td>	
-											</tr>
-										</table>
-									</td>			
-								</tr>
-							</table>
-						</div>
-						<div id="div_datosdevalidacion" style="width:100%; float:left; margin-top:2px; border: 1px solid #a6c9e2; border-radius:5px;">
-							<table border="0" width="100%" class="tablaFormulario">
-								<tr>
-									<td style="text-align:left;width:10%">
-										<button style="width:155; height:32px" id="btn_RegistrarDatosdelDocumentoGuardar" title=""
-										class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
-										onClick="ncsistema.Guardar_Einvoiceheader(0)">
-										<span class="ui-button-icon-left ui-icon ui-icon-disk"></span>
-										<span class="ui-button-text">Guardar</span></button>
-									</td>
-									<td style="text-align:left;width:90%">
-										<button style="width:155px; height:32px" id="btn_RegistrarDatosdelDocumento" title="" 
-										class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"
-										onClick="ncsistema.Guardar_Einvoiceheader(1)">
-										<span class="ui-button-icon-left ui-icon ui-icon-transfer-e-w"></span>
-										<span class="ui-button-text"><div id="div_nombrebotonguardar">Enviar y Declarar</div></span></button>
-									</td>
-								</tr>
-							</table>
-						</div>
-					</div>
-
+							</td>
+							<td style="text-align:right;width:30%" valign="top">
+								<table width="100%" border="0" >
+									<tr>							
+										<td style="text-align:right;width:20%">Importe Total Retenido S./</td>
+										<td style="text-align:right;width:15%" >
+											<input type="text" id="txt_importe_retenido_footer" value="0.00" disabled="disabled" style="width:80%;text-align:right" >
+										</td>			
+									</tr>
+									<tr>
+										<td style="text-align:right">Importe Total a Pagar S./</td>
+										<td style="text-align:right">
+											<input type="text" id="txt_importetotal_pagar_footer" value="0.00" disabled="disabled" style="width:80%;text-align:right">
+										</td>					
+									</tr>
+								</table>
+							</td>			
+						</tr>
+					</table>
 				</div>
+				<div id="div_footer" style="width:100%; float:left; margin-top:2px; border: 1px solid #a6c9e2; border-radius:5px;">
+					<table border="0" width="100%" class="tablaFormulario">
+						<tr>
+							<td style="text-align:left;width:10%">
+								<button style="width:155; height:32px" id="btn_RegistrarDatosdelDocumentoGuardar" title=""
+								class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
+								onClick="ncsistema.Guardar_Einvoiceheader(0)">
+								<span class="ui-button-icon-left ui-icon ui-icon-disk"></span>
+								<span class="ui-button-text">Guardar</span></button>
+							</td>
+							<td style="text-align:left;width:90%">
+								<button style="width:155px; height:32px" id="btn_RegistrarDatosdelDocumento" title="" 
+								class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"
+								onClick="ncsistema.Guardar_Einvoiceheader(1)">
+								<span class="ui-button-icon-left ui-icon ui-icon-transfer-e-w"></span>
+								<span class="ui-button-text"><div id="div_nombrebotonguardar">Enviar y Declarar</div></span></button>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+
+		</div>
 		<!--
 		<div>
 			<?php $this->load->view('inicio/footer'); ?> 
@@ -4019,269 +3500,179 @@ function OcultarFilaPassword(id,opcion)
 	<div id="dialog-form" title="Crear un Nuevo ITEM">
 		<!--<p class="validateTips">All form fields are required.</p>-->
 		<input type="hidden" id="numeroitem" value="0" >
+		<input type="hidden" id="txt_moneda_final" value="" >
 		<form>
 			<table width="100%" border="0px">
 				<tr>
-					<td style="width:20%;font-weight:bold">
+					<td style="width:50%;font-weight:bold">
 						N° Item:
+					</td>
+					<td style="width:50%" colspan="4">
+						<input type="text" name="txt_numeroitem" id="txt_numeroitem" value="1" disabled="disabled" class="">
+					</td>
+				</tr>
+				<tr>
+					<td style="width:50%;font-weight:bold">
+						Tipo Doc.Relacionado :
 					</td >
-					<td style="width:80%" colspan="4">
-						<table width="100%" border="0" style="border-collapse:separate; border-spacing:0px 0px;">
+					<td style="width:50%;" colspan="4">
+						<select id="cmb_tipodocumentosunat" style="" onChange="" >
+							<option value="0">[SELECCIONAR]</option>
+							<?php foreach ( $Listar_TipodeDocumento as $v):	?>
+								<option value="<?php echo trim($v['co_item_tabla']); ?>"><?php echo trim(utf8_decode($v['no_corto']));?> </option>
+							<?php  endforeach; ?>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td style="width:50%;font-weight:bold">
+						Numero Documento Relacionado :
+					</td >
+					<td style="width:50%" colspan="4">
+						<input type="text" name="txt_numero_relacionado" id="txt_numero_relacionado" class="" maxlength="13" onChange="javascript:Numero_Pago_Ret(this.value)" >
+					</td>
+				</tr>
+				<tr>
+					<td style="width:50%;font-weight:bold">
+						Fecha Emision Doc.Relacionado :
+					</td >
+					<td style="width:50%" colspan="4">
+						<table border="0" style="border-collapse:separate; border-spacing:0px 0px;">
 							<tr>
-								<td width="10%">
-									<input type="text" name="txt_numeroitem" id="txt_numeroitem" value="1" disabled="disabled" class="">
-								</td>
-								<td width="90%">
+								<td>
+									<input id="txt_FechaEmision_Relacionado" type="text" value="" disabled="disa" />
 								</td>
 							</tr>
 						</table>
 					</td>
 				</tr>
 				<tr>
-					<td style="width:20%;font-weight:bold">
-						Código:
+					<td style="width:50%;font-weight:bold">
+						Importe Total Doc.Relacionado :
+					</td >
+					<td style="width:50%" colspan="4">
+						<input type="text" name="txt_importe_total_relacionado" id="txt_importe_total_relacionado" value="" placeholder="0.00" class="">
 					</td>
-					<td style="width:30%">
-						<table width="100%" style="border-collapse:separate; border-spacing:0px 0px;">
+				</tr>
+				<tr>
+					<td style="width:50%;font-weight:bold">
+						Moneda Doc.Relacionado :
+					</td >
+					<td style="width:50%;" colspan="4">
+						<select id="cmb_Monedas" style="" onChange="javascript:Moneda_Relacionado(this.value)" >
+							<option value="0">[SELECCIONAR]</option>
+							<?php foreach ( $Listar_Monedas as $v):	?>
+								<option value="<?php echo trim($v['codigo']); ?>"><?php echo trim(utf8_decode($v['nombre']));?></option>
+							<?php  endforeach; ?>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td style="width:50%;font-weight:bold">
+						Fecha De Pago :
+					</td >
+					<td style="width:50%" colspan="4">
+						<table border="0" style="border-collapse:separate; border-spacing:0px 0px;">
 							<tr>
-								<td width="40%">
-									<input type="text" name="txt_codigoprod" id="txt_codigoprod" value="-"  width="100%" class="">
-									<input type="hidden" name="txt_idprod" id="txt_idprod" disabled="disabled" >
-								</td>
-								<td style="text-align:left;vertical-align:middle">
-									<a href="javascript:ver_filtro_producto()">
-										<img align="center" src="<?php echo base_url();?>application/helpers/image/ico/buscar.png" 
-										title="Buscar Producto" width="20" height="20"  border="0" >	
-									</a>
+								<td>
+									<input id="txt_FechaPago" type="text" value="" onChange="" disabled="disabled"/>
 								</td>
 							</tr>
 						</table>
 					</td>
-					<td width="20%" style="font-weight:bold; text-align:right">
-						Unid. Medida:
+				</tr>
+				<tr>
+					<td style="width:50%;font-weight:bold">
+						Numero de Pago :
+					</td >
+					<td style="width:50%" colspan="4">
+						<input name="txt_numero_pago" id="txt_numero_pago" placeholder="0" type="text" disabled="disabled" value="1">
 					</td>
-					<td width="30%">
-						<table width="100%" border="0" style="border-spacing:0px 0px;">
+				</tr>
+				<tr>
+					<td style="width:50%;font-weight:bold">
+						Importe Pago Sin Retencion :
+					</td >
+					<td style="width:50%" colspan="4">
+						<input name="txt_importepago_sin_retencion" id="txt_importepago_sin_retencion" placeholder="0.00" type="text" onchange="javascript:validaMonto(this.value)">
+					</td>
+				</tr>
+				<tr>
+					<td style="width:50%;font-weight:bold">
+						Moneda Pago :
+					</td >
+					<td style="width:50%;" colspan="4">
+						<input name="txt_moneda_pago" id="txt_moneda_pago" type="text" disabled="disabled">
+					</td>
+				</tr>
+				<tr>
+					<td style="width:50%;font-weight:bold">
+						Importe Total Retenido :
+					</td >
+					<td style="width:50%" colspan="4">
+						<input name="txt_importe_retenido" id="txt_importe_retenido" placeholder="0.00" type="text" disabled="disabled">
+					</td>
+				</tr>
+				<tr>
+					<td style="width:50%;font-weight:bold">
+						Fecha De Retencion:
+					</td >
+					<td style="width:50%" colspan="4">
+						<table border="0" style="border-collapse:separate; border-spacing:0px 0px;">
 							<tr>
-								<td width="100%">
-									<select id="cmb_unidadmedida" style="width:97%;height:25px" >
-										<option value="">SELECCIONAR</option>							
-										<?php foreach ( $Listar_Unidades as $v):	?>
-											<option value="<?php echo trim($v['codigo_unidad']); ?>"><?php echo trim(utf8_decode($v['nombre_unidad']));?> </option>
-										<?php  endforeach; ?>
-									</select>
-								</td>
-							</tr>
-						</table>
-					</td>			
-				</tr>
-				<tr>
-					<td style="font-weight:bold; vertical-align:top">
-						Descripción:
-					</td>
-					<td colspan="4">
-						<textarea id="txt_descripcion" style="width: 98%; height: 50px;text-transform:uppercase" placeholder="Máximo 250 caracteres" maxlength="250" name="txt_ubicacion"></textarea>
-					</td>
-				</tr>
-				<tr>
-					<td style="font-weight:bold">
-						Tipo Afectación:
-					</td>
-					<td colspan="4">
-						<div id="div_tipoafectacion">
-							<select id="cmb_tipoafectacion" style="width:100%;height:25px" onChange="javascript:Calcular_Montos()" >
-								<option value="">SELECCIONAR</option>
-							</select>
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<td style="font-weight:bold">
-						Cantidad:
-					</td>
-					<td>
-						<table width="100%" border="0" style="border-spacing:0px 0px;">
-							<tr>
-								<td width="40%">
-									<input style="text-align:right" type="text" name="txt_cantidad" id="txt_cantidad" onKeyPress="return NumCheck(event, this);" onBlur="javascript:Calcular_Montos()">
-								</td>
-								<td >
+								<td>
+									<input id="txt_fechaRetencion" type="text" value="" disabled="disabled"/>
 								</td>
 							</tr>
 						</table>
 					</td>
+				</tr>
+				<tr>
+					<td style="width:50%;font-weight:bold">
+						Importe Total Pagar Neto:
+					</td>
+					<td style="width:50%" colspan="4">
+						<input name="txt_importetotal_pagar" id="txt_importetotal_pagar" placeholder="0.00" type="text" disabled="disabled">
+					</td>
+				</tr>
+				<tr>
+					<table id="txt_item_hidden" style="margin-top:3%;border: 1px solid #a6c9e2;" hidden="">
+						<tr>
+							<td style="width:50%;font-weight:bold">
+								Moneda Referencia Tipo Cambio :
+							</td >
+							<td style="width:50%" colspan="4">
+								<input style="margin-left: 13px" name="txt_moneda_referencia" id="txt_moneda_referencia" placeholder="Sol" type="text" disabled="disabled">
+							</td>
+						</tr>
+						<tr>
+							<td style="width:50%;font-weight:bold">
+								Factor Tipo Cambio Moneda:
+							</td >
+							<td style="width:50%" colspan="4">
+								<input style="margin-left: 13px" name="txt_tipo_cambio" id="txt_tipo_cambio" placeholder="0.00" value="3.1400" type="text">
+							</td>
+						</tr>
+						<tr>
+							<td style="width:50%;font-weight:bold">
+								Fecha Cambio:
+							</td >
+							<td style="width:50%" colspan="4">
+								<table border="0" style="border-collapse:separate; border-spacing:0px 0px;">
+									<tr>
+										<td>
+											<input style="margin-left: 13px" id="txt_fechaCambio" type="text" value="" disabled="disabled"/>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
 				</tr>
 				<tr>
 					<td> <label class="columna"></label>
 					</td>
 					<td> 
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2" style="vertical-align:top">
-						<div id="div_sinIGV" style="width:100%; float:left; margin-top:0px; border: 1px solid #a6c9e2; border-radius:3px;">
-							<table>
-								<tr>
-									<td style="font-weight:bold" width="45%">
-										Valor Unitario:
-									</td>
-									<td  width="55%">
-										<table width="100%" border="0" style="border-spacing:0px 0px;">
-											<tr>
-												<td width="40%">
-													<input type="text" name="txt_valorunitario" id="txt_valorunitario" onKeyPress="return NumCheck(event, this);" style="text-align:right" onBlur="javascript:Calcular_Montos()">
-												</td>
-												<td >
-												</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-								<tr height="100%"><td colspan="2" >
-									<input type="text" name="space1" id="space1" style="width:0; visibility:hidden"  ></td>
-								</tr>
-								<tr>
-									<td style="font-weight:bold">
-										Descuento:
-									</td>
-									<td>
-										<table width="100%" border="0" style="border-spacing:0px 0px;">
-											<tr>
-												<td width="40%">
-													<input type="text" name="txt_descuento" id="txt_descuento" onKeyPress="return NumCheck(event, this);" style="text-align:right" onBlur="javascript:Calcular_Montos()">
-												</td>
-												<td >
-												</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-								<tr>
-									<td style="font-weight:bold">
-										ISC:
-									</td>
-									<td>
-										<table width="100%" border="0" style=" border-spacing:0px 0px;">
-											<tr>
-												<td width="40%">
-													<input type="text" name="txt_isc" id="txt_isc" disabled="disabled" style="text-align:right">
-												</td>
-												<td >
-												</td>
-											</tr>
-										</table>						
-									</td>
-								</tr>
-								<tr>
-									<td style="font-weight:bold">
-										IGV:
-									</td>
-									<td>
-										<table width="100%" border="0" style=" border-spacing:0px 0px;">
-											<tr>
-												<td width="40%">
-													<input type="text" name="txt_igv" id="txt_igv" disabled="disabled" class="" style="text-align:right">
-												</td>
-												<td ><div id="div_mensajereferencia"></div>
-												</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-								<tr>
-									<td style="font-weight:bold">
-										Valor Total:
-									</td>
-									<td>
-										<table width="100%" border="0" style=" border-spacing:0px 0px;">
-											<tr>
-												<td width="40%">
-													<input type="text" name="txt_valortotal" id="txt_valortotal" disabled="disabled" class="" style="text-align:right">
-												</td>
-												<td >
-												</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-							</table>
-						</div>
-					</td>
-					<td colspan="2" style="vertical-align:top">
-						<div id="div_sinIGV" style="width:100%; float:left; margin-top:0px; border: 1px solid #a6c9e2; border-radius:3px;">
-							<table border="0px" style="height: 100%;">
-								<tr>
-									<td style="font-weight:bold" width="45%">
-										Precio Unitario:
-									</td>
-									<td>
-										<table width="100%" border="0" style="border-spacing:0px 0px;">
-											<tr>
-												<td width="40%">
-													<input type="text" name="txt_preciounitario" id="txt_preciounitario" disabled="disabled" style="text-align:right">
-												</td>
-												<td >
-												</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-								<tr>
-									<td style="font-weight:bold" width="45%">
-										Precio de Cobro:
-									</td>
-									<td width="55%">
-										<table width="100%" border="0" style="border-spacing:0px 0px;">
-											<tr>
-												<td width="40%">
-													<input type="text" name="txt_precio" id="txt_precio" onKeyPress="return NumCheck(event, this);" disabled="disabled" style="text-align:right" onBlur="javascript:Calcular_Montos()">
-												</td>
-												<td >
-												</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-								<tr>
-									<td style="font-weight:bold">
-										Dscto. inc. IGV:
-									</td>
-									<td>
-										<table width="100%" border="0" style="border-spacing:0px 0px;">
-											<tr>
-												<td width="40%">
-													<input type="text" name="txt_descuentoIGV" id="txt_descuentoIGV" onKeyPress="return NumCheck(event, this);" disabled="disabled" style="text-align:right" onBlur="javascript:Calcular_Montos()">
-												</td>
-												<td >
-												</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-								<tr height="100%"><td colspan="2" >
-									<input type="text" name="space11" id="space1" style="width:0; visibility:hidden"  ></td>
-								</tr>
-								<tr height="100%"><td colspan="2" >
-									<input type="text" name="space111" id="space111" style="width:0; visibility:hidden"  ></td>
-								</tr>
-								<tr>
-									<td style="font-weight:bold">
-										Precio Total:
-									</td>
-									<td>
-										<table width="100%" border="0" style="border-spacing:0px 0px;">
-											<tr>
-												<td width="40%">
-													<input type="text" name="txt_preciototal" id="txt_preciototal" disabled="disabled" style="text-align:right">
-												</td>
-												<td >
-												</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-							</table>
-						</div>
 					</td>
 				</tr>
 			</table>
@@ -4631,10 +4022,6 @@ function OcultarFilaPassword(id,opcion)
 	</table>
 </form>
 </div>
-
-<script>
-	Listar_DatosDocumentoModificar();
-</script>
 
 </body>	
 </html>

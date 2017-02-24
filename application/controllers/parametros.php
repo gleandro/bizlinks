@@ -218,7 +218,7 @@ class Parametros extends CI_Controller {
 		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
 		
 		$prm_grupo_nombre=trim($this->input->post('grupo_nombre'));
-		
+				
 		if ($prm_grupo_nombre=='RUTA_CERTIFICADO' or $prm_grupo_nombre=='RUTA_DOCUMENTOS')
 		{
 			if ($prm_valorcadena!='')
@@ -241,7 +241,19 @@ class Parametros extends CI_Controller {
 		echo json_encode($result);
 	}
 	
-
+	public function actualizarImagen()
+	{
+		$target_path = "uploads/";
+		$target_path = $target_path . basename( $_FILES['uploadedfile']['name']); 
+		print_r($target_path);
+		return;
+		if(move_uploaded_file($_FILES['uploadedfile']['tmp_name'], $target_path)) 
+		{ 
+			echo "El archivo ". basename( $_FILES['uploadedfile']['name']). " ha sido subido";
+		} else{
+			echo "Ha ocurrido un error, trate de nuevo!";
+		}
+	}
 	
 	public function Eliminar_Portalmultitabla()
 	{	

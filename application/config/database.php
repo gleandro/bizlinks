@@ -5,9 +5,9 @@ $active_record=TRUE;
 $db['ncserver']['hostname']='localhost';
 $db['ncserver']['username']='sa';
 $db['ncserver']['password']='sql';
-$db['ncserver']['database']='PORTALBIZ';
+$db['ncserver']['database']='portalbiz';
 $db['ncserver']['dbdriver']='sqlsrv';
-#$db['ncserver']['port']='';
+$db['ncserver']['port']='52048';
 $db['ncserver']['dbprefix']='';
 $db['ncserver']['pconnect']=FALSE;
 $db['ncserver']['db_debug']=TRUE;
@@ -18,3 +18,4 @@ $db['ncserver']['dbcollat']='utf8_general_ci';
 $db['ncserver']['swap_pre']='';
 $db['ncserver']['autoinit']=TRUE;
 $db['ncserver']['stricton']=FALSE;
+

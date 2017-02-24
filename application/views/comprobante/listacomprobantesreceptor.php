@@ -34,7 +34,7 @@
 				$("#tabs").tabs();
 				ncsistema.Listar_ComprobantesTabla('',0);	
 				
-				$('#txt_FechaGenInicio,#txt_FechaEmisionInicio').datepicker({
+				$('#txt_FechaEmisionInicio').datepicker({
 					showOn: 'button',					
 					buttonImage: "<?php echo base_url()?>application/helpers/image/ico/calendar_icon.gif",
 					buttonImageOnly: true,
@@ -46,7 +46,7 @@
 				});
 				$('#txt_FechaEmisionInicio').datepicker('setDate', 'today -1');
 				
-				$('#txt_FechaGenFinal,#txt_FechaEmisionFinal').datepicker({
+				$('#txt_FechaEmisionFinal').datepicker({
 					showOn: 'button',					
 					buttonImage: "<?php echo base_url()?>application/helpers/image/ico/calendar_icon.gif",
 					buttonImageOnly: true,
@@ -177,17 +177,17 @@
 					newHtml+='<thead>';
 					newHtml+='<tr>';						
 						newHtml+='<th width:3%>Opci&oacute;n</td>';						
-						newHtml+='<th width:5%>Emisor</td>';						
-						newHtml+='<th width:10%>Tipo Doc.</td>';
-						newHtml+='<th width:10%>Serie-Num.</td>';
-						newHtml+='<th width:20%>Moneda</td>';
-						newHtml+='<th width:50%>Imp.Total</td>';
-						newHtml+='<th width:50%>Fec.Emisi&oacute;n</td>';
-						newHtml+='<th width:50%>Est.Doc.</td>';
-						newHtml+='<th width:50%>Est.Sunat</td>';
-						newHtml+='<th width:50%>Descripci&oacute;n</td>';
+						newHtml+='<th width:10%>Emisor</td>';						
+						newHtml+='<th width:5%>Tipo Doc.</td>';
+						newHtml+='<th width:20%>SerieNúmero</td>';
+						newHtml+='<th width:5%>Moneda</td>';
+						newHtml+='<th width:5%>Imp.Total</td>';
+						newHtml+='<th width:7%>Fec.Emisi&oacute;n</td>';
+						newHtml+='<th width:7%>Est.Doc.</td>';
+						newHtml+='<th width:8%>Est.Sunat</td>';
+						newHtml+='<th width:25%>Descripci&oacute;n</td>';
 						//newHtml+='<th width:50%>Intentos</td>';
-						newHtml+='<th width:50%>Visto</td>';
+						newHtml+='<th width:5%>Visto</td>';
 					newHtml+='</tr>';
 					newHtml+='</thead>';
         			newHtml+='<tbody>';
@@ -350,7 +350,7 @@
 							$('#div_param12').empty().append('');	
 							$('#div_param13').empty().append(rs.tipomonedacabecera);	
 							$('#div_param14').empty().append('');							
-							$('#div_param15').empty().append(rs.textoleyenda_1);							
+							$('#div_param15').empty().append('SON: '+rs.textoleyenda_1);						
 							
 							OcultarFilaPassword('row1',0);
 							OcultarFilaPassword('row2',0);

@@ -1,11 +1,10 @@
 <?php
-@session_start();
+//@session_start();
 class Clientes_model extends CI_Model
 {
 	function __construct()
 	{
 		parent::__construct();
-		
 	}
 	
 	
