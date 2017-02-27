@@ -425,39 +425,40 @@ class Comprobante_model extends CI_Model
 			if(floatval($prm_porcentajeotroscargos)>0){
 				$query_colum=$query_colum."totalOtrosCargos,";				$query_valores=$query_valores."'".$prm_totalotroscargos."',";
 				$query_colum=$query_colum."codigoAuxiliar40_2,"; 			$query_valores=$query_valores."'9370',";
-				$query_colum=$query_colum."textoAuxiliar40_2,"; 			$query_valores=$query_valores."'".$prm_porcentajeotroscargos."%',";}
+				$query_colum=$query_colum."textoAuxiliar40_2,"; 			$query_valores=$query_valores."'".$prm_porcentajeotroscargos."%',";
 			}
+		}
 		//Fin Requerimiento
 		//Requerimiento de cambio 4: Registro del valor de IGV
-			$query_colum=$query_colum."codigoAuxiliar40_1,"; 				$query_valores=$query_valores."'9011',";
-			$query_colum=$query_colum."textoAuxiliar40_1,"; 				$query_valores=$query_valores."'".$valorigv_original."%',";
+		$query_colum=$query_colum."codigoAuxiliar40_1,"; 				$query_valores=$query_valores."'9011',";
+		$query_colum=$query_colum."textoAuxiliar40_1,"; 				$query_valores=$query_valores."'".$valorigv_original."%',";
 		//Fin Requerimiento
 		//Requerimiento 4: Insertar de datos de usuario de login siempre y cuando se modelo ticket
-			if ($valor_Aditional==3){
-				$txt_user='';
-				$txt_user=$_SESSION['SES_InicioSystem'][0]['nom_usu'].', '.$_SESSION['SES_InicioSystem'][0]['apell_usu'];
-				$query_colum=$query_colum."codigoAuxiliar100_1,"; 				$query_valores=$query_valores."'9371',";
-				$query_colum=$query_colum."textoAuxiliar100_1,"; 				$query_valores=$query_valores."'".$txt_user."',";
-			}
+		if ($valor_Aditional==3){
+			$txt_user='';
+			$txt_user=$_SESSION['SES_InicioSystem'][0]['nom_usu'].', '.$_SESSION['SES_InicioSystem'][0]['apell_usu'];
+			$query_colum=$query_colum."codigoAuxiliar100_1,"; 				$query_valores=$query_valores."'9371',";
+			$query_colum=$query_colum."textoAuxiliar100_1,"; 				$query_valores=$query_valores."'".$txt_user."',";
+		}
 		//Fin Requerimiento
 		//Requerimiento 4-version 2: Campos Adicionales
 			//Inicio cantidad adicional: Se esta reservando estos dos campos para guardar la cantidad de adicionales insertados
 			//$query_colum=$query_colum."codigoAuxiliar500_5,"; 				$query_valores=$query_valores."'ADIC',";
 			//$query_colum=$query_colum."textoAuxiliar500_5,"; 				$query_valores=$query_valores."'".$prm_adicionalCantidad."',";
 			//Fin cantidad adicional
-			if ($prm_adicionalCantidad>0)
+		if ($prm_adicionalCantidad>0)
+		{
+			while($prm_adicionalCantidad>0)
 			{
-				while($prm_adicionalCantidad>0)
-				{
-					$query_colum=$query_colum."codigoAuxiliar".$prm_adicionalCampos[$prm_adicionalCantidad-1].","; 				
-					$query_valores=$query_valores."'".$prm_adicionalCodigo[$prm_adicionalCantidad-1]."',";
-					
-					$query_colum=$query_colum."textoAuxiliar".$prm_adicionalCampos[$prm_adicionalCantidad-1].","; 				
-					$query_valores=$query_valores."'".$prm_adicionalValor[$prm_adicionalCantidad-1]."',";
-					
-					$prm_adicionalCantidad--;
-				}
-			}		
+				$query_colum=$query_colum."codigoAuxiliar".$prm_adicionalCampos[$prm_adicionalCantidad-1].","; 				
+				$query_valores=$query_valores."'".$prm_adicionalCodigo[$prm_adicionalCantidad-1]."',";
+				
+				$query_colum=$query_colum."textoAuxiliar".$prm_adicionalCampos[$prm_adicionalCantidad-1].","; 				
+				$query_valores=$query_valores."'".$prm_adicionalValor[$prm_adicionalCantidad-1]."',";
+				
+				$prm_adicionalCantidad--;
+			}
+		}		
 		//Fin Requerimiento
 		if($prm_tipodocumento=='03')//BOLETA
 		{

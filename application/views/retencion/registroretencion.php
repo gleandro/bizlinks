@@ -569,6 +569,7 @@ ncsistema=
 							if(result.status==1)
 							{
 								ncsistema.filtro_datosAdicionales_Tabla(result.data);
+								$('#txt_dato_adicional_condicion').val(1);
 								
 							}
 							else if (result.status==1000)
@@ -579,6 +580,7 @@ ncsistema=
 							else
 							{
 								ncsistema.filtro_datosAdicionales_Tabla("");
+								$('#txt_dato_adicional_condicion').val(0);
 							}
 						}
 					});	
@@ -1037,8 +1039,6 @@ var datoadicional_Codigo = [];
 var datoadicional_Valor = [];
 var array_numpago = [];
 var n=0;
-
-
 function Registrar_DatosAdicionales()
 {
 	i=0; 
@@ -1195,12 +1195,6 @@ function Seleccionar_DatoAdicional(key)
 					
 					allFields.removeClass( "ui-state-error" );
 					
-					if (txt_codigo_documento == '01')
-					{
-
-					}
-
-					
 					if (txt_tipo_comprobante=="[SELECCIONAR]")
 					{					
 						$('#cmb_tipodocumentosunat').addClass( "ui-state-error" );
@@ -1324,7 +1318,11 @@ function Seleccionar_DatoAdicional(key)
 				//Ventana para registrar nuevos adicionales
 				$("#create-aditional" ).button().on("click", function() 
 				{
-					ncsistema.filtro_datosAdicionales();
+					var txt_dato_adicional_condicion=$.trim($('#txt_dato_adicional_condicion').val());
+					if (txt_dato_adicional_condicion==0)
+					{
+						ncsistema.filtro_datosAdicionales();
+					}
 					dialogAdicional.dialog( "open" );
 				});
 				
@@ -2031,6 +2029,7 @@ function Calcular_Montos()
 
 						$('#txt_clienteubanizacion').val('');
 						$('#txt_clientedireccion').val('');
+						$('#txt_dato_adicional_condicion').val(0);
 					}
 				}
 
@@ -3326,6 +3325,7 @@ function Calcular_Montos()
 					<input type="hidden" id="txt_valorotroscargos" value="<?php echo $valor_otroscargos;?>"  />
 					<input type="hidden" id="txt_modificarregistro" value="0"  />
 					<input type="hidden" id="txt_config_valorprecio" value="<?php echo $Config_ValorPrecio;?>"  />
+					<input type="hidden" id="txt_dato_adicional_condicion" value="0"  />
 					
 					<table border="0" width="80%" style="border-collapse:separate; border-spacing:1px 1px;" cellpadding="3" class="tablaFormulario">
 						<tr><td><label class="columna"></label></td></tr>

@@ -168,8 +168,8 @@ class Retencion extends CI_Controller {
 
 		$prm_tipo_registro=trim($this->input->post('tipo_registro'));
 		$prm_moneda=trim($this->input->post('txt_moneda_final'));
+		
 		//Req. V2. Campos Adicionales
-		/*
 		$prm_adicionalCantidad=trim($this->input->post('arr_adicional_Cantidad'));
 		$prm_adicionalCodigo=($this->input->post('arr_adicional_Codigo'));
 		$prm_adicionalValor=($this->input->post('arr_adicional_Valor'));
@@ -178,55 +178,59 @@ class Retencion extends CI_Controller {
 			"40_19","40_20","500_1","500_2","500_3","500_4","500_5","250_1","250_2","250_3","250_4","250_5",
 			"250_6","250_7","250_8","250_9","250_10","250_11","250_12","250_13","250_14","250_15","250_16",
 			"250_17","250_18","250_19","250_20","250_21","250_22","250_23","250_24","250_25");
-		*/
+		
 		//print_r($temp);
 		//return;
-			$consulta =$this->Retencion_model->Guardar_RetentionHeader(
-				$prm_cod_empr,
-				$prm_cod_usu,
-				$prm_correoemisor,
-				$prm_correoadquiriente,
-				$prm_numerodocumentoemisor,
-				$prm_tipodocumentoemisor,
-				$prm_tipodocumento,
-				$prm_razonsocialemisor,
-				$prm_nombrecomercialemisor,
-				$prm_seriedocumento,
-				$prm_correlativodocumento,
-				$prm_fechaemision,
-				$prm_ubigeoemisor,
-				$prm_direccionemisor,
-				$prm_urbanizacion,
-				$prm_provinciaemisor,
-				$prm_departamentoemisor,
-				$prm_distritoemisor,
-				$prm_paisemisor,
-				$prm_numerodocumentoproveedor,
-				$prm_tipodocumentoproveedor,
-				$prm_nombrecomercialproveedor,
-				$prm_ubigeoproveedor,
-				$prm_direccionproveedor,
-				$prm_urbanizacionproveedor,
-				$prm_provinciaproveedor,
-				$prm_departamentoproveedor,
-				$prm_distritoproveedor,
-				$prm_codigopaisproveedor,
-				$prm_razonsocialproveedor,
-				$prm_total_retenido,
-				$prm_total_pagar,
-				$datosproveedor,
-				$prm_observacion,
-				$prm_tipo_registro,
-				$prm_moneda
-				);
+		$consulta =$this->Retencion_model->Guardar_RetentionHeader(
+			$prm_cod_empr,
+			$prm_cod_usu,
+			$prm_correoemisor,
+			$prm_correoadquiriente,
+			$prm_numerodocumentoemisor,
+			$prm_tipodocumentoemisor,
+			$prm_tipodocumento,
+			$prm_razonsocialemisor,
+			$prm_nombrecomercialemisor,
+			$prm_seriedocumento,
+			$prm_correlativodocumento,
+			$prm_fechaemision,
+			$prm_ubigeoemisor,
+			$prm_direccionemisor,
+			$prm_urbanizacion,
+			$prm_provinciaemisor,
+			$prm_departamentoemisor,
+			$prm_distritoemisor,
+			$prm_paisemisor,
+			$prm_numerodocumentoproveedor,
+			$prm_tipodocumentoproveedor,
+			$prm_nombrecomercialproveedor,
+			$prm_ubigeoproveedor,
+			$prm_direccionproveedor,
+			$prm_urbanizacionproveedor,
+			$prm_provinciaproveedor,
+			$prm_departamentoproveedor,
+			$prm_distritoproveedor,
+			$prm_codigopaisproveedor,
+			$prm_razonsocialproveedor,
+			$prm_total_retenido,
+			$prm_total_pagar,
+			$datosproveedor,
+			$prm_observacion,
+			$prm_tipo_registro,
+			$prm_moneda,
+			$prm_adicionalCantidad,
+			$prm_adicionalCodigo,
+			$prm_adicionalValor,
+			$prm_adicionalCampos
+			);
 
 		//print_r($consulta);
-			if ($consulta['result']==1)
-			{
-				$result['status']=1;
-				$result['numero']=$consulta['numero'];
+		if ($consulta['result']==1)
+		{
+			$result['status']=1;
+			$result['numero']=$consulta['numero'];
 			//$result['codigo_baja']=$prm_resumenid;	
-			}
+		}
 		else if ($consulta['result']==2)//EXISTE EL DOCUMENTO
 		{
 			$result['status']=2;
