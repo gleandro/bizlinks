@@ -3103,21 +3103,21 @@ class Comprobante extends CI_Controller {
 
 			//Obtiene fecha inicial de rango permitido
 			$tmpserie='';
-			$tmpserie=$arr['seriedocumento'].'-'.str_pad((string)($tmpnumero+1), 8, "0", STR_PAD_LEFT);
-			$consulta_fecha =$this->Comprobante_model->Buscar_Documento($prm_tipodocumentoemisor,$prm_numerodocumentoemisor,$prm_tipodedocumento,$tmpserie);
+			$tmpserie=$arr['seriedocumento'].'-'.str_pad((string)($tmpnumero-1), 8, "0", STR_PAD_LEFT);
+			$consulta_fechainicio =$this->Comprobante_model->Buscar_Documento($prm_tipodocumentoemisor,$prm_numerodocumentoemisor,$prm_tipodedocumento,$tmpserie);
 			if(!empty($consulta_fechainicio))//SI NO ES NULO O VACIO
 			{
 				$prm_fec_emisinicio_tmp=explode('-',$consulta_fechainicio[0]['fechaemision']);
 				$primera_fecha=($prm_fec_emisinicio_tmp[2].'/'.$prm_fec_emisinicio_tmp[1].'/'.$prm_fec_emisinicio_tmp[0]);
 			}else
 			{
-				$primera_fecha=$arr['fechaemision'];
+				$primera_fecha='';
 			}
 			$arr['primera_fecha'] =$primera_fecha;
 
 			//Obtiene fecha final de rango permitido
 			$tmpserie='';
-			$tmpserie=$arr['seriedocumento'].'-'.str_pad((string)($tmpnumero-1), 8, "0", STR_PAD_LEFT);
+			$tmpserie=$arr['seriedocumento'].'-'.str_pad((string)($tmpnumero+1), 8, "0", STR_PAD_LEFT);
 			$consulta_fecha =$this->Comprobante_model->Buscar_Documento($prm_tipodocumentoemisor,$prm_numerodocumentoemisor,$prm_tipodedocumento,$tmpserie);//$prm_serienumero);
 			
 			if(!empty($consulta_fecha))//SI NO ES NULO O VACIO
@@ -3126,7 +3126,7 @@ class Comprobante extends CI_Controller {
 				$ultima_fecha=($prm_fec_emisinicio_tmp[2].'/'.$prm_fec_emisinicio_tmp[1].'/'.$prm_fec_emisinicio_tmp[0]);
 			}else
 			{
-				$ultima_fecha=date("dd/mm/yy");
+				$ultima_fecha=date("d/m/Y");
 			}
 			$arr['ultima_fecha'] =$ultima_fecha;
 			

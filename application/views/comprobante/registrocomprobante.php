@@ -3459,20 +3459,20 @@ function Calcular_Montos()
 						{
 							alert('Ocurrió un error en la edición de este comprobante.\n Comunicarse con Bizlinks para su revisión');	
 							document.location.href= '<?php echo base_url()?>comprobante';							
-										return;
-									},*/
-									success:function(result)
-									{
-										if(result.status==1)
-										{
-											$("#cmb_tipodocumentosunat").prop('disabled', true);
-											$('#cmb_tipodocumentosunat').val(result.data['tipodocumento']);	
-											var tipodocumentoreferenciaprincip=result.data['tipodocumentoreferenciaprincip']
-											if (tipodocumentoreferenciaprincip=='' &&  result.data['tipodocumento']=='08')
-											{
-												tipodocumentoreferenciaprincip='01';
-											}
-											Serie_Documento(result.data['tipodocumento'],result.data['seriedocumento'],tipodocumentoreferenciaprincip,result.data['codigoserienumeroafectado'],result.data['tipodocumentoadquiriente']);
+							return;
+						},*/
+						success:function(result)
+						{
+							if(result.status==1)
+							{
+								$("#cmb_tipodocumentosunat").prop('disabled', true);
+								$('#cmb_tipodocumentosunat').val(result.data['tipodocumento']);	
+								var tipodocumentoreferenciaprincip=result.data['tipodocumentoreferenciaprincip']
+								if (tipodocumentoreferenciaprincip=='' &&  result.data['tipodocumento']=='08')
+								{
+									tipodocumentoreferenciaprincip='01';
+								}
+								Serie_Documento(result.data['tipodocumento'],result.data['seriedocumento'],tipodocumentoreferenciaprincip,result.data['codigoserienumeroafectado'],result.data['tipodocumentoadquiriente']);
 								//$('#cmb_seriedocumentosunat').val(result.data['seriedocumento']);	
 								$('#txt_numerodocumentosunat').val(result.data['numerodocumento']);
 								
@@ -3555,7 +3555,10 @@ function Calcular_Montos()
 								}
 								//alert(result.data['primera_fecha']);
 								//alert(result.data['ultima_fecha']);
-								$('#txt_FechaEmision') .datepicker('option', 'minDate', result.data['primera_fecha']) .datepicker('refresh'); 
+								if (result.data['primera_fecha'] != '') {
+									$('#txt_FechaEmision') .datepicker('option', 'minDate', result.data['primera_fecha']) .datepicker('refresh'); 
+								}
+								
 								$('#txt_FechaEmision') .datepicker('option', 'maxDate', result.data['ultima_fecha']) .datepicker('refresh'); 
 								
 								$('#txt_modificarregistro').val(1);

@@ -279,6 +279,7 @@
 			function Limpiar_DatosAdicional()
 			{
 				$('#txt_Codigo').val('');
+				$('#txt_Codigo').attr('disabled', false);
 				$('#txt_Orden').val('');
 				$('#txt_Observacion').val('');
 				$('#txt_id').val('0')
@@ -309,6 +310,7 @@
 							$.each(result.data,function(key,rs)
 							{
 								$.trim($('#txt_Codigo').val(rs.codigo));
+								$('#txt_Codigo').attr('disabled', true);
 								$.trim($('#txt_Orden').val(rs.orden));
 								$.trim($('#txt_Observacion').val(rs.observacion));
 								$.trim($('#txt_id').val(1));
@@ -350,6 +352,7 @@
 							$.each(result.data,function(key,rs)
 							{
 								$.trim($('#txt_Codigo').val(rs.codigo));
+								$('#txt_Codigo').attr('disabled',true);
 								$.trim($('#txt_Orden').val(rs.orden));
 								$.trim($('#txt_Observacion').val(rs.observacion));
 								$.trim($('#txt_id').val(1));

@@ -53,6 +53,10 @@ class Retencion_model extends CI_Model
 			{
 				$query=$query." and a.bl_estadoregistro='".$prm_cod_estdoc."' ";
 			}
+			if ($prm_estado_documentosunat!='0')	
+			{
+				$query=$query." and upper(b.bl_estadoProceso) like '%".$prm_estado_documentosunat."%' ";
+			}
 			if ($prm_fec_emisinicio!='' && $prm_fec_emisfinal!='')	
 			{
 				$query=$query." and a.fechaemision>='".$prm_fec_emisinicio."'
@@ -63,7 +67,47 @@ class Retencion_model extends CI_Model
 		}else{
 			if ($rol_usuario==2) //RECEPTOR
 			{
-				$query="";
+				$query="select a.tipodocumentoemisor, a.tipodocumento, a.numerodocumentoemisor, a.serienumeroretencion,
+				a.numerodocumentoproveedor, a.razonsocialproveedor, a.importetotalpagado, a.tipomonedatotalpagado, 
+				(select b.nombre from sgr_multitabla b where b.grupo_nombre='TIPO_MONEDA' and b.activo=1 
+				and b.grupo_id=5 and b.valorcadena=a.tipomonedatotalpagado) tipomonedapagado,
+				a.importetotalretenido, a.tipomonedatotalretenido, 
+				(select b.nombre from sgr_multitabla b where b.grupo_nombre='TIPO_MONEDA' and b.activo=1 
+				and b.grupo_id=5 and b.valorcadena=a.tipomonedatotalretenido) tipomonedaretenido,
+				a.fechaemision, a.bl_estadoregistro, 
+				(select b.no_corto from tm_tabla_multiple b where b.no_tabla='ESTADO_DOCUMENTO_PORTAL' 
+				and b.in_habilitado=1 and b.co_item_tabla=a.bl_estadoregistro) estadoregistro,
+				a.bl_reintento, b.reintento, b.bl_estadoproceso estadosunat,	
+				b.bl_mensaje, b.bl_mensajesunat,
+				(case when b.bl_estadoRegistro='L' and b.bl_estadoproceso='SIGNED' then 1 else 0 end) mensajeresponse,
+				a.visualizado
+				from spe_retention a
+				left join spe_retention_response b on
+				a.tipodocumentoemisor=b.tipodocumentoemisor 
+				and a.numerodocumentoemisor=b.numerodocumentoemisor
+				and a.serieNumeroRetencion=b.serieNumeroRetencion
+				and a.tipoDocumento=b.tipoDocumento
+				";
+				$query=$query." where a.tipoDocumentoEmisor='6' and a.tipoDocumento='20' and a.numeroDocumentoProveedor='".$prm_ruc_empr."' ";
+				if ($prm_documento_cliente!='')	
+				{
+					$query=$query." and a.numerodocumentoproveedor='".$prm_documento_cliente."' ";
+				}
+				if ($prm_serie_numeroinicio!='' && $prm_serie_numerofinal!='')	
+				{
+					$query=$query." and a.serienumero>='".$prm_serie_numeroinicio."' and a.serienumero<='".$prm_serie_numerofinal."' ";
+				}
+				if ($prm_estado_documentosunat!='0')	
+				{
+					$query=$query." and upper(b.bl_estadoProceso) like '%".$prm_estado_documentosunat."%' ";
+				}
+				if ($prm_fec_emisinicio!='' && $prm_fec_emisfinal!='')	
+				{
+					$query=$query." and a.fechaemision>='".$prm_fec_emisinicio."'
+					and	a.fechaemision<='".$prm_fec_emisfinal."' "; 
+				}
+				$query=$query." order by fechaemision;";
+			//print_r($query);
 			}
 		}
 		$consulta =  $this->db_client->query($query);		
@@ -134,7 +178,7 @@ class Retencion_model extends CI_Model
 		and c.grupo_id=5 and c.valorcadena=b.tipomonedadocumentorelacionado) tipomonedarelacionado,
 		b.importetotaldocumentorelaciona, 
 		b.importepagosinretencion, b.importeretenido, b.importetotalpagarneto,
-
+		
 		a.bl_estadoregistro, 
 		(select b.no_corto from tm_tabla_multiple b where b.no_tabla='ESTADO_DOCUMENTO_PORTAL' 
 		and b.in_habilitado=1 and b.co_item_tabla=a.bl_estadoregistro) estadoregistro
@@ -330,7 +374,11 @@ class Retencion_model extends CI_Model
 		$datosproveedor,
 		$prm_observacion,
 		$prm_tipo_registro,
-		$prm_moneda
+		$prm_moneda,
+		$prm_adicionalCantidad,
+		$prm_adicionalCodigo,
+		$prm_adicionalValor,
+		$prm_adicionalCampos
 		)
 	{
 
@@ -400,7 +448,7 @@ class Retencion_model extends CI_Model
 				return $result;
 			}
 
-			/*
+/*			
 			//Requerimiento 4 de la Versión 2: PARAMETRO DE MODELO TICKET
 			//Si es valor 3: es un modelo ticket
 			$valor_Aditional=0;
@@ -412,12 +460,12 @@ class Retencion_model extends CI_Model
 			{
 				$valor_Aditional=substr(($res_get_Aditional[0]['aditional']), 10, 1);
 			}
-			*/		
+*/					
 			$query_colum='';
 			$query_valores='';
 
 
-			//INICIO DE INSERCCION CABECERA SPE_EINVOICEHEADER
+			//INICIO DE INSERCCION CABECERA SPE_RETENTION
 			$query_colum="insert into SPE_RETENTION(tipoDocumentoEmisor,";	$query_valores=" values('".$prm_tipodocumentoemisor."',";
 			$query_colum=$query_colum."numeroDocumentoEmisor,";				$query_valores=$query_valores."'".$prm_numerodocumentoemisor."',";
 			$query_colum=$query_colum."serieNumeroRetencion,";			$query_valores=$query_valores."'".$prm_seriedocumento.'-'.$prm_correlativodocumento."',";
@@ -509,6 +557,24 @@ class Retencion_model extends CI_Model
 				$query_colum=$query_colum."tipoMonedaTotalPagado,";					$query_valores=$query_valores."'".$prm_moneda."',";
 				$query_colum=$query_colum."tipoMonedaTotalRetenido,";					$query_valores=$query_valores."'".$prm_moneda."',";
 			}
+/*
+			//Requerimiento 4: Insertar de datos de usuario de login siempre y cuando se modelo ticket
+			if ($valor_Aditional==3){
+				$txt_user='';
+				$txt_user=$_SESSION['SES_InicioSystem'][0]['nom_usu'].', '.$_SESSION['SES_InicioSystem'][0]['apell_usu'];
+				$query_colum=$query_colum."codigoAuxiliar100_1,"; 				$query_valores=$query_valores."'9371',";
+				$query_colum=$query_colum."textoAuxiliar100_1,"; 				$query_valores=$query_valores."'".$txt_user."',";
+			}
+			//Fin Requerimiento
+
+			//Requerimiento 4-version 2: Campos Adicionales
+			//Inicio cantidad adicional: Se esta reservando estos dos campos para guardar la cantidad de adicionales insertados
+			//$query_colum=$query_colum."codigoAuxiliar500_5,"; 				$query_valores=$query_valores."'ADIC',";
+			//$query_colum=$query_colum."textoAuxiliar500_5,"; 				$query_valores=$query_valores."'".$prm_adicionalCantidad."',";
+			//Fin cantidad adicional
+*/
+
+			//Fin Requerimiento
 
 			$query_colum=$query_colum."bl_origen)";							$query_valores=$query_valores."'P');";
 
@@ -522,7 +588,7 @@ class Retencion_model extends CI_Model
 				$result['numero']=-2;
 				return $result;
 			}
-		//FIN INSERCCION SPE_EINVOICEHEADER: Inicia en linea 332
+		//FIN INSERCCION SPE_RETENTION: Inicia en linea 332
 
 		//INICIO PARA INSERCCION DEL DETALLE DEL COMPROBANTE: SPE_EINVOICEDETAIL
 			$consulta = $this->db_client->query("select 
@@ -565,7 +631,7 @@ class Retencion_model extends CI_Model
 
 			$query_colum='';
 		$query_valores='';
-				//INICIO INSERCCION DETALLE: SPE_EINVOICEDETAIL
+		//INICIO INSERCCION DETALLE: SPE_RETENTION_ITEM
 		$query_colum="insert into SPE_RETENTION_ITEM(tipoDocumentoEmisor,";	$query_valores=" values('".$prm_tipodocumentoemisor."',";
 		$query_colum=$query_colum."numeroDocumentoEmisor,";					$query_valores=$query_valores."'".$prm_numerodocumentoemisor."',";			
 		$query_colum=$query_colum."serieNumeroRetencion,";					$query_valores=$query_valores."'".$prm_seriedocumento.'-'.$prm_correlativodocumento."',";	
@@ -608,7 +674,31 @@ class Retencion_model extends CI_Model
 		}				
 		$contador++;				
 		endforeach;
-		//FIN INSERCCION: SPE_EINVOICEDETAIL
+		//FIN INSERCCION: SPE_RETENTION_ITEM
+
+		//INICIO INSERCION: SPE_RETENTION_AUXILIAR
+		if ($prm_adicionalCantidad>0)
+		{
+			while($prm_adicionalCantidad>0)
+			{
+
+				$query="insert into SPE_RETENTION_AUXILIAR (TIPODOCUMENTOEMISOR,NUMERODOCUMENTOEMISOR,TIPODOCUMENTO,SERIENUMERO,CLAVE,VALOR) values (6,'".$prm_numerodocumentoemisor."','20','".$prm_seriedocumento.'-'.$prm_correlativodocumento."','"."codigoAuxiliar".$prm_adicionalCampos[$prm_adicionalCantidad-1]."','".$prm_adicionalCodigo[$prm_adicionalCantidad-1]."');";
+
+				$query=$query."insert into SPE_RETENTION_AUXILIAR (TIPODOCUMENTOEMISOR,NUMERODOCUMENTOEMISOR,TIPODOCUMENTO,SERIENUMERO,CLAVE,VALOR) values (6,'".$prm_numerodocumentoemisor."','20','".$prm_seriedocumento.'-'.$prm_correlativodocumento."','"."textoAuxiliar".$prm_adicionalCampos[$prm_adicionalCantidad-1]."','".$prm_adicionalValor[$prm_adicionalCantidad-1]."');";
+
+				$this->db_client->query($query);		
+				if ($this->db_client->trans_status() === FALSE)
+				{
+					$this->db_client->trans_rollback();
+					$result['result']=0;
+					$result['numero']=-6;
+					return $result;
+				}
+
+				$prm_adicionalCantidad--;
+			}
+		}
+		//FIN INSERCION: SPE_RETENTION_AUXILIAR
 
 		$query="delete from sgr_registroretenciones_temp where cod_empr='".$prm_cod_empr."' and cod_usu='".$prm_cod_usu."';";
 		$this->db_client->query($query);		
@@ -631,6 +721,15 @@ class Retencion_model extends CI_Model
 			$result['numero']=-7;
 			return $result;
 		}
+
+		if ($this->db_client->trans_status() === FALSE)
+		{
+			$this->db_client->trans_rollback();
+			$result['result']=0;
+			$result['numero']=-7;
+			return $result;
+		}
+
 		
 		$this->db_client->trans_commit();
 		$result['result']=1;
@@ -638,5 +737,6 @@ class Retencion_model extends CI_Model
 
 		return $result;
 	}	
+
 
 }
