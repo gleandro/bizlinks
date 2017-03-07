@@ -58,18 +58,14 @@
 					"Aceptar": function()
 					{
 						dialogoforPendientes.dialog( "close" );
-							//$("#dialog-for-Pendientes").parent().hide();
-							//$("#modal-base").hide();
-						}
-					},
-
-					close: function()
-					{
-						//alert("entro");
-						//$("#dialog-for-Pendientes").parent().hide();
-						//$("#modal-base").hide();
 					}
-				});
+				},
+
+				close: function()
+				{
+
+				}
+			});
 
 			dialogforRespuesta = $("#dialog-for-Pendientes-confirm").dialog({
 				autoOpen: false,
@@ -81,21 +77,45 @@
 					"Aceptar": function()
 					{
 						dialogforRespuesta.dialog( "close" );
-							//$("#dialog-for-Pendientes").parent().hide();
-							//$("#modal-base").hide();
-						}
-					},
-
-					close: function()
-					{
-						//alert("entro");
-						//$("#dialog-for-Pendientes").parent().hide();
-						//$("#modal-base").hide();
 					}
-				});
+				},
 
-			//Carga los modales al iniciar la vista
+				close: function()
+				{
 
+				}
+			});
+
+			dialogregistroresumen = $("#dialog-form-registroresumen").dialog({
+				autoOpen: false,
+				height: 180,
+				width: 400,
+				modal: true,
+				buttons: 
+				{
+					"Aceptar": function() 
+					{
+						$('#txt_numerodocumento_respuesta').val('');
+						$('#txt_estadodocumento_respuesta').val('');
+						$('#txt_descripciondocumento_respuesta').val('');
+						dialogregistroresumen.dialog( "close" );
+
+					}
+				},
+
+				close: function() 
+				{
+					$('#txt_numerodocumento_respuesta').val('');
+					$('#txt_estadodocumento_respuesta').val('');
+					$('#txt_descripciondocumento_respuesta').val('');
+					form[0].reset();
+				}
+			});
+
+			form = dialogregistroresumen.find( "form" ).on( "submit", function( event ) 
+			{
+				event.preventDefault();
+			});
 		})
 
 
@@ -106,8 +126,6 @@
 			Mostrar_Modal:function(){
 				dialogoforPendientes.dialog( "open" );
 				$( "#dialog-for-Pendientes" ).css("height","auto");
-				//$("#dialog-for-Pendientes").parent().show();
-				//$("#modal-base").show();
 			},
 
 
@@ -181,306 +199,348 @@
 
 			Listar_DocumentosdeResumen:function(codigo = 0)
 			{
-					//console.log("ingresa ready2");
-					var txt_RucEmpresa=$.trim($('#txt_RucEmpresa').val());
-					var txt_FechaEmision=$.trim($('#txt_FechaEmision').val());
-					var txt_RazonSocialEmpresa=$.trim($('#txt_RazonSocialEmpresa').val());
-					//console.log(txt_RucEmpresa);
-					//console.log(txt_FechaEmision);
-					//console.log(txt_RazonSocialEmpresa);
+				var txt_RucEmpresa=$.trim($('#txt_RucEmpresa').val());
+				var txt_FechaEmision=$.trim($('#txt_FechaEmision').val());
+				var txt_RazonSocialEmpresa=$.trim($('#txt_RazonSocialEmpresa').val());
 
-					$.ajax({
-						url:'<?php echo base_url()?>resumenboletas/Listar_DocumentosdeResumen',
-						type: 'post',
-						dataType: 'json',
-						data:
-						{
-							txt_RucEmpresa:txt_RucEmpresa,
-							txt_FechaEmision:txt_FechaEmision,
-							codigo:codigo
-						},
-						beforeSend:function()
-						{
-
-						},
-						success:function(result)
-						{
-
-							if(result.status==1)
-							{
-								ncsistema.Listar_DocumentosdeResumenTabla(result.data,codigo);
-
-							}
-							else if (result.status==1000)
-							{
-								document.location.href= '<?php echo base_url()?>usuario';
-								return;
-							}
-							else
-							{
-								if (result.cod==1) {
-									ncsistema.Listar_DocumentosdeResumenTabla("",1);
-								}else{
-									ncsistema.Listar_DocumentosdeResumenTabla("",'');
-								}
-							}
-						}
-					});
-				},
-
-
-				Listar_DocumentosdeResumenTabla:function(data,codigo_tabla)
-				{
-					//console.log("ingresa");
-					if (codigo_tabla == 1) {
-						$('#div_ListadoEmpresa_modal').empty().append('');
-					}
-					else{
-						$('#div_ListadoEmpresa').empty().append('');
-					}
-					$('#txt_fecemisiondoc').val('');
-					$('#txt_tipdocemisor').val('');
-
-					$('#txt_datosseleccionados').val('');
-
-					newHtml='';
-					if (codigo_tabla == 1) {
-						newHtml+='<table width="100%"  cellpadding="0" cellspacing="0" class="display" id="Tab_ListaEmpresa_modal">';
-					}
-					else{
-						newHtml+='<table width="100%"  cellpadding="0" cellspacing="0" class="display" id="Tab_ListaEmpresa">';
-					}
-					newHtml+='<thead>';
-					newHtml+='<tr>';
-					newHtml+='<th width:3%>Nro.</td>';
-						//newHtml+='<th width:5%>Opcion</td>';
-						newHtml+='<th width:10%>T.Doc.</td>';
-						newHtml+='<th hidden width:0%>T.Cod.Doc.</td>';
-						newHtml+='<th width:20%>Documento</td>';
-						newHtml+='<th width:20%>F.Emis.</td>';
-						newHtml+='<th width:50%>Mon.</td>';
-						newHtml+='<th width:10%>OP.Grav.</td>';
-						newHtml+='<th width:10%>IGV</td>';
-						newHtml+='<th width:10%>Op.Exonerado</td>';
-						newHtml+='<th width:10%>Op.No.Gravadas</td>';
-						newHtml+='<th width:10%>Op.Gratuitas</td>';
-						newHtml+='<th width:10%>Imp.Total</td>';
-						newHtml+='<th width:10%>Est.SUNAT</td>';
-						newHtml+='<th width:10%>Est.Declarar</td>';
-						if (codigo_tabla == 1) {
-							newHtml+='<th width:10%>Declarar</td>';
-						}
-						newHtml+='<th width:10%>Eliminar</td>';
-						newHtml+='</tr>';
-						newHtml+='</thead>';
-						newHtml+='<tbody>';
-					//<input style="height:20px;width:95%" id="txt_login" type="text" value="'+rs.cantidadproducto+'"/>
-					contador=0;
-					$.each(data,function(key,rs)
+				$.ajax({
+					url:'<?php echo base_url()?>resumenboletas/Listar_DocumentosdeResumen',
+					type: 'post',
+					dataType: 'json',
+					data:
+					{
+						txt_RucEmpresa:txt_RucEmpresa,
+						txt_FechaEmision:txt_FechaEmision,
+						codigo:codigo
+					},
+					beforeSend:function()
 					{
 
-						newHtml+='<tr>';
-						newHtml+='<td style="text-align:center">'+rs.nro_secuencia+'</td>';
+					},
+					success:function(result)
+					{
 
-						if (rs.tip_reg==1)
+						if(result.status==1)
 						{
-								//newHtml+='<td style="text-align:center"></td>';
-								contador++;
-							}
-							/*else
-							{
-								newHtml+='<td style="text-align:left"><input id="cbox_seleccion_'+key+'" type="checkbox" value="" name="cbox_seleccion_'+key+'" onChange="javascrip:Seleccionar_DatosBusqueda('+key+',\''+rs.cod_tipdoc+'\',\''+rs.numer_doc+'\')"></td>';
-							}
-							*/
-							
-							newHtml+='<td style="text-align:left">'+rs.tipo_doc+'</td>';
+							ncsistema.Listar_DocumentosdeResumenTabla(result.data,codigo);
 
-							if (codigo_tabla == 1) {
-								newHtml+='<td hidden id="modal_tipo_doc_'+contador+'" style="text-align:left">'+rs.cod_tipdoc+'</td>';
-								newHtml+='<td id="modal_comprobante_'+contador+'" style="text-align:left">'+rs.numer_doc+'</td>';
+						}
+						else if (result.status==1000)
+						{
+							document.location.href= '<?php echo base_url()?>usuario';
+							return;
+						}
+						else
+						{
+							if (result.cod==1) {
+								ncsistema.Listar_DocumentosdeResumenTabla("",1);
 							}else{
-								newHtml+='<td hidden id="tipo_doc_'+contador+'" style="text-align:left">'+rs.cod_tipdoc+'</td>';
-								newHtml+='<td id="comprobante_'+contador+'" style="text-align:left">'+rs.numer_doc+'</td>';
+								ncsistema.Listar_DocumentosdeResumenTabla("",'');
 							}
-							
-							newHtml+='<td style="text-align:left">'+rs.fec_emision+'</td>';
-							newHtml+='<td style="text-align:left">'+rs.moneda+'</td>';
-							newHtml+='<td style="text-align:left">'+rs.op_gravado+'</td>';
-							newHtml+='<td style="text-align:left">'+rs.igv+'</td>';
-							newHtml+='<td style="text-align:left">'+rs.op_exonerado+'</td>';
-							newHtml+='<td style="text-align:left">'+rs.op_nogravado+'</td>';
-							newHtml+='<td style="text-align:left">'+rs.op_gratis+'</td>';
-							newHtml+='<td style="text-align:left">'+rs.imp_total+'</td>';
-							newHtml+='<td style="text-align:left">'+rs.est_sunat+'</td>';
-							newHtml+='<td style="text-align:left">'+rs.est_declarar+'</td>';
-
-							if (rs.tip_reg==1)
-							{
-								if (codigo_tabla == 1) {
-									newHtml+='<td style="text-align:center"><a href="javascript:Declarar_Comprobante('+contador+')" ><img align="center" src="<?php echo base_url();?>application/helpers/image/ico/actualizar.png" title="Declarar" width="15"  height="15" border="0" ></a></td>';
-								}
-								newHtml+='<td style="text-align:center"><a href="javascript:Eliminar_DocumentoBoletaResumen('+contador+','+codigo_tabla+')" ><img align="center" src="<?php echo base_url();?>application/helpers/image/ico/nceliminar.png" title="Eliminar" width="15"  height="15" border="0" ></a></td>';
-								$('#txt_fecemisiondoc').val(rs.fec_emision);
-							}
-							else
-							{
-								newHtml+='<td style="text-align:center"></td>';
-							}
-
-
-							$('#txt_tipdocemisor').val(rs.tip_docemisor);
-
-							newHtml+='</tr>';
-						});
-					newHtml+='</tbody>';
-					newHtml+='</table>';
-					//console.log(newHtml);
-
-					$('#txt_cantidad').val(contador);
-
-					if (codigo_tabla == 1) {
-						$('#div_ListadoEmpresa_modal').empty().append(newHtml);
-
-						oTable=$('#Tab_ListaEmpresa_modal').dataTable({
-							"bPaginate": true,
-							"sScrollX": "110%",
-							"sScrollXInner": "100%",
-							"bScrollCollapse": true,
-							"bJQueryUI": true
-						});
-
-						$("#Tab_ListaEmpresa_modal tbody").click(function(event)
-						{
-							$(oTable.fnSettings().aoData).each(function (){
-								$(this.nTr).removeClass('row_selected');
-							});
-							$(event.target.parentNode).addClass('row_selected');
-						});
+						}
 					}
-					else{
-						$('#div_ListadoEmpresa').empty().append(newHtml);
+				});
+			},
 
-						oTable=$('#Tab_ListaEmpresa').dataTable({
-							"bPaginate": true,
-							"sScrollX": "100%",
-							"sScrollXInner": "100%",
-							"bScrollCollapse": true,
-							"bJQueryUI": true
-						});
 
-						$("#Tab_ListaEmpresa tbody").click(function(event)
-						{
-							$(oTable.fnSettings().aoData).each(function (){
-								$(this.nTr).removeClass('row_selected');
-							});
-							$(event.target.parentNode).addClass('row_selected');
-						});
-					}
+			Listar_DocumentosdeResumenTabla:function(data,codigo_tabla)
+			{
+				if (codigo_tabla == 1) {
+					$('#div_ListadoEmpresa_modal').empty().append('');
+				}
+				else{
+					$('#div_ListadoEmpresa').empty().append('');
+				}
+				$('#txt_fecemisiondoc').val('');
+				$('#txt_tipdocemisor').val('');
 
-				},
+				$('#txt_datosseleccionados').val('');
 
-				Guardar_SummaryHeader:function()
+				newHtml='';
+				if (codigo_tabla == 1) {
+					newHtml+='<table width="100%"  cellpadding="0" cellspacing="0" class="display" id="Tab_ListaEmpresa_modal">';
+				}
+				else{
+					newHtml+='<table width="100%"  cellpadding="0" cellspacing="0" class="display" id="Tab_ListaEmpresa">';
+				}
+				newHtml+='<thead>';
+				newHtml+='<tr>';
+				newHtml+='<th width:3%>Nro.</td>';
+				newHtml+='<th width:10%>T.Doc.</td>';
+				newHtml+='<th hidden width:0%>T.Cod.Doc.</td>';
+				newHtml+='<th width:20%>Documento</td>';
+				newHtml+='<th width:20%>F.Emis.</td>';
+				newHtml+='<th width:50%>Mon.</td>';
+				newHtml+='<th width:10%>OP.Grav.</td>';
+				newHtml+='<th width:10%>IGV</td>';
+				newHtml+='<th width:10%>Op.Exonerado</td>';
+				newHtml+='<th width:10%>Op.No.Gravadas</td>';
+				newHtml+='<th width:10%>Op.Gratuitas</td>';
+				newHtml+='<th width:10%>Imp.Total</td>';
+				newHtml+='<th width:10%>Est.SUNAT</td>';
+				newHtml+='<th width:10%>Est.Declarar</td>';
+				if (codigo_tabla == 1) {
+					newHtml+='<th width:10%>Declarar</td>';
+				}
+				newHtml+='<th width:10%>Eliminar</td>';
+				newHtml+='</tr>';
+				newHtml+='</thead>';
+				newHtml+='<tbody>';
+				contador=0;
+				$.each(data,function(key,rs)
 				{
 
-					var txt_RucEmpresa=$.trim($('#txt_RucEmpresa').val());
-					var txt_RazonSocialEmpresa=$.trim($('#txt_RazonSocialEmpresa').val());
-					var txt_cantidad=$.trim($('#txt_cantidad').val());
-					var txt_fecemisiondoc=$.trim($('#txt_fecemisiondoc').val());
-					var txt_tipdocemisor=$.trim($('#txt_tipdocemisor').val());
+					newHtml+='<tr>';
+					newHtml+='<td style="text-align:center">'+rs.nro_secuencia+'</td>';
 
-
-					cbox_mensajeguardar=0;
-					if ($("#cbox_mensajeguardar").is(":checked"))
+					if (rs.tip_reg==1)
 					{
-						cbox_mensajeguardar=1;
+						contador++;
 					}
-					if (cbox_mensajeguardar==0)
+
+					newHtml+='<td style="text-align:left">'+rs.tipo_doc+'</td>';
+
+					if (codigo_tabla == 1) {
+						newHtml+='<td hidden id="modal_tipo_doc_'+contador+'" style="text-align:left">'+rs.cod_tipdoc+'</td>';
+						newHtml+='<td id="modal_comprobante_'+contador+'" style="text-align:left">'+rs.numer_doc+'</td>';
+					}else{
+						newHtml+='<td hidden id="tipo_doc_'+contador+'" style="text-align:left">'+rs.cod_tipdoc+'</td>';
+						newHtml+='<td id="comprobante_'+contador+'" style="text-align:left">'+rs.numer_doc+'</td>';
+					}
+
+					newHtml+='<td style="text-align:left">'+rs.fec_emision+'</td>';
+					newHtml+='<td style="text-align:left">'+rs.moneda+'</td>';
+					newHtml+='<td style="text-align:left">'+rs.op_gravado+'</td>';
+					newHtml+='<td style="text-align:left">'+rs.igv+'</td>';
+					newHtml+='<td style="text-align:left">'+rs.op_exonerado+'</td>';
+					newHtml+='<td style="text-align:left">'+rs.op_nogravado+'</td>';
+					newHtml+='<td style="text-align:left">'+rs.op_gratis+'</td>';
+					newHtml+='<td style="text-align:left">'+rs.imp_total+'</td>';
+					newHtml+='<td style="text-align:left">'+rs.est_sunat+'</td>';
+					newHtml+='<td style="text-align:left">'+rs.est_declarar+'</td>';
+
+					if (rs.tip_reg==1)
+					{
+						if (codigo_tabla == 1) {
+							newHtml+='<td style="text-align:center"><a href="javascript:Declarar_Comprobante('+contador+')" ><img align="center" src="<?php echo base_url();?>application/helpers/image/ico/actualizar.png" title="Declarar" width="15"  height="15" border="0" ></a></td>';
+						}
+						newHtml+='<td style="text-align:center"><a href="javascript:Eliminar_DocumentoBoletaResumen('+contador+','+codigo_tabla+')" ><img align="center" src="<?php echo base_url();?>application/helpers/image/ico/nceliminar.png" title="Eliminar" width="15"  height="15" border="0" ></a></td>';
+						$('#txt_fecemisiondoc').val(rs.fec_emision);
+					}
+					else
+					{
+						newHtml+='<td style="text-align:center"></td>';
+					}
+
+
+					$('#txt_tipdocemisor').val(rs.tip_docemisor);
+
+					newHtml+='</tr>';
+				});
+				newHtml+='</tbody>';
+				newHtml+='</table>';
+
+				$('#txt_cantidad').val(contador);
+
+				if (codigo_tabla == 1) {
+					$('#div_ListadoEmpresa_modal').empty().append(newHtml);
+
+					oTable=$('#Tab_ListaEmpresa_modal').dataTable({
+						"bPaginate": true,
+						"sScrollX": "110%",
+						"sScrollXInner": "100%",
+						"bScrollCollapse": true,
+						"bJQueryUI": true
+					});
+
+					$("#Tab_ListaEmpresa_modal tbody").click(function(event)
+					{
+						$(oTable.fnSettings().aoData).each(function (){
+							$(this.nTr).removeClass('row_selected');
+						});
+						$(event.target.parentNode).addClass('row_selected');
+					});
+				}
+				else{
+					$('#div_ListadoEmpresa').empty().append(newHtml);
+
+					oTable=$('#Tab_ListaEmpresa').dataTable({
+						"bPaginate": true,
+						"sScrollX": "100%",
+						"sScrollXInner": "100%",
+						"bScrollCollapse": true,
+						"bJQueryUI": true
+					});
+
+					$("#Tab_ListaEmpresa tbody").click(function(event)
+					{
+						$(oTable.fnSettings().aoData).each(function (){
+							$(this.nTr).removeClass('row_selected');
+						});
+						$(event.target.parentNode).addClass('row_selected');
+					});
+				}
+
+			},
+
+			Guardar_SummaryHeader:function()
+			{
+
+				var txt_RucEmpresa=$.trim($('#txt_RucEmpresa').val());
+				var txt_RazonSocialEmpresa=$.trim($('#txt_RazonSocialEmpresa').val());
+				var txt_cantidad=$.trim($('#txt_cantidad').val());
+				var txt_fecemisiondoc=$.trim($('#txt_fecemisiondoc').val());
+				var txt_tipdocemisor=$.trim($('#txt_tipdocemisor').val());
+
+
+				cbox_mensajeguardar=0;
+				if ($("#cbox_mensajeguardar").is(":checked"))
+				{
+					cbox_mensajeguardar=1;
+				}
+				if (cbox_mensajeguardar==0)
+				{
+					$('#div_MensajeValidacionEmpresa').fadeIn(0);
+					$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">No ha aceptado la responsabilidad de esta declaraci�n</div>');
+					setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
+					return;
+				}
+
+				if (txt_cantidad==0)
+				{
+					$('#div_MensajeValidacionEmpresa').fadeIn(0);
+					$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">No existe datos para el registro</div>');
+					setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
+					return;
+				}
+
+				$.ajax({
+					url:'<?php echo base_url()?>resumenboletas/Guardar_SummaryHeader',
+					type: 'post',
+					dataType: 'json',
+					data:
+					{
+						txt_RucEmpresa:txt_RucEmpresa,
+						txt_RazonSocialEmpresa:txt_RazonSocialEmpresa,
+						txt_fecemisiondoc:txt_fecemisiondoc,
+						txt_tipdocemisor:txt_tipdocemisor
+					},
+					beforeSend:function()
 					{
 						$('#div_MensajeValidacionEmpresa').fadeIn(0);
-						$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">No ha aceptado la responsabilidad de esta declaraci�n</div>');
-						setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
-						return;
-					}
+						$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/procesando.gif" width="27" height="27"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Procesando, Espere por favor...</div>');
+						setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(300);},1000);
 
-					if (txt_cantidad==0)
+					},
+					success:function(result)
 					{
-						$('#div_MensajeValidacionEmpresa').fadeIn(0);
-						$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">No existe datos para el registro</div>');
-						setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
-						return;
-					}
-
-					$.ajax({
-						url:'<?php echo base_url()?>resumenboletas/Guardar_SummaryHeader',
-						type: 'post',
-						dataType: 'json',
-						data:
+						if(result.status==0)
 						{
-							txt_RucEmpresa:txt_RucEmpresa,
-							txt_RazonSocialEmpresa:txt_RazonSocialEmpresa,
-							txt_fecemisiondoc:txt_fecemisiondoc,
-							txt_tipdocemisor:txt_tipdocemisor
-						},
-						beforeSend:function()
+							ncsistema.Listar_DocumentosdeResumen(1);
+							ncsistema.Mostrar_Modal();
+							return;
+						}
+						else if(result.status==1)
+						{
+							$('#txt_numerodocumento_respuesta').val(result.codigo_resumen);
+							$('#txt_estadodocumento_respuesta').val('POR PROCESAR');
+							$('#txt_descripciondocumento_respuesta').val('ENVIADO A DECLARAR');
+							dialogregistroresumen.dialog( "open" );
+							ncsistema.Listar_DocumentosdeResumenTabla("",'');
+							return;
+						}
+						else if (result.status==1000)
+						{
+							document.location.href= '<?php echo base_url()?>usuario';
+							return;
+						}
+						else
 						{
 							$('#div_MensajeValidacionEmpresa').fadeIn(0);
-							$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/procesando.gif" width="27" height="27"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Procesando, Espere por favor...</div>');
-							setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(300);},1000);
-
-						},
-						success:function(result)
-						{
-							if(result.status==0)
-							{
-								ncsistema.Listar_DocumentosdeResumen(1);
-								ncsistema.Mostrar_Modal();
-								return;
-							}
-							else if(result.status==1)
-							{
-								/*
-								$('#div_MensajeValidacionEmpresa').fadeIn(0);
-								$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:left"><img src="<?php echo base_url();?>application/helpers/image/ico/information.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Se gener� el resumen '+result.codigo_baja+'</div>');
-								setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
-								*/
-								alert('Se gener\u00F3 el '+result.codigo_resumen);
-								Limpiar_DatosRegistroDocBajas();
-								//ncsistema.Listar_DocumentosdeResumen();
-								ncsistema.Listar_DocumentosdeResumenTabla("",'');
-								return;
-							}
-							else if (result.status==1000)
-							{
-								document.location.href= '<?php echo base_url()?>usuario';
-								return;
-							}
-							else
-							{
-								$('#div_MensajeValidacionEmpresa').fadeIn(0);
-								$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:lefts"><img src="<?php echo base_url();?>application/helpers/image/ico/error.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Error con el registro de los datos</div>');
-								return;
-							}
+							$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:4%;float:left;text-align:lefts"><img src="<?php echo base_url();?>application/helpers/image/ico/error.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Error con el registro de los datos</div>');
+							return;
 						}
-					});
+					}
+				});
+			},
+		}
+
+		function Declarar_Comprobante(codigo)
+		{
+			var var_comprobante = $("[id='modal_comprobante_"+codigo+"']").text();
+			var var_tipo_doc = $("[id='modal_tipo_doc_"+codigo+"']").text();
+			var var_ruc=$.trim($('#txt_RucEmpresa').val());
+
+			$.ajax
+			({
+				url:'<?php echo base_url()?>resumenboletas/Declarar_Comprobante',type:'post',dataType:'json',
+				data:
+				{
+					var_ruc:var_ruc,
+					var_tipo_doc:var_tipo_doc,
+					var_comprobante:var_comprobante
 				},
-			}
+				beforeSend:function()
+				{
 
-			function Limpiar_DatosRegistroDocBajas()
-			{
-				//$('#Cmb_TipoDocumento').val('0');
-				$('#txt_Motivo').val('');
-				document.getElementsByName('cbox_mensajeguardar')[0].checked=false;
-			}
+					/*
+					$("#span_respuesta").html('El comprobante N°"'+var_comprobante+'" esta siendo procesado.');
+					dialogforRespuesta.dialog( "open" );
+					$('#div_MensajeValidacionEmpresa').fadeIn(0);
+					$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/procesando.gif" width="27" height="27"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Procesando, Espere por favor...</div>')
+					*/
 
-			function Declarar_Comprobante(codigo)
-			{
+				},
+				success:function(result)
+				{
+					$("#span_respuesta").html('El comprobante N°"'+var_comprobante+'" fue procesado.');
+					dialogforRespuesta.dialog( "open" );
+					ncsistema.Listar_DocumentosdeResumen(1);
+					/*
+					if(result.status==1)
+					{
+						$('#div_MensajeValidacionEmpresa').fadeIn(0);
+						$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/information.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">La eliminaci&oacute;n del Documento se realiz&oacute; con &eacute;xito</div>');
+						setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
+						ncsistema.Listar_DocumentosdeResumen();
+						return;
+
+
+					}
+					else if (result.status==1000)
+					{
+						document.location.href= '<?php echo base_url()?>usuario';
+						return;
+					}
+					else
+					{
+						$('#div_MensajeValidacionEmpresa').fadeIn(0);
+						$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/error.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Error al eliminar el documento</div>');
+						setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
+						return;
+					}
+					*/
+				}
+			});
+		}
+
+		function Eliminar_DocumentoBoletaResumen(codigo,tabla)
+		{	
+			if (tabla == 0) {
+				var var_comprobante = $("[id='comprobante_"+codigo+"']").text();
+				var var_tipo_doc = $("[id='tipo_doc_"+codigo+"']").text();
+				var var_ruc=$.trim($('#txt_RucEmpresa').val());
+			}
+			else{
 				var var_comprobante = $("[id='modal_comprobante_"+codigo+"']").text();
 				var var_tipo_doc = $("[id='modal_tipo_doc_"+codigo+"']").text();
 				var var_ruc=$.trim($('#txt_RucEmpresa').val());
-
+			}
+			if(confirm("� Esta Seguro de Eliminar el documento ?"))
+			{
 				$.ajax
 				({
-					url:'<?php echo base_url()?>resumenboletas/Declarar_Comprobante',type:'post',dataType:'json',
+					url:'<?php echo base_url()?>resumenboletas/Eliminar_DocumentoBoletaResumen',type:'post',dataType:'json',
 					data:
 					{
 						var_ruc:var_ruc,
@@ -489,165 +549,73 @@
 					},
 					beforeSend:function()
 					{
-
-						/*
-						$("#span_respuesta").html('El comprobante N°"'+var_comprobante+'" esta siendo procesado.');
-						dialogforRespuesta.dialog( "open" );
 						$('#div_MensajeValidacionEmpresa').fadeIn(0);
 						$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/procesando.gif" width="27" height="27"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Procesando, Espere por favor...</div>')
-						*/
-
 					},
 					success:function(result)
 					{
-						$("#span_respuesta").html('El comprobante N°"'+var_comprobante+'" fue procesado.');
-						dialogforRespuesta.dialog( "open" );
-						ncsistema.Listar_DocumentosdeResumen(1);
-							/*
-							if(result.status==1)
-							{
-								$('#div_MensajeValidacionEmpresa').fadeIn(0);
-								$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/information.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">La eliminaci&oacute;n del Documento se realiz&oacute; con &eacute;xito</div>');
-								setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
-								ncsistema.Listar_DocumentosdeResumen();
-								return;
-
-
-							}
-							else if (result.status==1000)
-							{
-								document.location.href= '<?php echo base_url()?>usuario';
-								return;
-							}
-							else
-							{
-								$('#div_MensajeValidacionEmpresa').fadeIn(0);
-								$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/error.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Error al eliminar el documento</div>');
-								setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
-								return;
-							}
-							*/
-						}
-					});
-			}
-
-			function Eliminar_DocumentoBoletaResumen(codigo,tabla)
-			{	
-				if (tabla == 0) {
-					var var_comprobante = $("[id='comprobante_"+codigo+"']").text();
-					var var_tipo_doc = $("[id='tipo_doc_"+codigo+"']").text();
-					var var_ruc=$.trim($('#txt_RucEmpresa').val());
-				}
-				else{
-					var var_comprobante = $("[id='modal_comprobante_"+codigo+"']").text();
-					var var_tipo_doc = $("[id='modal_tipo_doc_"+codigo+"']").text();
-					var var_ruc=$.trim($('#txt_RucEmpresa').val());
-				}
-				if(confirm("� Esta Seguro de Eliminar el documento ?"))
-				{
-					$.ajax
-					({
-						url:'<?php echo base_url()?>resumenboletas/Eliminar_DocumentoBoletaResumen',type:'post',dataType:'json',
-						data:
-						{
-							var_ruc:var_ruc,
-							var_tipo_doc:var_tipo_doc,
-							var_comprobante:var_comprobante
-						},
-						beforeSend:function()
+						if(result.status==1)
 						{
 							$('#div_MensajeValidacionEmpresa').fadeIn(0);
-							$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/procesando.gif" width="27" height="27"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Procesando, Espere por favor...</div>')
-						},
-						success:function(result)
-						{
-							if(result.status==1)
-							{
-								$('#div_MensajeValidacionEmpresa').fadeIn(0);
-								$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/information.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">La eliminaci&oacute;n del Documento se realiz&oacute; con &eacute;xito</div>');
-								setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
-								ncsistema.Listar_DocumentosdeResumen(1);
-								ncsistema.Listar_DocumentosdeResumen();
-								return;
+							$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/information.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">La eliminaci&oacute;n del Documento se realiz&oacute; con &eacute;xito</div>');
+							setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
+							ncsistema.Listar_DocumentosdeResumen(1);
+							ncsistema.Listar_DocumentosdeResumen();
+							return;
 
 
-							}
-							else if (result.status==1000)
-							{
-								document.location.href= '<?php echo base_url()?>usuario';
-								return;
-							}
-							else
-							{
-								$('#div_MensajeValidacionEmpresa').fadeIn(0);
-								$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/error.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Error al eliminar el documento</div>');
-								setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
-								return;
-							}
 						}
-					});
-				}
-
-			}
-
-			function Seleccionar_DatosBusqueda(key,cod_tipdoc,documento)
-			{
-				var txt_datosseleccionados=$.trim($('#txt_datosseleccionados').val());
-
-
-				if ($("#cbox_seleccion_"+key).is(":checked"))
-				{
-					if (txt_datosseleccionados=='')
-					{
-						txt_datosseleccionados=(cod_tipdoc+'-'+documento);
+						else if (result.status==1000)
+						{
+							document.location.href= '<?php echo base_url()?>usuario';
+							return;
+						}
+						else
+						{
+							$('#div_MensajeValidacionEmpresa').fadeIn(0);
+							$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/error.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Error al eliminar el documento</div>');
+							setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
+							return;
+						}
 					}
-					else
-					{
-						txt_datosseleccionados=txt_datosseleccionados+','+(cod_tipdoc+'-'+documento);
-					}
-				}
-				else
-				{
-					txt_datosseleccionados=txt_datosseleccionados.replace(","+cod_tipdoc+'-'+documento, "");
-					txt_datosseleccionados=txt_datosseleccionados.replace(cod_tipdoc+'-'+documento, "");
-				}
-				$('#txt_datosseleccionados').val($.trim(txt_datosseleccionados));
+				});
 			}
+		}
 
-		</script>
+	</script>
 
-	</head>
-	<body>
-		<?php header('Content-Type: text/html; charset=ISO-8859-1');?>
-		<div id="Div_HeadSistema"><?php $this->load->view('inicio/head',$Listar_UsuarioAccesos,$Listar_Empresas,$pagina_ver); ?></div>
+</head>
+<body>
+	<?php header('Content-Type: text/html; charset=ISO-8859-1');?>
+	<div id="Div_HeadSistema"><?php $this->load->view('inicio/head',$Listar_UsuarioAccesos,$Listar_Empresas,$pagina_ver); ?></div>
 
-		<div id="tabs" style="width:99.7%;float:left;text-align:center;margin-top:5px">
-			<ul>
-				<li><a href="#tabs-1">RESUMEN DE BOLETAS</a></li>
-			</ul>
-			<div id="tabs-1" style="width:95%;float:left">
+	<div id="tabs" style="width:99.7%;float:left;text-align:center;margin-top:5px">
+		<ul>
+			<li><a href="#tabs-1">RESUMEN DE BOLETAS</a></li>
+		</ul>
+		<div id="tabs-1" style="width:95%;float:left">
 
-				<div id="div_datosempresa" style="width:100%; float:left; margin-top:10px; border: 1px solid #a6c9e2;border-radius:5px;">
-					<input style="width:15%" type="hidden" id="txt_cantidad"  value="0" />
-					<input style="width:15%" type="hidden" id="txt_fecemisiondoc"  value="" />
-					<input style="width:15%" type="hidden" id="txt_tipdocemisor"  value="" />
+			<div id="div_datosempresa" style="width:100%; float:left; margin-top:10px; border: 1px solid #a6c9e2;border-radius:5px;">
+				<input style="width:15%" type="hidden" id="txt_cantidad"  value="0" />
+				<input style="width:15%" type="hidden" id="txt_fecemisiondoc"  value="" />
+				<input style="width:15%" type="hidden" id="txt_tipdocemisor"  value="" />
 
-					<input id="txt_datosseleccionados" type="hidden" value="" />
+				<input id="txt_datosseleccionados" type="hidden" value="" />
 
-					<table border="0" width="65%" style="border-collapse:separate; border-spacing:8px 1px;" cellpadding="3" class="tablaFormulario">
-						<tbody>
-							<tr><td><label class="columna"></label></td>
-								<tr>
-									<td style="text-align:right;width:10%" ><label class="columna">RUC:</label></td>
-									<td style="text-align:left;width:15%"><input style="width:90%" type="text" id="txt_RucEmpresa" value="<?php echo trim(utf8_encode($Ruc_Empresa));?>"  disabled="disabled" /></td>
-									<td style="text-align:right;width:8%"><label class="columna">Raz&oacute;n Social:</label></td>
-									<td style="text-align:left;width:30%"><input style="width:95%" type="text" id="txt_RazonSocialEmpresa" value="<?php echo trim(utf8_encode($Razon_Social));?>" disabled="disabled" /></td>
-								</tr>
-								<tr>
-									<td style="text-align:right"><label class="columna">Fecha Emision:</label></td>
-									<td style="text-align:left">
-										<input style="width:70%" id="txt_FechaEmision" disabled="disabled" type="text" value="" />
-									</td>
+				<table border="0" width="65%" style="border-collapse:separate; border-spacing:8px 1px;" cellpadding="3" class="tablaFormulario">
+					<tbody>
+						<tr><td><label class="columna"></label></td>
+							<tr>
+								<td style="text-align:right;width:10%" ><label class="columna">RUC:</label></td>
+								<td style="text-align:left;width:15%"><input style="width:90%" type="text" id="txt_RucEmpresa" value="<?php echo trim(utf8_encode($Ruc_Empresa));?>"  disabled="disabled" /></td>
+								<td style="text-align:right;width:8%"><label class="columna">Raz&oacute;n Social:</label></td>
+								<td style="text-align:left;width:30%"><input style="width:95%" type="text" id="txt_RazonSocialEmpresa" value="<?php echo trim(utf8_encode($Razon_Social));?>" disabled="disabled" /></td>
+							</tr>
+							<tr>
+								<td style="text-align:right"><label class="columna">Fecha Emision:</label></td>
+								<td style="text-align:left">
+									<input style="width:70%" id="txt_FechaEmision" disabled="disabled" type="text" value="" />
+								</td>
 							<!--
 							<td style="text-align:right"><label class="columna">Opciones:</label></td>
 							<td style="text-align:left">
@@ -711,6 +679,31 @@
 				</form>
 			</div>
 
+			<div id="dialog-form-registroresumen" title="Respuesta de Registro">
+				<form>
+					<table width="100%" border="0px">
+						<tr>
+							<td style="font-weight:bold;width:40%">N&uacute;mero de Resumen:</td>
+							<td style="width:60%">
+								<input type="text" id="txt_numerodocumento_respuesta" disabled="disabled" value="" style="width:90%" >
+							</td>
+						</tr>
+						<tr>
+							<td style="font-weight:bold">Estado del Resumen:</td>
+							<td >
+								<input type="text" id="txt_estadodocumento_respuesta" disabled="disabled" value="" style="width:90%" >
+							</td>
+						</tr>
+						<tr>
+							<td style="font-weight:bold">Descripci&oacute;n:</td>
+							<td >
+								<input type="text"  id="txt_descripciondocumento_respuesta" disabled="disabled" value="" style="width:90%" >
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+
 			<div id="dialog-for-Pendientes-confirm" title="titulo">
 				<form>
 					<div id="div_Modal_Respuesta" style="width:100%; float:left; margin-top:0px; border: 1px solid #a6c9e2; border-radius:4px;">
@@ -730,16 +723,18 @@
 							<input id="cbox_mensajeguardar" type="checkbox" value="" name="cbox_mensajeguardar" >
 						</td>
 						<td style="text-align:left;width:30%">
-							<label class="columna" style="color: #a6c9e2;">Acepto bajo mi responsabilidad que la informacion es correcta</label></td>
-							<td style="text-align:left;width:68%">
-								<button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" style="height:40px; width:160px" id="btn_IniciarSesion"
-								title="Iniciar Sesi�n" onClick="ncsistema.Guardar_SummaryHeader()">
-								<span class="ui-button-icon-left ui-icon ui-icon-check"></span>
-								<span class="ui-button-text">Firmar y Declarar</span></button></td>
-							</tr>
-						</table>
-					</div>
-				</div>
+							<label class="columna" style="color: #a6c9e2;">Acepto bajo mi responsabilidad que la informacion es correcta</label>
+						</td>
+						<td style="text-align:left;width:68%">
+							<button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" style="height:40px; width:160px" id="btn_IniciarSesion"
+							title="Iniciar Sesi�n" onClick="ncsistema.Guardar_SummaryHeader()">
+							<span class="ui-button-icon-left ui-icon ui-icon-check"></span>
+							<span class="ui-button-text">Firmar y Declarar</span></button>
+						</td>
+					</tr>
+				</table>
 			</div>
-		</body>
-		</html>
+		</div>
+	</div>
+</body>
+</html>
