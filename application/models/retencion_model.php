@@ -224,39 +224,37 @@ class Retencion_model extends CI_Model
 		$this->db_client =$this->load->database('ncserver',TRUE);	
 		$this->db_client->trans_begin();
 
-		$query="
-		insert into sgr_registroretenciones_temp
-		(
-		cod_usu,
-		cod_empr,
-		cod_doc,
-		tipo_doc,
-		num_doc,
-		fec_emision,
-		fec_pago,
-		num_pago,
-		moneda_origen,
-		imp_origen,
-		imp_pago_sin_ret,
-		imp_retenido,
-		imp_total_pagar
-		)
-		values
-		(
-		'".$prm_cod_usu."',
-		'".$prm_cod_empr."',
-		'".$prm_cod_doc."',
-		'".$prm_tipo_doc."',
-		'".$prm_num_doc."',
-		'".$prm_fec_emision."',
-		'".$prm_fec_pago."',
-		'".$prm_num_pago."',
-		'".$prm_moneda_origen."',
-		'".$prm_imp_origen."',					
-		'".$prm_imp_pago_sin_ret."',
-		'".$prm_imp_retenido."',
-		'".$prm_imp_total_pagar."'
-		);";
+		$query_colum='';
+		$query_valores='';
+
+
+		//INICIO DE INSERCCION CABECERA SPE_RETENTION
+		$query_colum="insert into sgr_registroretenciones_temp(cod_usu,";	$query_valores=" values('".$prm_cod_usu."',";
+		$query_colum=$query_colum."cod_doc,";			$query_valores=$query_valores."'".$prm_cod_doc."',";
+		$query_colum=$query_colum."tipo_doc,";			$query_valores=$query_valores."'".$prm_tipo_doc."',";
+		$query_colum=$query_colum."num_doc,";					$query_valores=$query_valores."'".$prm_num_doc."',";
+		$query_colum=$query_colum."fec_emision,";				$query_valores=$query_valores."'".$prm_fec_emision."',";
+		if ($prm_fec_pago!=''){
+			$query_colum=$query_colum."fec_pago,";		$query_valores=$query_valores."'".$prm_fec_pago."',";
+		}
+		if ($prm_num_pago!=''){
+			$query_colum=$query_colum."num_pago,";		$query_valores=$query_valores."'".$prm_num_pago."',";
+		}
+		$query_colum=$query_colum."moneda_origen,";				$query_valores=$query_valores."'".$prm_moneda_origen."',";
+		$query_colum=$query_colum."imp_origen,";				$query_valores=$query_valores."'".$prm_imp_origen."',";
+		if ($prm_imp_pago_sin_ret!=''){
+			$query_colum=$query_colum."imp_pago_sin_ret,";		$query_valores=$query_valores."'".$prm_imp_pago_sin_ret."',";
+		}
+		if ($prm_imp_retenido!=''){
+			$query_colum=$query_colum."imp_retenido,";		$query_valores=$query_valores."'".$prm_imp_retenido."',";
+		}
+		if ($prm_imp_total_pagar!=''){
+			$query_colum=$query_colum."imp_total_pagar,";		$query_valores=$query_valores."'".$prm_imp_total_pagar."',";
+		}
+		
+		$query_colum=$query_colum."cod_empr)";				$query_valores=$query_valores."'".$prm_cod_empr."');";
+
+		$query=$query_colum.$query_valores;
 
 		$this->db_client->query($query);
 		if ($this->db_client->trans_status() === FALSE)
@@ -413,209 +411,209 @@ class Retencion_model extends CI_Model
 		}
 		$numerodocumento=$consulta->result_array();
 		$prm_correlativodocumento=0;
-			if(!empty($numerodocumento))//SI NO ES NULO O VACIO
-			{
-				$prm_correlativodocumento=str_pad($numerodocumento[0]['num_documento'],8, "0", STR_PAD_LEFT);
-			}else
-			{
-				$this->db_client->trans_rollback();
-				$result['result']=0;
-				$result['numero']=-1;
-				return $result;
-			}
-			
-			//VALIDAMOS QUE EL NUMERO EN EJECUCION YA EXISTE REGISTRADO, SIEMPRE EN CUANDO SE INGRESO DE OTRA FUENTE O MANUAL
-			$query="select serieNumeroRetencion from spe_retention 
-			where 
-			tipodocumentoemisor='".$prm_tipodocumentoemisor."' 
-			and numerodocumentoemisor= '".$prm_numerodocumentoemisor."' 
-			and tipodocumento= '".$prm_tipodocumento."' 
-			and serieNumeroRetencion='".$prm_seriedocumento.'-'.$prm_correlativodocumento."' ;";		
-			
-			$consulta=$this->db_client->query($query);		
-			if ($this->db_client->trans_status() === FALSE)
-			{
-				$this->db_client->trans_rollback();
-				$result['result']=0;
-				$result['numero']=-10;
-				return $result;
-			}
-			if($consulta->num_rows()>0)//SI NO ES NULO O VACIO, SIGNIFICA QUE YA ESTA REGISTRADO EL CODIGO
-			{
-				$this->db_client->trans_rollback();
-				$result['result']=2;
-				$result['numero']=$prm_seriedocumento.'-'.$prm_correlativodocumento;
-				return $result;
-			}
+		if(!empty($numerodocumento))//SI NO ES NULO O VACIO
+		{
+			$prm_correlativodocumento=str_pad($numerodocumento[0]['num_documento'],8, "0", STR_PAD_LEFT);
+		}else
+		{
+			$this->db_client->trans_rollback();
+			$result['result']=0;
+			$result['numero']=-1;
+			return $result;
+		}
 
-/*			
-			//Requerimiento 4 de la Versión 2: PARAMETRO DE MODELO TICKET
-			//Si es valor 3: es un modelo ticket
-			$valor_Aditional=0;
-			$get_Aditional = $this->db_client->query("select aditional from bl_configuration
-				where id_emisor='".$prm_tipodocumentoemisor."-".$prm_numerodocumentoemisor."';");	
-			$res_get_Aditional=$get_Aditional->result_array();
+		//VALIDAMOS QUE EL NUMERO EN EJECUCION YA EXISTE REGISTRADO, SIEMPRE EN CUANDO SE INGRESO DE OTRA FUENTE O MANUAL
+		$query="select serieNumeroRetencion from spe_retention 
+		where 
+		tipodocumentoemisor='".$prm_tipodocumentoemisor."' 
+		and numerodocumentoemisor= '".$prm_numerodocumentoemisor."' 
+		and tipodocumento= '".$prm_tipodocumento."' 
+		and serieNumeroRetencion='".$prm_seriedocumento.'-'.$prm_correlativodocumento."' ;";		
 
-			if(!empty($res_get_Aditional))//SI NO ES NULO O VACIO
-			{
-				$valor_Aditional=substr(($res_get_Aditional[0]['aditional']), 10, 1);
-			}
-*/					
-			$query_colum='';
-			$query_valores='';
+		$consulta=$this->db_client->query($query);		
+		if ($this->db_client->trans_status() === FALSE)
+		{
+			$this->db_client->trans_rollback();
+			$result['result']=0;
+			$result['numero']=-10;
+			return $result;
+		}
+		if($consulta->num_rows()>0)//SI NO ES NULO O VACIO, SIGNIFICA QUE YA ESTA REGISTRADO EL CODIGO
+		{
+			$this->db_client->trans_rollback();
+			$result['result']=2;
+			$result['numero']=$prm_seriedocumento.'-'.$prm_correlativodocumento;
+			return $result;
+		}
+
+		/*			
+		//Requerimiento 4 de la Versión 2: PARAMETRO DE MODELO TICKET
+		//Si es valor 3: es un modelo ticket
+		$valor_Aditional=0;
+		$get_Aditional = $this->db_client->query("select aditional from bl_configuration
+			where id_emisor='".$prm_tipodocumentoemisor."-".$prm_numerodocumentoemisor."';");	
+		$res_get_Aditional=$get_Aditional->result_array();
+
+		if(!empty($res_get_Aditional))//SI NO ES NULO O VACIO
+		{
+			$valor_Aditional=substr(($res_get_Aditional[0]['aditional']), 10, 1);
+		}
+		*/					
+		$query_colum='';
+		$query_valores='';
 
 
 			//INICIO DE INSERCCION CABECERA SPE_RETENTION
-			$query_colum="insert into SPE_RETENTION(tipoDocumentoEmisor,";	$query_valores=" values('".$prm_tipodocumentoemisor."',";
-			$query_colum=$query_colum."numeroDocumentoEmisor,";				$query_valores=$query_valores."'".$prm_numerodocumentoemisor."',";
-			$query_colum=$query_colum."serieNumeroRetencion,";			$query_valores=$query_valores."'".$prm_seriedocumento.'-'.$prm_correlativodocumento."',";
-			$query_colum=$query_colum."tipoDocumento,";			$query_valores=$query_valores."'".$prm_tipodocumento."',";
-			$query_colum=$query_colum."bl_estadoRegistro,";					$query_valores=$query_valores."'".$prm_blestadoregistro."',";
-			$query_colum=$query_colum."correoEmisor,";				$query_valores=$query_valores."'".$prm_correoemisor."',";
-			$query_colum=$query_colum."correoAdquiriente,";				$query_valores=$query_valores."'".$prm_correoadquiriente."',";
-			$query_colum=$query_colum."fechaEmision,";					$query_valores=$query_valores."'".$prm_fechaemision."',";
+		$query_colum="insert into SPE_RETENTION(tipoDocumentoEmisor,";	$query_valores=" values('".$prm_tipodocumentoemisor."',";
+		$query_colum=$query_colum."numeroDocumentoEmisor,";				$query_valores=$query_valores."'".$prm_numerodocumentoemisor."',";
+		$query_colum=$query_colum."serieNumeroRetencion,";			$query_valores=$query_valores."'".$prm_seriedocumento.'-'.$prm_correlativodocumento."',";
+		$query_colum=$query_colum."tipoDocumento,";			$query_valores=$query_valores."'".$prm_tipodocumento."',";
+		$query_colum=$query_colum."bl_estadoRegistro,";					$query_valores=$query_valores."'".$prm_blestadoregistro."',";
+		$query_colum=$query_colum."correoEmisor,";				$query_valores=$query_valores."'".$prm_correoemisor."',";
+		$query_colum=$query_colum."correoAdquiriente,";				$query_valores=$query_valores."'".$prm_correoadquiriente."',";
+		$query_colum=$query_colum."fechaEmision,";					$query_valores=$query_valores."'".$prm_fechaemision."',";
 
-			if ($prm_nombrecomercialemisor!=''){
-				$query_colum=$query_colum."nombreComercialEmisor,";		$query_valores=$query_valores."'".$prm_nombrecomercialemisor."',";
-			}
-			if ($prm_ubigeoemisor!=''){
-				$query_colum=$query_colum."ubigeoEmisor,";				$query_valores=$query_valores."'".$prm_ubigeoemisor."',";
-			}
-			if ($prm_direccionemisor!=''){
-				$query_colum=$query_colum."direccionEmisor,";			$query_valores=$query_valores."'".$prm_direccionemisor."',";
-			}
-			if ($prm_urbanizacion!=''){
-				$query_colum=$query_colum."urbanizacionEmisor,";				$query_valores=$query_valores."'".$prm_urbanizacion."',";
-			}
-			if ($prm_provinciaemisor!=''){
-				$query_colum=$query_colum."provinciaEmisor,";			$query_valores=$query_valores."'".$prm_provinciaemisor."',";
-			}
-			if ($prm_departamentoemisor!=''){
-				$query_colum=$query_colum."departamentoEmisor,";		$query_valores=$query_valores."'".$prm_departamentoemisor."',";
-			}
-			if ($prm_distritoemisor!=''){
-				$query_colum=$query_colum."distritoEmisor,";			$query_valores=$query_valores."'".$prm_distritoemisor."',";
-			}
-			if ($prm_paisemisor!=''){
-				$query_colum=$query_colum."codigoPaisEmisor,";				$query_valores=$query_valores."'".$prm_paisemisor."',";
-			}
+		if ($prm_nombrecomercialemisor!=''){
+			$query_colum=$query_colum."nombreComercialEmisor,";		$query_valores=$query_valores."'".$prm_nombrecomercialemisor."',";
+		}
+		if ($prm_ubigeoemisor!=''){
+			$query_colum=$query_colum."ubigeoEmisor,";				$query_valores=$query_valores."'".$prm_ubigeoemisor."',";
+		}
+		if ($prm_direccionemisor!=''){
+			$query_colum=$query_colum."direccionEmisor,";			$query_valores=$query_valores."'".$prm_direccionemisor."',";
+		}
+		if ($prm_urbanizacion!=''){
+			$query_colum=$query_colum."urbanizacionEmisor,";				$query_valores=$query_valores."'".$prm_urbanizacion."',";
+		}
+		if ($prm_provinciaemisor!=''){
+			$query_colum=$query_colum."provinciaEmisor,";			$query_valores=$query_valores."'".$prm_provinciaemisor."',";
+		}
+		if ($prm_departamentoemisor!=''){
+			$query_colum=$query_colum."departamentoEmisor,";		$query_valores=$query_valores."'".$prm_departamentoemisor."',";
+		}
+		if ($prm_distritoemisor!=''){
+			$query_colum=$query_colum."distritoEmisor,";			$query_valores=$query_valores."'".$prm_distritoemisor."',";
+		}
+		if ($prm_paisemisor!=''){
+			$query_colum=$query_colum."codigoPaisEmisor,";				$query_valores=$query_valores."'".$prm_paisemisor."',";
+		}
 
-			if ($prm_razonsocialemisor!=''){
-				if ($prm_razonsocialemisor=='GENERICO')
-					$prm_razonsocialemisor='-';
-				$query_colum=$query_colum."razonSocialEmisor,";	$query_valores=$query_valores."'".$prm_razonsocialemisor."',";
-			}
-			if ($prm_numerodocumentoproveedor!=''){
-				$query_colum=$query_colum."numeroDocumentoProveedor,";$query_valores=$query_valores."'".$prm_numerodocumentoproveedor."',";
-			}
-			if ($prm_tipodocumentoproveedor!=''){
-				$query_colum=$query_colum."tipoDocumentoProveedor,";	$query_valores=$query_valores."'".$prm_tipodocumentoproveedor."',";
-			}
-			if ($prm_nombrecomercialproveedor!=''){
-				$query_colum=$query_colum."nombreComercialProveedor,";	$query_valores=$query_valores."'".$prm_nombrecomercialproveedor."',";
-			}
-			if ($prm_ubigeoproveedor!=''){
-				$query_colum=$query_colum."ubigeoProveedor,";				$query_valores=$query_valores."'".$prm_ubigeoproveedor."',";
-			}
-			if ($prm_direccionproveedor!=''){
-				$query_colum=$query_colum."direccionProveedor,";			$query_valores=$query_valores."'".$prm_direccionproveedor."',";
-			}
-			if ($prm_urbanizacionproveedor!=''){
-				$query_colum=$query_colum."urbanizacionProveedor,";				$query_valores=$query_valores."'".$prm_urbanizacionproveedor."',";
-			}
-			if ($prm_provinciaproveedor!=''){
-				$query_colum=$query_colum."provinciaProveedor,";			$query_valores=$query_valores."'".$prm_provinciaproveedor."',";
-			}
-			if ($prm_departamentoproveedor!=''){
-				$query_colum=$query_colum."departamentoProveedor,";		$query_valores=$query_valores."'".$prm_departamentoproveedor."',";
-			}
-			if ($prm_distritoproveedor!=''){
-				$query_colum=$query_colum."distritoProveedor,";			$query_valores=$query_valores."'".$prm_distritoproveedor."',";
-			}
-			if ($prm_codigopaisproveedor!=''){
-				$query_colum=$query_colum."codigoPaisProveedor,";				$query_valores=$query_valores."'".$prm_codigopaisproveedor."',";
-			}
-			if ($prm_razonsocialproveedor!=''){
-				if ($prm_razonsocialproveedor=='GENERICO')
-					$prm_razonsocialproveedor='-';
-				$query_colum=$query_colum."razonSocialProveedor,";	$query_valores=$query_valores."'".$prm_razonsocialproveedor."',";
-			}
+		if ($prm_razonsocialemisor!=''){
+			if ($prm_razonsocialemisor=='GENERICO')
+				$prm_razonsocialemisor='-';
+			$query_colum=$query_colum."razonSocialEmisor,";	$query_valores=$query_valores."'".$prm_razonsocialemisor."',";
+		}
+		if ($prm_numerodocumentoproveedor!=''){
+			$query_colum=$query_colum."numeroDocumentoProveedor,";$query_valores=$query_valores."'".$prm_numerodocumentoproveedor."',";
+		}
+		if ($prm_tipodocumentoproveedor!=''){
+			$query_colum=$query_colum."tipoDocumentoProveedor,";	$query_valores=$query_valores."'".$prm_tipodocumentoproveedor."',";
+		}
+		if ($prm_nombrecomercialproveedor!=''){
+			$query_colum=$query_colum."nombreComercialProveedor,";	$query_valores=$query_valores."'".$prm_nombrecomercialproveedor."',";
+		}
+		if ($prm_ubigeoproveedor!=''){
+			$query_colum=$query_colum."ubigeoProveedor,";				$query_valores=$query_valores."'".$prm_ubigeoproveedor."',";
+		}
+		if ($prm_direccionproveedor!=''){
+			$query_colum=$query_colum."direccionProveedor,";			$query_valores=$query_valores."'".$prm_direccionproveedor."',";
+		}
+		if ($prm_urbanizacionproveedor!=''){
+			$query_colum=$query_colum."urbanizacionProveedor,";				$query_valores=$query_valores."'".$prm_urbanizacionproveedor."',";
+		}
+		if ($prm_provinciaproveedor!=''){
+			$query_colum=$query_colum."provinciaProveedor,";			$query_valores=$query_valores."'".$prm_provinciaproveedor."',";
+		}
+		if ($prm_departamentoproveedor!=''){
+			$query_colum=$query_colum."departamentoProveedor,";		$query_valores=$query_valores."'".$prm_departamentoproveedor."',";
+		}
+		if ($prm_distritoproveedor!=''){
+			$query_colum=$query_colum."distritoProveedor,";			$query_valores=$query_valores."'".$prm_distritoproveedor."',";
+		}
+		if ($prm_codigopaisproveedor!=''){
+			$query_colum=$query_colum."codigoPaisProveedor,";				$query_valores=$query_valores."'".$prm_codigopaisproveedor."',";
+		}
+		if ($prm_razonsocialproveedor!=''){
+			if ($prm_razonsocialproveedor=='GENERICO')
+				$prm_razonsocialproveedor='-';
+			$query_colum=$query_colum."razonSocialProveedor,";	$query_valores=$query_valores."'".$prm_razonsocialproveedor."',";
+		}
 
-			$query_colum=$query_colum."regimenRetencion,";	 $query_valores=$query_valores."'01',";
-			$query_colum=$query_colum."tasaRetencion,";	 $query_valores=$query_valores."'3.00',";
+		$query_colum=$query_colum."regimenRetencion,";	 $query_valores=$query_valores."'01',";
+		$query_colum=$query_colum."tasaRetencion,";	 $query_valores=$query_valores."'3.00',";
 
-			if ($prm_observacion!=''){
-				$query_colum=$query_colum."observaciones,";	 $query_valores=$query_valores."'".$prm_observacion."',";
-			}
-			if ($prm_total_retenido!=''){
-				$query_colum=$query_colum."importeTotalRetenido,";	 $query_valores=$query_valores."'".$prm_total_retenido."',";
-			}
-			if ($prm_total_pagar!=''){
-				$query_colum=$query_colum."importeTotalPagado,";					$query_valores=$query_valores."'".$prm_total_pagar."',";
-			}
-			if ($prm_moneda!=''){
-				$query_colum=$query_colum."tipoMonedaTotalPagado,";					$query_valores=$query_valores."'".$prm_moneda."',";
-				$query_colum=$query_colum."tipoMonedaTotalRetenido,";					$query_valores=$query_valores."'".$prm_moneda."',";
-			}
-/*
-			//Requerimiento 4: Insertar de datos de usuario de login siempre y cuando se modelo ticket
-			if ($valor_Aditional==3){
-				$txt_user='';
-				$txt_user=$_SESSION['SES_InicioSystem'][0]['nom_usu'].', '.$_SESSION['SES_InicioSystem'][0]['apell_usu'];
-				$query_colum=$query_colum."codigoAuxiliar100_1,"; 				$query_valores=$query_valores."'9371',";
-				$query_colum=$query_colum."textoAuxiliar100_1,"; 				$query_valores=$query_valores."'".$txt_user."',";
-			}
-			//Fin Requerimiento
+		if ($prm_observacion!=''){
+			$query_colum=$query_colum."observaciones,";	 $query_valores=$query_valores."'".$prm_observacion."',";
+		}
+		if ($prm_total_retenido!=''){
+			$query_colum=$query_colum."importeTotalRetenido,";	 $query_valores=$query_valores."'".$prm_total_retenido."',";
+		}
+		if ($prm_total_pagar!=''){
+			$query_colum=$query_colum."importeTotalPagado,";					$query_valores=$query_valores."'".$prm_total_pagar."',";
+		}
+		if ($prm_moneda!=''){
+			$query_colum=$query_colum."tipoMonedaTotalPagado,";					$query_valores=$query_valores."'".$prm_moneda."',";
+			$query_colum=$query_colum."tipoMonedaTotalRetenido,";					$query_valores=$query_valores."'".$prm_moneda."',";
+		}
+		/*
+		//Requerimiento 4: Insertar de datos de usuario de login siempre y cuando se modelo ticket
+		if ($valor_Aditional==3){
+			$txt_user='';
+			$txt_user=$_SESSION['SES_InicioSystem'][0]['nom_usu'].', '.$_SESSION['SES_InicioSystem'][0]['apell_usu'];
+			$query_colum=$query_colum."codigoAuxiliar100_1,"; 				$query_valores=$query_valores."'9371',";
+			$query_colum=$query_colum."textoAuxiliar100_1,"; 				$query_valores=$query_valores."'".$txt_user."',";
+		}
+		//Fin Requerimiento
 
-			//Requerimiento 4-version 2: Campos Adicionales
-			//Inicio cantidad adicional: Se esta reservando estos dos campos para guardar la cantidad de adicionales insertados
-			//$query_colum=$query_colum."codigoAuxiliar500_5,"; 				$query_valores=$query_valores."'ADIC',";
-			//$query_colum=$query_colum."textoAuxiliar500_5,"; 				$query_valores=$query_valores."'".$prm_adicionalCantidad."',";
-			//Fin cantidad adicional
-*/
+		//Requerimiento 4-version 2: Campos Adicionales
+		//Inicio cantidad adicional: Se esta reservando estos dos campos para guardar la cantidad de adicionales insertados
+		//$query_colum=$query_colum."codigoAuxiliar500_5,"; 				$query_valores=$query_valores."'ADIC',";
+		//$query_colum=$query_colum."textoAuxiliar500_5,"; 				$query_valores=$query_valores."'".$prm_adicionalCantidad."',";
+		//Fin cantidad adicional
+		*/
 
-			//Fin Requerimiento
+		//Fin Requerimiento
 
-			$query_colum=$query_colum."bl_origen)";							$query_valores=$query_valores."'P');";
+		$query_colum=$query_colum."bl_origen)";							$query_valores=$query_valores."'P');";
 
-			$query=$query_colum.$query_valores;
+		$query=$query_colum.$query_valores;
 
-			$this->db_client->query($query);
-			if ($this->db_client->trans_status() === FALSE)
-			{
-				$this->db_client->trans_rollback();
-				$result['result']=0;
-				$result['numero']=-2;
-				return $result;
-			}
+		$this->db_client->query($query);
+		if ($this->db_client->trans_status() === FALSE)
+		{
+			$this->db_client->trans_rollback();
+			$result['result']=0;
+			$result['numero']=-2;
+			return $result;
+		}
 		//FIN INSERCCION SPE_RETENTION: Inicia en linea 332
 
 		//INICIO PARA INSERCCION DEL DETALLE DEL COMPROBANTE: SPE_EINVOICEDETAIL
-			$consulta = $this->db_client->query("select 
-				tmp_ret,
-				cod_usu,
-				cod_empr,
-				cod_doc,
-				tipo_doc,
-				num_doc,
-				fec_emision,
-				fec_pago,
-				num_pago,
-				moneda_origen,
-				imp_origen,
-				imp_pago_sin_ret,
-				imp_retenido,
-				imp_total_pagar
-				from sgr_registroretenciones_temp where cod_empr='".$prm_cod_empr."' and cod_usu='".$prm_cod_usu."';");				
+		$consulta = $this->db_client->query("select 
+			tmp_ret,
+			cod_usu,
+			cod_empr,
+			cod_doc,
+			tipo_doc,
+			num_doc,
+			fec_emision,
+			fec_pago,
+			num_pago,
+			moneda_origen,
+			imp_origen,
+			imp_pago_sin_ret,
+			imp_retenido,
+			imp_total_pagar
+			from sgr_registroretenciones_temp where cod_empr='".$prm_cod_empr."' and cod_usu='".$prm_cod_usu."';");				
 
-			if ($this->db_client->trans_status() === FALSE)
-			{
-				$this->db_client->trans_rollback();
-				$result['result']=0;
-				$result['numero']=-4;
-				return $result;
-			}
-			$detalledocumento=$consulta->result_array();
+		if ($this->db_client->trans_status() === FALSE)
+		{
+			$this->db_client->trans_rollback();
+			$result['result']=0;
+			$result['numero']=-4;
+			return $result;
+		}
+		$detalledocumento=$consulta->result_array();
 		//Valida si existe detalle
 		if(count($detalledocumento)<1)//SI NO HAY NINGUN REGISTRO
 		{
@@ -644,19 +642,21 @@ class Retencion_model extends CI_Model
 		$query_colum=$query_colum."importeTotalDocumentoRelaciona,";		$query_valores=$query_valores."'".number_format(trim($v['imp_origen']),2,'.',',')."',";
 
 		$query_colum=$query_colum."tipoMonedaDocumentoRelacionado,";		$query_valores=$query_valores."'".trim($v['moneda_origen'])."',";
-		$query_colum=$query_colum."fechaPago,";								$query_valores=$query_valores."'".trim($v['fec_pago'])."',";
-		$query_colum=$query_colum."numeroPago,";							$query_valores=$query_valores."'".trim($v['num_pago'])."',";
 
-		$query_colum=$query_colum."importePagoSinRetencion,";				$query_valores=$query_valores."'".number_format(trim($v['imp_pago_sin_ret']),2,'.',',')."',";
+		if ($v['cod_doc'] != "07")
+		{
+			$query_colum=$query_colum."fechaPago,";								$query_valores=$query_valores."'".trim($v['fec_pago'])."',";
+			$query_colum=$query_colum."numeroPago,";							$query_valores=$query_valores."'".trim($v['num_pago'])."',";
+			$query_colum=$query_colum."monedaPago,";							$query_valores=$query_valores."'".trim($v['moneda_origen'])."',";
+			$query_colum=$query_colum."importePagoSinRetencion,";				$query_valores=$query_valores."'".number_format(trim($v['imp_pago_sin_ret']),2,'.',',')."',";
+			$query_colum=$query_colum."importeRetenido,";						$query_valores=$query_valores."'".number_format(trim($v['imp_retenido']),2,'.',',')."',";
+			$query_colum=$query_colum."importeTotalPagarNeto,";					$query_valores=$query_valores."'".number_format(trim($v['imp_total_pagar']),2,'.',',')."',";
+			$query_colum=$query_colum."monedaImporteRetenido,";					$query_valores=$query_valores."'".trim($v['moneda_origen'])."',";
+			$query_colum=$query_colum."fechaRetencion,";						$query_valores=$query_valores."'".trim($prm_fechaemision)."',";
+			$query_colum=$query_colum."monedaMontoNetoPagado,";					$query_valores=$query_valores."'".trim($v['moneda_origen'])."',";
 
-		$query_colum=$query_colum."monedaPago,";							$query_valores=$query_valores."'".trim($v['moneda_origen'])."',";
+		}
 
-		$query_colum=$query_colum."importeRetenido,";						$query_valores=$query_valores."'".number_format(trim($v['imp_retenido']),2,'.',',')."',";
-
-		$query_colum=$query_colum."monedaImporteRetenido,";					$query_valores=$query_valores."'".trim($v['moneda_origen'])."',";
-		$query_colum=$query_colum."fechaRetencion,";						$query_valores=$query_valores."'".trim($prm_fechaemision)."',";
-		$query_colum=$query_colum."importeTotalPagarNeto,";					$query_valores=$query_valores."'".number_format(trim($v['imp_total_pagar']),2,'.',',')."',";
-		$query_colum=$query_colum."monedaMontoNetoPagado,";					$query_valores=$query_valores."'".trim($v['moneda_origen'])."',";
 		$query_colum=$query_colum."monedaReferenciaTipoCambio,";			$query_valores=$query_valores."NULL,";
 		$query_colum=$query_colum."monedaObjetivoTasaCambio,";				$query_valores=$query_valores."NULL,";
 		$query_colum=$query_colum."factorTipoCambioMoneda,";				$query_valores=$query_valores."NULL,";
