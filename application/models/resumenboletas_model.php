@@ -120,7 +120,7 @@ class Resumenboletas_model extends CI_Model
 			return $result;
 		}
 
-		$consulta = $this->db_client->query("select 	
+		$consulta = $this->db_client->query("select distinct	
 			a.bl_estadoProceso,							
 			b.serieNumero 'ser_doc',
 			b.tipoDocumento 'tip_doc',
@@ -142,7 +142,7 @@ class Resumenboletas_model extends CI_Model
 
 			from SPE_EINVOICEHEADER b join SPE_EINVOICE_RESPONSE a on b.serieNumero = a.serieNumero
 			where b.numeroDocumentoEmisor = '".$prm_ruc_empr."'
-			and b.tipoDocumento = '03' 
+			and b.tipoDocumento IN ('03','07','08') 
 			and b.fechaEmision = '".$prm_fechaemisioncomprobante."' ;");
 
 		if ($this->db_client->trans_status() === FALSE)
