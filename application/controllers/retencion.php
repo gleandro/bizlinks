@@ -995,9 +995,8 @@ class Retencion extends CI_Controller {
 		$prm_imp_pago_sin_ret=trim($this->input->post('txt_importepago_sin_retencion'));
 		$prm_imp_retenido=trim($this->input->post('txt_importe_retenido'));
 		$prm_imp_total_pagar=trim($this->input->post('txt_importetotal_pagar'));	
-
+		$prm_fact_cambio=trim($this->input->post('txt_tipo_cambio'));	
 		
-		//print_r($prm_val_descuento);
 		if(!$this->Usuarioinicio_model->MarcoTrabajoExiste())
 		{
 			$prm_cod_empr=0;
@@ -1006,7 +1005,7 @@ class Retencion extends CI_Controller {
 		{
 			$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();		
 		}	
-		$consulta =$this->Retencion_model->Guardar_Registroretenciones($prm_cod_usu,$prm_cod_empr,$prm_cod_doc,$prm_tipo_doc,$prm_num_doc,$prm_fec_emision,$prm_fec_pago,$prm_num_pago,$prm_moneda_origen,$prm_imp_origen,$prm_imp_pago_sin_ret,$prm_imp_retenido,$prm_imp_total_pagar);
+		$consulta =$this->Retencion_model->Guardar_Registroretenciones($prm_cod_usu,$prm_cod_empr,$prm_cod_doc,$prm_tipo_doc,$prm_num_doc,$prm_fec_emision,$prm_fec_pago,$prm_num_pago,$prm_moneda_origen,$prm_imp_origen,$prm_imp_pago_sin_ret,$prm_imp_retenido,$prm_imp_total_pagar,$prm_fact_cambio);
 		
 		if ($consulta['result']==1)
 		{

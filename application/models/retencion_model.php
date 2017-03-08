@@ -189,8 +189,6 @@ class Retencion_model extends CI_Model
 		where a.numerodocumentoemisor='".$prm_ruc_empremisor."' and a.tipodocumento='".$prm_tipo_documento."' 
 		and a.serienumeroretencion='".$prm_serie_numero."' and a.tipoDocumento='20'
 		order by a.tipodocumento,a.serienumeroretencion, b.numeroOrdenItem;";
-		//print_r($query);
-		//return;
 		$consulta =  $this->db_client->query($query);		
 		return $consulta->result_array();
 	}
@@ -218,7 +216,7 @@ class Retencion_model extends CI_Model
 		return $consulta->result_array();
 	}
 
-	function Guardar_Registroretenciones($prm_cod_usu,$prm_cod_empr,$prm_cod_doc,$prm_tipo_doc,$prm_num_doc,$prm_fec_emision,$prm_fec_pago,$prm_num_pago,$prm_moneda_origen,$prm_imp_origen,$prm_imp_pago_sin_ret,$prm_imp_retenido,$prm_imp_total_pagar)
+	function Guardar_Registroretenciones($prm_cod_usu,$prm_cod_empr,$prm_cod_doc,$prm_tipo_doc,$prm_num_doc,$prm_fec_emision,$prm_fec_pago,$prm_num_pago,$prm_moneda_origen,$prm_imp_origen,$prm_imp_pago_sin_ret,$prm_imp_retenido,$prm_imp_total_pagar,$prm_fact_cambio)
 	{
 		$result['result']=0;		
 		$this->db_client =$this->load->database('ncserver',TRUE);	
@@ -230,6 +228,7 @@ class Retencion_model extends CI_Model
 
 		//INICIO DE INSERCCION CABECERA SPE_RETENTION
 		$query_colum="insert into sgr_registroretenciones_temp(cod_usu,";	$query_valores=" values('".$prm_cod_usu."',";
+		$query_colum=$query_colum."cod_empr,";				$query_valores=$query_valores."'".$prm_cod_empr."',";
 		$query_colum=$query_colum."cod_doc,";			$query_valores=$query_valores."'".$prm_cod_doc."',";
 		$query_colum=$query_colum."tipo_doc,";			$query_valores=$query_valores."'".$prm_tipo_doc."',";
 		$query_colum=$query_colum."num_doc,";					$query_valores=$query_valores."'".$prm_num_doc."',";
@@ -251,8 +250,15 @@ class Retencion_model extends CI_Model
 		if ($prm_imp_total_pagar!=''){
 			$query_colum=$query_colum."imp_total_pagar,";		$query_valores=$query_valores."'".$prm_imp_total_pagar."',";
 		}
+		if ($prm_moneda_origen == 'PEN') {
+			$query_colum=$query_colum."fac_cambio)";				$query_valores=$query_valores."NULL);";
+		}
+		else
+		{
+			$query_colum=$query_colum."fac_cambio)";				$query_valores=$query_valores."'".$prm_fact_cambio."');";
+		}
 		
-		$query_colum=$query_colum."cod_empr)";				$query_valores=$query_valores."'".$prm_cod_empr."');";
+		
 
 		$query=$query_colum.$query_valores;
 
@@ -552,8 +558,8 @@ class Retencion_model extends CI_Model
 			$query_colum=$query_colum."importeTotalPagado,";					$query_valores=$query_valores."'".$prm_total_pagar."',";
 		}
 		if ($prm_moneda!=''){
-			$query_colum=$query_colum."tipoMonedaTotalPagado,";					$query_valores=$query_valores."'".$prm_moneda."',";
-			$query_colum=$query_colum."tipoMonedaTotalRetenido,";					$query_valores=$query_valores."'".$prm_moneda."',";
+			$query_colum=$query_colum."tipoMonedaTotalPagado,";					$query_valores=$query_valores."'PEN',";
+			$query_colum=$query_colum."tipoMonedaTotalRetenido,";					$query_valores=$query_valores."'PEN',";
 		}
 		/*
 		//Requerimiento 4: Insertar de datos de usuario de login siempre y cuando se modelo ticket
@@ -603,7 +609,8 @@ class Retencion_model extends CI_Model
 			imp_origen,
 			imp_pago_sin_ret,
 			imp_retenido,
-			imp_total_pagar
+			imp_total_pagar,
+			fac_cambio
 			from sgr_registroretenciones_temp where cod_empr='".$prm_cod_empr."' and cod_usu='".$prm_cod_usu."';");				
 
 		if ($this->db_client->trans_status() === FALSE)
@@ -647,20 +654,29 @@ class Retencion_model extends CI_Model
 		{
 			$query_colum=$query_colum."fechaPago,";								$query_valores=$query_valores."'".trim($v['fec_pago'])."',";
 			$query_colum=$query_colum."numeroPago,";							$query_valores=$query_valores."'".trim($v['num_pago'])."',";
-			$query_colum=$query_colum."monedaPago,";							$query_valores=$query_valores."'".trim($v['moneda_origen'])."',";
+			$query_colum=$query_colum."monedaPago,";							$query_valores=$query_valores."'".trim($v['moneda_origen'])."',"; 
 			$query_colum=$query_colum."importePagoSinRetencion,";				$query_valores=$query_valores."'".number_format(trim($v['imp_pago_sin_ret']),2,'.',',')."',";
 			$query_colum=$query_colum."importeRetenido,";						$query_valores=$query_valores."'".number_format(trim($v['imp_retenido']),2,'.',',')."',";
 			$query_colum=$query_colum."importeTotalPagarNeto,";					$query_valores=$query_valores."'".number_format(trim($v['imp_total_pagar']),2,'.',',')."',";
-			$query_colum=$query_colum."monedaImporteRetenido,";					$query_valores=$query_valores."'".trim($v['moneda_origen'])."',";
+			$query_colum=$query_colum."monedaImporteRetenido,";					$query_valores=$query_valores."'PEN',";
 			$query_colum=$query_colum."fechaRetencion,";						$query_valores=$query_valores."'".trim($prm_fechaemision)."',";
-			$query_colum=$query_colum."monedaMontoNetoPagado,";					$query_valores=$query_valores."'".trim($v['moneda_origen'])."',";
+			$query_colum=$query_colum."monedaMontoNetoPagado,";					$query_valores=$query_valores."'PEN',";
 
 		}
+		if ($v['moneda_origen'] == 'PEN') {
+			$query_colum=$query_colum."monedaReferenciaTipoCambio,";			$query_valores=$query_valores."NULL,";
+			$query_colum=$query_colum."monedaObjetivoTasaCambio,";				$query_valores=$query_valores."NULL,";
+			$query_colum=$query_colum."factorTipoCambioMoneda,";				$query_valores=$query_valores."NULL,";
+			$query_colum=$query_colum."fechaCambio)";							$query_valores=$query_valores."NULL);";
+		}
+		else
+		{
+			$query_colum=$query_colum."monedaReferenciaTipoCambio,";			$query_valores=$query_valores."'".trim($v['moneda_origen'])."',";
+			$query_colum=$query_colum."monedaObjetivoTasaCambio,";				$query_valores=$query_valores."'PEN',";
+			$query_colum=$query_colum."factorTipoCambioMoneda,";				$query_valores=$query_valores."'".trim($v['fac_cambio'])."',";
+			$query_colum=$query_colum."fechaCambio)";							$query_valores=$query_valores."'".trim($v['fec_pago'])."');";
+		}
 
-		$query_colum=$query_colum."monedaReferenciaTipoCambio,";			$query_valores=$query_valores."NULL,";
-		$query_colum=$query_colum."monedaObjetivoTasaCambio,";				$query_valores=$query_valores."NULL,";
-		$query_colum=$query_colum."factorTipoCambioMoneda,";				$query_valores=$query_valores."NULL,";
-		$query_colum=$query_colum."fechaCambio)";							$query_valores=$query_valores."NULL);";
 
 		$query=$query_colum.$query_valores;
 

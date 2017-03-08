@@ -82,8 +82,7 @@
 			});	
 			$('#txt_fechaRetencion').datepicker('setDate', 'today');
 
-			$('#txt_fechaCambio').datepicker({
-				showOn: 'button',					
+			$('#txt_fechaCambio').datepicker({				
 				buttonImage: "<?php echo base_url()?>application/helpers/image/ico/calendar_icon.gif",
 				buttonImageOnly: true,
 				dateFormat: 'dd/mm/yy',
@@ -97,6 +96,7 @@
 			$("#txt_FechaPago").change(function(event) {
 				var dato = $("#txt_FechaPago").val();
 				$("#txt_fechaRetencion").val(dato);
+				$("#txt_fechaCambio").val(dato);
 			});
 
 			$("#txt_numero_relacionado").change(function(e) {
@@ -829,7 +829,8 @@ $(function()
 				txt_importepago_sin_retencion:txt_importepago_sin_retencion,
 				txt_importe_retenido:txt_importe_retenido,
 				txt_importetotal_pagar:txt_importetotal_pagar,
-				item_boolean:item_boolean
+				item_boolean:item_boolean,
+				txt_tipo_cambio:txt_tipo_cambio
 			},
 			beforeSend:function()
 			{
