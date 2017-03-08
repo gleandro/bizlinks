@@ -120,13 +120,13 @@ class Resumenboletas_model extends CI_Model
 			return $result;
 		}
 
-		$consulta = $this->db_client->query("select distinct	
+		$consulta = $this->db_client->query("select
 			a.bl_estadoProceso,							
-			b.serieNumero 'ser_doc',
-			b.tipoDocumento 'tip_doc',
+			b.serieNumero ser_doc,
+			b.tipoDocumento tip_doc,
 			b.tipodocumentoadquiriente,
-			SUBSTRING(b.serieNumero,1,4) 'ser_gru',
-			SUBSTRING(b.serieNumero,6,8) 'num_doc',
+			SUBSTRING(b.serieNumero,1,4) ser_gru,
+			SUBSTRING(b.serieNumero,6,8) num_doc,
 			b.numerodocumentoadquiriente ,
 			b.tipomoneda,
 			b.totalvalorventanetoopgravadas,
@@ -140,8 +140,10 @@ class Resumenboletas_model extends CI_Model
 			b.totalvalorventanetoopnogravada,
 			b.totalventa
 
-			from SPE_EINVOICEHEADER b join SPE_EINVOICE_RESPONSE a on b.serieNumero = a.serieNumero
+			from SPE_EINVOICEHEADER b inner join SPE_EINVOICE_RESPONSE a on b.numerodocumentoemisor = a.numerodocumentoemisor
+			and b.serienumero=a.serienumero and b.tipodocumento=a.tipodocumento 
 			where b.numeroDocumentoEmisor = '".$prm_ruc_empr."'
+			and a.serienumero like 'B%'
 			and b.tipoDocumento IN ('03','07','08') 
 			and b.fechaEmision = '".$prm_fechaemisioncomprobante."' ;");
 
