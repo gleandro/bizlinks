@@ -56,7 +56,6 @@ class Resumenboletas extends CI_Controller {
 				$prm['Razon_Social']='';
 			}
 			//BORRAMOS LOS DATOS DEL USUARIO EN LA TABLA TEMPORAL
-			$this->Resumenboletas_model->Eliminar_Resumenboletas($prm_cod_empr,$prm_cod_usu);
 			$prm['pagina_ver']='resumenboletas';
 
 			$this->load->view('resumenboletas/resumenboletas',$prm);
@@ -246,65 +245,6 @@ class Resumenboletas extends CI_Controller {
 			if($codigo_temp==1) {
 				$result['cod']=1;
 			}
-		}
-		echo json_encode($result);
-	}
-
-	public function Guardar_ResumenBoletas()
-	{
-		$result['status']=0;
-		if(!$this->Usuarioinicio_model->SessionExiste())
-		{
-			$result['status']=1000;
-			echo json_encode($result);
-			exit;
-		}
-		$result['mensaje']='';
-
-		$prm_cod_usu=$this->Usuarioinicio_model->Get_Cod_Usu();
-		$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();
-		$prm_documento=trim($this->input->post('txt_datosseleccionados'));
-		$prm_ruc_empr=trim($this->input->post('txt_RucEmpresa'));
-		$prm_est_declarar=trim($this->input->post('tip_evento'));
-		$prm_fec_doc=trim($this->input->post('txt_FechaEmision'));
-		$prm_tip_docemisor=trim($this->input->post('txt_tipdocemisor'));
-		$txt_fecemisiondoc=trim($this->input->post('txt_fecemisiondoc'));
-
-		$fechadocumento=explode('/',$prm_fec_doc);
-		$fecha_actual = strtotime('now');
-		$fecha_entrada = strtotime($fechadocumento[2].'/'.$fechadocumento[1].'/'.$fechadocumento[0]);
-
-		$dias	= (( $fecha_actual-$fecha_entrada)/86400);
-		$dias 	= abs($dias);
-		$dias = floor($dias);
-
-		if ($dias>7)
-		{
-			$result['status']=0;
-			$result['mensaje']='La fecha de emisi�n es inferior a 7 dias calendarios';
-			echo json_encode($result);
-			return;
-		}
-
-		if ($txt_fecemisiondoc!='')
-		{
-			if ($prm_fec_doc!=$txt_fecemisiondoc)
-			{
-				$result['status']=0;
-				$result['mensaje']='No se puede agregar documentos de otra fecha';
-				echo json_encode($result);
-				return;
-			}
-		}
-		//FALTA AGREGAR LAS CONDICIONES POR CADA EVENTO, SI ES DE BAJA SOLO Q DEBEN TENER UN ESTADO ESPECIFICO
-
-
-		$consulta =$this->Resumenboletas_model->Guardar_ResumenBoletas($prm_cod_usu,$prm_cod_empr,$prm_documento,$prm_ruc_empr,$prm_est_declarar,$prm_fec_doc,$prm_tip_docemisor);
-
-		if ($consulta['result']==1)
-		{
-			$result['status']=1;
-			$result['mensaje']='';
 		}
 		echo json_encode($result);
 	}

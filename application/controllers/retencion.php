@@ -846,13 +846,13 @@ class Retencion extends CI_Controller {
 			$arr[$key]['tipo_doc'] =  trim($v['tipo_doc']);
 			$arr[$key]['num_doc'] =  trim($v['num_doc']);
 			$arr[$key]['fec_emision'] =  trim($v['fec_emision']);
-			$arr[$key]['fec_pago'] =  trim($v['fec_pago']);
-			$arr[$key]['num_pago'] =  trim($v['num_pago']);
+			$arr[$key]['fec_pago'] =  ($v['fec_pago'])? trim($v['fec_pago']) : "-" ;
+			$arr[$key]['num_pago'] =  ($v['num_pago'])? trim($v['num_pago']) : "-";
 			$arr[$key]['moneda_origen'] =  trim($v['moneda_origen']);
 			$arr[$key]['imp_origen'] =  number_format(trim($v['imp_origen']),2,'.',','); 
-			$arr[$key]['imp_pago_sin_ret'] =  number_format(trim($v['imp_pago_sin_ret']),2,'.',','); 
-			$arr[$key]['imp_retenido'] =  number_format(trim($v['imp_retenido']),2,'.',',');
-			$arr[$key]['imp_total_pagar'] =  number_format(trim($v['imp_total_pagar']),2,'.',','); 
+			$arr[$key]['imp_pago_sin_ret'] =  ($v['imp_pago_sin_ret'])? number_format(trim($v['imp_pago_sin_ret']),2,'.',',') : "0.00"; 
+			$arr[$key]['imp_retenido'] =  ($v['imp_retenido'])? number_format(trim($v['imp_retenido']),2,'.',',') : "0.00";
+			$arr[$key]['imp_total_pagar'] =  ($v['imp_total_pagar'])? number_format(trim($v['imp_total_pagar']),2,'.',',') : "0.00"; 
 
 			$importeretenido_footer=$importeretenido_footer+$v['imp_retenido'];
 			$importetotal_footer=$importetotal_footer+$v['imp_total_pagar'];
@@ -974,6 +974,7 @@ class Retencion extends CI_Controller {
 		}
 
 		$prm_cod_usu=$this->Usuarioinicio_model->Get_Cod_Usu();
+		$prm_boolean=trim($this->input->post('item_boolean'));
 		$prm_cod_doc=trim($this->input->post('txt_codigo_documento'));
 		$prm_tipo_doc=trim($this->input->post('txt_tipo_comprobante'));
 		$prm_num_doc=trim($this->input->post('txt_numero_relacionado'));
@@ -981,10 +982,12 @@ class Retencion extends CI_Controller {
 		$prm_fechaemisiontmp=trim($this->input->post('txt_FechaEmision_Relacionado'));
 		$prm_fechaemisiontmp=explode('/',$prm_fechaemisiontmp);
 		$prm_fec_emision=($prm_fechaemisiontmp[2].'-'.$prm_fechaemisiontmp[1].'-'.$prm_fechaemisiontmp[0]);
-
-		$prm_fechaemisiontmp=trim($this->input->post('txt_FechaPago'));
-		$prm_fechaemisiontmp=explode('/',$prm_fechaemisiontmp);
-		$prm_fec_pago=($prm_fechaemisiontmp[2].'-'.$prm_fechaemisiontmp[1].'-'.$prm_fechaemisiontmp[0]);
+		$prm_fec_pago='';
+		if ($prm_cod_doc != 07) {
+			$prm_fechapagotmp=trim($this->input->post('txt_FechaPago'));
+			$prm_fechapagotmp=explode('/',$prm_fechapagotmp);
+			$prm_fec_pago=($prm_fechapagotmp[2].'-'.$prm_fechapagotmp[1].'-'.$prm_fechapagotmp[0]);
+		}
 
 		$prm_num_pago=trim($this->input->post('txt_numero_pago'));
 		$prm_moneda_origen=trim($this->input->post('txt_moneda'));
@@ -992,9 +995,8 @@ class Retencion extends CI_Controller {
 		$prm_imp_pago_sin_ret=trim($this->input->post('txt_importepago_sin_retencion'));
 		$prm_imp_retenido=trim($this->input->post('txt_importe_retenido'));
 		$prm_imp_total_pagar=trim($this->input->post('txt_importetotal_pagar'));	
-
+		$prm_fact_cambio=trim($this->input->post('txt_tipo_cambio'));	
 		
-		//print_r($prm_val_descuento);
 		if(!$this->Usuarioinicio_model->MarcoTrabajoExiste())
 		{
 			$prm_cod_empr=0;
@@ -1003,7 +1005,7 @@ class Retencion extends CI_Controller {
 		{
 			$prm_cod_empr=$this->Usuarioinicio_model->Get_Cod_Empr();		
 		}	
-		$consulta =$this->Retencion_model->Guardar_Registroretenciones($prm_cod_usu,$prm_cod_empr,$prm_cod_doc,$prm_tipo_doc,$prm_num_doc,$prm_fec_emision,$prm_fec_pago,$prm_num_pago,$prm_moneda_origen,$prm_imp_origen,$prm_imp_pago_sin_ret,$prm_imp_retenido,$prm_imp_total_pagar);
+		$consulta =$this->Retencion_model->Guardar_Registroretenciones($prm_cod_usu,$prm_cod_empr,$prm_cod_doc,$prm_tipo_doc,$prm_num_doc,$prm_fec_emision,$prm_fec_pago,$prm_num_pago,$prm_moneda_origen,$prm_imp_origen,$prm_imp_pago_sin_ret,$prm_imp_retenido,$prm_imp_total_pagar,$prm_fact_cambio);
 		
 		if ($consulta['result']==1)
 		{

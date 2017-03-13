@@ -131,6 +131,9 @@
 					$('#txt_datosseleccionados').val('');
 					$('#txt_cantidadseleccionados').val('0');
 
+					$('#txt_documentoemisor').val('');
+					$('#txt_documentoemisordocumentos').val('');
+
 					$.ajax({
 						url:'<?php echo base_url()?>retencion/Listar_Retenciones',
 						type: 'post',
@@ -199,7 +202,7 @@
 					$.each(data,function(key,rs)
 					{
 						newHtml+='<tr>';										
-							newHtml+='<td style="text-align:center;color:#990000;font-weight:bold"><input id="cbox_seleccion_'+key+'" type="checkbox" value="" name="cbox_seleccion_'+key+'" onChange="javascrip:Seleccionar_DatosBusqueda('+key+',\''+rs.tipodocumento+'\',\''+rs.serienumeroretencion+'\',\''+rs.bl_estadoregistro+'\',\''+rs.estadosunat+'\')" ></td>';
+							newHtml+='<td style="text-align:center;color:#990000;font-weight:bold"><input id="cbox_seleccion_'+key+'" type="checkbox" value="" name="cbox_seleccion_'+key+'" onChange="javascrip:Seleccionar_DatosBusqueda('+key+',\''+rs.tipodocumento+'\',\''+rs.serienumeroretencion+'\',\''+rs.bl_estadoregistro+'\',\''+rs.estadosunat+'\',\''+rs.numerodocumentoemisor+'\')" ></td>';
 							newHtml+='<td style="text-align:left">'+rs.razonsocialproveedor+'</td>';		
 							newHtml+='<td style="text-align:center">'+rs.serienumeroretencion+'</td>';
 							newHtml+='<td style="text-align:right">'+rs.importetotalpagado+'</td>';
@@ -250,6 +253,16 @@
 					var txt_RucEmpresa=$.trim($('#txt_RucEmpresa').val());					
 					if (txt_cantidadseleccionados==1)
 					{
+
+						if(Validar_EmisoresDocumentos()==true)
+						{
+							var txt_RucEmpresa=$.trim($('#txt_documentoemisordocumentos').val());	
+						}
+						else
+						{
+							alert("Los documentos seleccionados no tiene el mismo emisor");
+						}
+
 						$.ajax({
 							url:'<?php echo base_url()?>retencion/Listar_DetalleDocumento',
 							type: 'post',
@@ -533,21 +546,26 @@
 				ncsistema.Listar_RetencionesTabla('',0);	
 			}
 
-			function Seleccionar_DatosBusqueda(key,tipodocumento,serienumero,estado_doc,estado_sunat)
+			function Seleccionar_DatosBusqueda(key,tipodocumento,serienumero,estado_doc,estado_sunat,numerodocumentoemisor)
 			{
 				var txt_datosseleccionados=$.trim($('#txt_datosseleccionados').val());	
 				var txt_cantidadseleccionados=$.trim($('#txt_cantidadseleccionados').val());	
 				//var txt_cantidaddocumborrador=$.trim($('#txt_cantidaddocumborrador').val());
 				//alert(serienumero);
+
+				var txt_documentoemisor=$.trim($('#txt_documentoemisor').val());
+
 				if ($("#cbox_seleccion_"+key).is(":checked"))
 				{	
 					if (txt_datosseleccionados=='')
 					{
 						txt_datosseleccionados=tipodocumento+'-'+serienumero;
+						txt_documentoemisor=numerodocumentoemisor;
 					}
 					else
 					{
 						txt_datosseleccionados=txt_datosseleccionados+','+tipodocumento+'-'+serienumero;
+						txt_documentoemisor=txt_documentoemisor+','+numerodocumentoemisor;
 					}
 					txt_cantidadseleccionados++;
 					
@@ -604,6 +622,7 @@
 				}
 				$('#txt_datosseleccionados').val($.trim(txt_datosseleccionados));
 				$('#txt_cantidadseleccionados').val($.trim(txt_cantidadseleccionados));
+				$('#txt_documentoemisor').val(txt_documentoemisor);
 				
 			}
 			
@@ -710,27 +729,6 @@
 
 				document.location.href=urlexportardatos+'retencion/Descargar_DocumentoSeleccionado?param1='+txt_datosseleccionados+'&param2='+txt_rucemisor;	
 			}
-			/*
-			function OcultarFilaPassword(id,opcion) 
-			{
-				if (!document.getElementById) return false;
-				fila = document.getElementById(id);
-				
-				if (opcion==0)//OCULTA LA FILA
-				{
-					if (fila.style.display != "none") 
-					{
-						fila.style.display = "none"; //ocultar fila
-					}
-				}
-				else
-				{
-					if (fila.style.display == "none") 
-					{
-						fila.style.display = ""; //mostrar fila
-					}
-				}
-			}*/
 			
 			function Descargar_ExcelGeneral()
 			{
@@ -772,12 +770,35 @@
 					}
 				}
 			}
-			
-			function Listar_DocumentoSunat(cod_tipodocumento)
-			{
-				
-			}
 
+			function Validar_EmisoresDocumentos() 
+			{
+				var txt_documentoemisor=$.trim($('#txt_documentoemisor').val());
+				var ListaPermisosAsignarAll = txt_documentoemisor.split(",");
+				
+				var doc_emisor='';
+				$('#txt_documentoemisordocumentos').val('');
+				
+				$.each(ListaPermisosAsignarAll,function(key,rs)
+				{
+					//alert(rs);
+					if (key==0)
+					{
+						doc_emisor=rs;
+					}
+					else
+					{
+						if (doc_emisor!=rs)
+						{
+							return false;
+						}
+					}
+				});	
+				
+				$('#txt_documentoemisordocumentos').val(doc_emisor);
+
+				return true
+			}
 		</script>
 		
     </head>   
@@ -877,6 +898,10 @@
 					
 					<input id="txt_datosseleccionados" type="hidden" value="" />
 					<input id="txt_cantidadseleccionados" type="hidden" value="0" />
+
+					<input id="txt_documentoemisor" type="hidden" value="" />
+					<input id="txt_documentoemisordocumentos" type="hidden" value="" />
+
 					<input id="txt_filtrobusqueda" type="hidden" value="" />
 					<input id="txt_botonbusqueda" type="hidden" value="0" />
 					<tr">
