@@ -1,9 +1,9 @@
 <!doctype html>
 <html>
 <head>
-		<title>SFE Bizlinks - Parámetros</title>
+		<title>SFE Bizlinks - Parï¿½metros</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-		
+
 		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/jquery-ui.css"/>
 		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/jquery-ui.min.css"/>
 		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/plugins/dataTable/css/dataTables-all.css" />
@@ -14,53 +14,53 @@
 		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/css/tabla_documento.css"/>
 		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/css/botones.css"/>
 		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/helpers/css/site.css"/>
-		
+
 		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/external/jquery/jquery.js"></script>
 		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/jquery-ui.js"></script>
 		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
 		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/plugins/jquery.alphanumeric.min.js"></script>
-		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/plugins/jquery.maskedinput.min.js"></script>		
+		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/plugins/jquery.maskedinput.min.js"></script>
 		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/plugins/dataTable/js/dataTables.min.js"></script>
-		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/plugins/jquery.ui.datepicker-es.js"></script> 
+		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/plugins/jquery.ui.datepicker-es.js"></script>
 		<script type="text/javascript" src="<?php echo base_url();?>application/helpers/jquery/flexigrid/flexigrid/flexigrid.js"></script>
-		
+
 		<script>var urlexportardatos="<?php echo base_url();?>"</script>
-		
-		<script type="text/javascript">	
+
+		<script type="text/javascript">
 
 			$(document).ready(function()
 			{
 				$("#tabs").tabs();
-				ncsistema.Listar_Parametros();	
+				ncsistema.Listar_Parametros();
 				document.getElementById('div_ButtonImage').style.visibility="hidden";
-				
+
 				$('#txt_valorentero').numeric();
 
 			})
-			
+
 			ncsistema=
 			{
 				Nuevo_Parametro:function()
 				{
 					Limpiar_Parametros();
 				},
-				
+
 				InvocaUpload:function()
 				{
 					var inputFileImage = document.getElementById("uploadedfile");
 					var file = inputFileImage.files[0];
-					var data = new FormData();					
+					var data = new FormData();
 					data.append('uploadedfile',file);
-					var url = '<?php echo base_url()?>upload'; 
-					
+					var url = '<?php echo base_url()?>upload';
+
 					$.ajax({
-					url:url,					
+					url:url,
 					type:'POST',
 					contentType:false,
 					data:data,
 					processData:false,
 					cache:false,
-					
+
 					success:function(result)
 						{
 							//alert(result);
@@ -69,10 +69,10 @@
 									$('#div_MensajeValidacionEmpresa').fadeIn(0);
 									$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/information.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">El registro de los datos se realiz&oacute; con &eacute;xito</div>');
 									setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
-				
+
 									Limpiar_Parametros();
 									ncsistema.Listar_Parametros();
-									alert('Es necesario reiniciar sesión y actualizar el navegador para que los cambian surtan efecto.');
+									alert('Es necesario reiniciar sesiï¿½n y actualizar el navegador para que los cambian surtan efecto.');
 									break;
 								case '2':
 									$('#div_MensajeValidacionEmpresa').fadeIn(0);
@@ -86,27 +86,27 @@
 									break;
 								default:
 									$('#div_MensajeValidacionEmpresa').fadeIn(0);
-									$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/information.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">No es posible actualizar, inténtelo nuevamente.</div>');
+									$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/information.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">No es posible actualizar, intï¿½ntelo nuevamente.</div>');
 									setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
 							}
 							return;
-							
+
 						}
 					});
 				},
-				
+
 				Guadar_Portalmultitabla:function()
 				{
 
 					var txt_codid=$.trim($('#txt_codid').val());
-					
+
 					var cmb_variables=$.trim($('#cmb_variables').val());
 					var grupo_nombre=$("#cmb_variables option:selected").text();
 
 					var txt_nombrevariable=$.trim($('#txt_nombrevariable').val());
 					var txt_valorentero=$.trim($('#txt_valorentero').val());
 					var txt_valorcadena=$.trim($('#txt_valorcadena').val());
-					
+
 					if (cmb_variables==0)
 					{
 						$('#div_MensajeValidacionEmpresa').fadeIn(0);
@@ -125,17 +125,17 @@
 					if (txt_valorentero=='')
 					{
 						$('#div_MensajeValidacionEmpresa').fadeIn(0);
-						$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Ingrese el valor numérico</div>');
+						$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Ingrese el valor numï¿½rico</div>');
 						setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
 						return;
 					}
-					
+
 					if (cmb_variables==7)
 					{
 						if (txt_valorentero>13)
 						{
 							$('#div_MensajeValidacionEmpresa').fadeIn(0);
-							$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">El valor máximo permitido es 13%.</div>');
+							$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">El valor mï¿½ximo permitido es 13%.</div>');
 							setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
 							return;
 						}
@@ -145,7 +145,7 @@
 						if (cmb_variables==1 || cmb_variables==2 || cmb_variables==3 || cmb_variables==4 || cmb_variables==8 || cmb_variables==9)
 						{
 							$('#div_MensajeValidacionEmpresa').fadeIn(0);
-							$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">No se permite generar más registros de este tipo por ser globales.</div>');
+							$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">No se permite generar mï¿½s registros de este tipo por ser globales.</div>');
 							setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
 							return;
 						}
@@ -158,18 +158,18 @@
 								if (txt_valorentero>1)
 								{
 									$('#div_MensajeValidacionEmpresa').fadeIn(0);
-									$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Solo se permiten valores 0(Cálculo por Valor Venta) y 1 (Cálculo por Precio)</div>');
+									$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Solo se permiten valores 0(Cï¿½lculo por Valor Venta) y 1 (Cï¿½lculo por Precio)</div>');
 									setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
 									return;
 								}else
 								{
 									txt_valorcadena='Configuracion_SI_Realizada';
 								}
-								
+
 							}else
 							{
 								$('#div_MensajeValidacionEmpresa').fadeIn(0);
-								$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">La configuración se realiza por única vez. Comuníquese con Bizlinks!</div>');
+								$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">La configuraciï¿½n se realiza por ï¿½nica vez. Comunï¿½quese con Bizlinks!</div>');
 								setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
 								return;
 							}
@@ -177,7 +177,7 @@
 						{
 							if  (cmb_variables==9)
 							{
-								var uploadedfile = document.getElementById("uploadedfile").value;	
+								var uploadedfile = document.getElementById("uploadedfile").value;
 								if (uploadedfile=="" || uploadedfile==null)
 								{
 									$('#div_MensajeValidacionEmpresa').fadeIn(0);
@@ -204,7 +204,7 @@
 								grupo_nombre:grupo_nombre,
 								txt_nombrevariable:txt_nombrevariable,
 								txt_valorentero:txt_valorentero,
-								txt_valorcadena:txt_valorcadena	
+								txt_valorcadena:txt_valorcadena
 							},
 							beforeSend:function()
 							{
@@ -218,7 +218,7 @@
 							{
 								if(result.status==1)
 								{
-								
+
 									$('#div_MensajeValidacionEmpresa').fadeIn(0);
 									$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/information.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">El registro de los datos se realiz&oacute; con &eacute;xito</div>');
 									setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
@@ -231,22 +231,22 @@
 								{
 									$('#div_Guardar').removeClass('disablediv');
 									$("#div_Guardar").addClass("enablediv").on("onclick");
-									
+
 									$('#div_MensajeValidacionEmpresa').fadeIn(0);
-									$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">La variable ya está registrado</div>');
+									$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/ncexclamacion.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">La variable ya estï¿½ registrado</div>');
 									setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
 									return;
-								}		
+								}
 								else if (result.status==1000)
 								{
 									document.location.href= '<?php echo base_url()?>usuario';
 									return;
-								}			
+								}
 								else
 								{
 									$('#div_Guardar').removeClass('disablediv');
 									$("#div_Guardar").addClass("enablediv").on("onclick");
-									
+
 									$('#div_MensajeValidacionEmpresa').fadeIn(0);
 									$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/error.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Error al registrar los datos</div>');
 									setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
@@ -274,7 +274,7 @@
 							{
 								$('#div_Guardar').removeClass('enablediv');
 								$("#div_Guardar").addClass("disablediv").off("onclick");
-								
+
 								$('#div_MensajeValidacionEmpresa').fadeIn(0);
 								$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/procesando.gif" width="27" height="27"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Procesando, Espere por favor...</div>');
 							},
@@ -300,7 +300,7 @@
 								{
 									$('#div_Guardar').removeClass('disablediv');
 									$("#div_Guardar").addClass("enablediv").on("onclick");
-									
+
 									$('#div_MensajeValidacionEmpresa').fadeIn(0);
 									$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/error.png"/></div><div style="margin-left:5px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">Error al modificar los datos</div>');
 									setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
@@ -328,7 +328,7 @@
 							if(result.status==1)
 							{
 								ncsistema.Listar_ParametrosTabla(result.data);
-								
+
 							}
 							else if (result.status==1000)
 							{
@@ -340,25 +340,25 @@
 								ncsistema.Listar_ParametrosTabla("");
 							}
 						}
-					});					
-				},				
-				
-				
+					});
+				},
+
+
 				Listar_ParametrosTabla:function(data)
-				{	
+				{
 					$('#div_ListadoSeriedocumentos').empty().append('');
-					
+
 					newHtml='';
 					newHtml+='<table width="100%"  cellpadding="0" cellspacing="0" class="display" id="Tab_ListaEmpresa">';
 					newHtml+='<thead>';
-					newHtml+='<tr>';						
-						newHtml+='<th style="width:3%">Nro.</td>';						
+					newHtml+='<tr>';
+						newHtml+='<th style="width:3%">Nro.</td>';
 						newHtml+='<th style="width:5%">Editar</td>';
 						newHtml+='<th style="width:10%">Codigo</td>';
 						newHtml+='<th style="width:35%">Nombre</td>';
 						newHtml+='<th style="width:25%">Valor Entero</td>';
-						newHtml+='<th style="width:25%">Cadena</td>';						
-						newHtml+='<th style="width:10%">Eliminar</td>';	
+						newHtml+='<th style="width:25%">Cadena</td>';
+						newHtml+='<th style="width:10%">Eliminar</td>';
 					newHtml+='</tr>';
 					newHtml+='</thead>';
         			newHtml+='<tbody>';
@@ -367,29 +367,29 @@
 					$.each(data,function(key,rs)
 					{
 						contador++;
-						newHtml+='<tr>';							
-							newHtml+='<td style="text-align:center">'+rs.nro_secuencia+'</td>';							
+						newHtml+='<tr>';
+							newHtml+='<td style="text-align:center">'+rs.nro_secuencia+'</td>';
 							newHtml+='<td style="text-align:center"><a href="javascript:VerDatosParametro_Modificar('+rs.id+')" ><img align="center" src="<?php echo base_url();?>application/helpers/image/ico/Editar.png" title="Imprimir" width="15"  height="15" border="0" ></a></td>';
 							newHtml+='<td style="text-align:left">'+rs.grupo_nombre+'</td>';
 							newHtml+='<td style="text-align:left">'+rs.nombre+'</td>';
 							newHtml+='<td style="text-align:left">'+rs.valorentero+'</td>';
-							newHtml+='<td style="text-align:left">'+rs.valorcadena+'</td>';							
-														
+							newHtml+='<td style="text-align:left">'+rs.valorcadena+'</td>';
+
 							if (rs.est_reg==0)//ANULADO
 							{
-								newHtml+='<td style="text-align:left"></td>';								
+								newHtml+='<td style="text-align:left"></td>';
 							}
 							else
 							{
 								newHtml+='<td style="text-align:center"><a href="javascript:Eliminar_Portalmultitabla('+rs.id+')" ><img align="center" src="<?php echo base_url();?>application/helpers/image/ico/nceliminar.png" title="Eliminar" width="15"  height="15" border="0" ></a></td>';
 							}
-							
-						newHtml+='</tr>';						
-					});	
+
+						newHtml+='</tr>';
+					});
 					newHtml+='</tbody>';
 					newHtml+='</table>';
-					
-					$('#div_ListadoSeriedocumentos').empty().append(newHtml);	
+
+					$('#div_ListadoSeriedocumentos').empty().append(newHtml);
 
 					oTable=$('#Tab_ListaEmpresa').dataTable({
 						"bPaginate": true,
@@ -398,40 +398,40 @@
 						"bScrollCollapse": true,
 						"bJQueryUI": true
 					});
-				 
-					$("#Tab_ListaEmpresa tbody").click(function(event) 
+
+					$("#Tab_ListaEmpresa tbody").click(function(event)
 					{
 						$(oTable.fnSettings().aoData).each(function (){
 							$(this.nTr).removeClass('row_selected');
 						});
 						$(event.target.parentNode).addClass('row_selected');
 					});
-									
-				
-				},	
-				
+
+
+				},
+
 			}
-			
+
 			function Limpiar_Parametros()
 			{
 				$('#txt_codid').val('0');
-				
+
 				$('#cmb_variables').val('0');
 				$('#txt_nombrevariable').val('');
-				$('#txt_valorentero').val('');		
+				$('#txt_valorentero').val('');
 				$('#txt_valorcadena').val('');
 				$('#div_DescripcionValorVenta_Precio').empty().append('');
 				//$('#div_ButtonImage').empty().append('');
 				document.getElementById('div_ButtonImage').style.visibility="hidden";
-				
+
 				$("#cmb_variables").prop('disabled', false);
 				$("#txt_valorcadena").prop('disabled', false);
 				$("#txt_nombrevariable").prop('disabled', false);
 
 				$('#div_Guardar').removeClass('disablediv');
-				$("#div_Guardar").addClass("enablediv").on("onclick");	
+				$("#div_Guardar").addClass("enablediv").on("onclick");
 			}
-			
+
 			function VerDatosParametro_Modificar(cod_id)
 			{
 				$.ajax
@@ -451,23 +451,23 @@
 							$.each(result.data,function(key,rs)
 							{
 									$("#cmb_variables").prop('disabled', true);
-									$.trim($('#txt_codid').val(rs.id));									
+									$.trim($('#txt_codid').val(rs.id));
 									$.trim($('#cmb_variables').val(rs.grupo_id));
 									$.trim($('#txt_nombrevariable').val(rs.nombre));
 									$.trim($('#txt_valorentero').val(rs.valorentero));
-									$.trim($('#txt_valorcadena').val(rs.valorcadena));	
-									if (rs.grupo_id==8 )								
+									$.trim($('#txt_valorcadena').val(rs.valorcadena));
+									if (rs.grupo_id==8 )
 									{
 										$("#txt_valorcadena").prop('disabled', true);
 										$("#txt_nombrevariable").prop('disabled', true);
 										document.getElementById('div_ButtonImage').style.visibility="hidden";
 										if (rs.valorentero==0)
-										{ $('#div_DescripcionValorVenta_Precio').empty().append('Cálculo por Valor Venta');
+										{ $('#div_DescripcionValorVenta_Precio').empty().append('Cï¿½lculo por Valor Venta');
 										}
 										else
-										{$('#div_DescripcionValorVenta_Precio').empty().append('Cálculo por Precio');
+										{$('#div_DescripcionValorVenta_Precio').empty().append('Cï¿½lculo por Precio');
 										}
-										
+
 									}else
 									{
 										if (rs.grupo_nombre=="OTROS_CARGOS" && rs.nombre=="% de Recargo por Servicio")
@@ -497,7 +497,7 @@
 											}
 										}
 									}
-									
+
 							});
 						}
 						else if (result.status==1000)
@@ -506,14 +506,14 @@
 							return;
 						}
 					}
-			
+
 				});
 			}
-			
-			
+
+
 			function Eliminar_Portalmultitabla(cod_id)
 			{
-				if(confirm("¿ Esta Seguro de Eliminar la variable ?"))
+				if(confirm("ï¿½ Esta Seguro de Eliminar la variable ?"))
 				{
 					$.ajax
 					({
@@ -535,9 +535,9 @@
 								$('#div_MensajeValidacionEmpresa').empty().append('<div style="width:10%;float:left;text-align:right"><img src="<?php echo base_url();?>application/helpers/image/ico/information.png"/></div><div style="margin-left:20px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:12px;padding-top:3px; width:80%;float:left;text-align:left">La eliminaci&oacute;n de la serie se realiz&oacute; con &eacute;xito</div>');
 								setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
 								ncsistema.Listar_Parametros();
-								return;							
-								
-	
+								return;
+
+
 							}
 							else if (result.status==1000)
 							{
@@ -551,40 +551,40 @@
 								setTimeout(function(){ $("#div_MensajeValidacionEmpresa").fadeOut(1500);},3000);
 								return;
 							}
-						}			
+						}
 					});
 				}
-				
+
 			}
-			
+
 			function cargarImagen() {
 				//var inputElement = document.getElementById("uploadedfile");
 				var files = document.getElementById("uploadedfile").files; // FileList object
-			
+
 				// use the 1st file from the list
 				f = files[0];
-			
+
 				var reader = new FileReader();
-				alert(files[0].size);//tamaño del archivo en KB
+				alert(files[0].size);//tamaï¿½o del archivo en KB
 				return;
 				// Closure to capture the file information.
 				reader.onload = (function(theFile) {
 					return function(e) {
-			
+
 					  jQuery( '#ms_word_filtered_html' ).val( e.target.result );
 					};
 				  })(f);
-			
+
 				  // Read in the image file as a data URL.
 				  reader.readAsText(f);
 			  }
 
 		</script>
-    </head>   
+    </head>
     <body>
 <?php header('Content-Type: text/html; charset=ISO-8859-1');?>
 		<div id="Div_HeadSistema"><?php $this->load->view('inicio/head',$Listar_UsuarioAccesos,$Listar_Empresas,$pagina_ver); ?></div>
-		
+
 		<div id="tabs" style="width:99.7%;float:left;text-align:center;margin-top:5px">
 			<ul>
 				<li><a href="#tabs-1">PARAMETROS</a></li>
@@ -598,7 +598,7 @@
 							<td style="text-align:right;width:25%"><label class="columna">Variable:</label></td>
 							<td style="text-align:left;width:75%" colspan="2">
 								<select id="cmb_variables" style="width:100%;height:22px" >
-									<option value="0">[SELECCIONAR]</option>								
+									<option value="0">[SELECCIONAR]</option>
 									<?php foreach ( $Listar_Variables as $v):	?>
 										<option value="<?php echo trim($v['codigo']); ?>"><?php echo trim(utf8_decode($v['nombre']));?> </option>
 									<?php  endforeach; ?>
@@ -609,7 +609,7 @@
 							<td style="text-align:right"><label class="columna">Nombre:</label></td>
 							<td style="text-align:left" colspan="2"><input style="width:90%" type="text" id="txt_nombrevariable" maxlength="100" /></td>
 						</tr>
-						
+
 						<tr>
 							<td style="text-align:right;width:25%"><label class="columna">Valor Entero:</label></td>
 							<td style="text-align:left;width:15%">
@@ -620,21 +620,21 @@
 									<div id="div_ButtonImage"><input id="uploadedfile" name="uploadedfile" type="file" /></div>
 								</form>
 							</td>
-							
+
 						</tr>
-						
+
 						<tr>
 							<td style="text-align:right"><label class="columna">Valor Cadena:</label></td>
 							<td style="text-align:left" colspan="2"><input style="width:90%" type="text" id="txt_valorcadena" maxlength="250"  /></td>
 						</tr>
-						
+
 						<tr style="vertical-align:top" ><!--<td><label class="columna"></label></td>-->
 							<td  style="vertical-align:top" colspan="3">
 								<div style="width:100%;height:15px;border:solid 0px;margin-left:4px;margin-right:20px;margin-top:0px;text-align:center;float:left">
 									<div id="div_MensajeValidacionEmpresa" style="width:100%;float:left;font-size:9px; color:#FF0000"></div>
 								</div>
 							</td></tr>
-						
+
 						<tr  style="align:left" >
 							<td><label class="columna"></label></td>
 							<td style="text-align:left" colspan="2">
@@ -658,15 +658,15 @@
 								  </tbody>
 								</table>
 							</td>
-						  </tr>			
+						  </tr>
 					</table>
-					
+
 				</div>
 				<div id="div_ListadoSeriedocumentos" style="width:100%;border:solid 0px;float:left;text-align:center;margin-top:10px">
-				</div>	
+				</div>
 			</div>
 
 		</div>
 
-    </body>	
+    </body>
 </html>

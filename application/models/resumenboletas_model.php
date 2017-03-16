@@ -38,7 +38,7 @@ class Resumenboletas_model extends CI_Model
 		and b.serienumero=a.serienumero and b.tipodocumento=a.tipodocumento
 		where a.numerodocumentoemisor='".$prm_ruc_empr."'
 		and a.serienumero like 'B%'
-		
+
 		and a.tipodocumento in ('03','07','08')
 		and b.fechaEmision='".$prm_fechabusqueda."'";
 
@@ -121,7 +121,7 @@ class Resumenboletas_model extends CI_Model
 		}
 
 		$consulta = $this->db_client->query("select
-			a.bl_estadoProceso,							
+			a.bl_estadoProceso,
 			b.serieNumero ser_doc,
 			b.tipoDocumento tip_doc,
 			b.tipodocumentoadquiriente,
@@ -141,10 +141,10 @@ class Resumenboletas_model extends CI_Model
 			b.totalventa
 
 			from SPE_EINVOICEHEADER b inner join SPE_EINVOICE_RESPONSE a on b.numerodocumentoemisor = a.numerodocumentoemisor
-			and b.serienumero=a.serienumero and b.tipodocumento=a.tipodocumento 
+			and b.serienumero=a.serienumero and b.tipodocumento=a.tipodocumento
 			where b.numeroDocumentoEmisor = '".$prm_ruc_empr."'
 			and a.serienumero like 'B%'
-			and b.tipoDocumento IN ('03','07','08') 
+			and b.tipoDocumento IN ('03','07','08')
 			and b.fechaEmision = '".$prm_fechaemisioncomprobante."' ;");
 
 		if ($this->db_client->trans_status() === FALSE)
@@ -268,8 +268,8 @@ class Resumenboletas_model extends CI_Model
 		$result['result']=0;
 		$this->db_client =$this->load->database('ncserver',TRUE);
 		$this->db_client->trans_begin();
-		$query="delete from SPE_EINVOICEHEADER 
-		where serieNumero = '".$prm_comprobante."' and 
+		$query="delete from SPE_EINVOICEHEADER
+		where serieNumero = '".$prm_comprobante."' and
 		numerodocumentoemisor = '".$prm_ruc."' and
 		tipoDocumento = '".$prm_tipo_doc."'	";
 		$this->db_client->query($query);
@@ -279,8 +279,8 @@ class Resumenboletas_model extends CI_Model
 			$result['result']=0;
 			return $result;
 		}
-		$query="delete from SPE_EINVOICEDETAIL 
-		where serieNumero = '".$prm_comprobante."' and 
+		$query="delete from SPE_EINVOICEDETAIL
+		where serieNumero = '".$prm_comprobante."' and
 		numerodocumentoemisor = '".$prm_ruc."' and
 		tipoDocumento = '".$prm_tipo_doc."'	";
 		$this->db_client->query($query);
@@ -290,8 +290,8 @@ class Resumenboletas_model extends CI_Model
 			$result['result']=0;
 			return $result;
 		}
-		$query="delete from SPE_EINVOICE_RESPONSE 
-		where serieNumero = '".$prm_comprobante."' and 
+		$query="delete from SPE_EINVOICE_RESPONSE
+		where serieNumero = '".$prm_comprobante."' and
 		numerodocumentoemisor = '".$prm_ruc."' and
 		tipoDocumento = '".$prm_tipo_doc."'	";
 		$this->db_client->query($query);
@@ -615,7 +615,7 @@ class Resumenboletas_model extends CI_Model
 		$this->db_client =$this->load->database('ncserver',TRUE);
 		$this->db_client->trans_begin();
 		$query="delete from SPE_EINVOICE_RESPONSE
-		where serieNumero = '".$prm_comprobante."' and 
+		where serieNumero = '".$prm_comprobante."' and
 		numerodocumentoemisor = '".$prm_ruc."' and
 		tipoDocumento = '".$prm_tipo_doc."'	";
 		$this->db_client->query($query);
@@ -628,7 +628,7 @@ class Resumenboletas_model extends CI_Model
 		}
 
 		$query="update SPE_EINVOICEHEADER set bl_estadoRegistro = 'A', bl_reintento = '0'
-		where serieNumero = '".$prm_comprobante."' and 
+		where serieNumero = '".$prm_comprobante."' and
 		numerodocumentoemisor = '".$prm_ruc."' and
 		tipoDocumento = '".$prm_tipo_doc."'	";
 		$this->db_client->query($query);
