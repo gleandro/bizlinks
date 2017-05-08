@@ -5,7 +5,7 @@ $active_record=TRUE;
 $db['ncserver']['hostname']='localhost';
 $db['ncserver']['username']='sa';
 $db['ncserver']['password']='sql';
-$db['ncserver']['database']='portalbiz';
+$db['ncserver']['database']='Bizlinks';
 $db['ncserver']['dbdriver']='sqlsrv';
 $db['ncserver']['port']='52048';
 $db['ncserver']['dbprefix']='';
@@ -18,4 +18,5 @@ $db['ncserver']['dbcollat']='utf8_general_ci';
 $db['ncserver']['swap_pre']='';
 $db['ncserver']['autoinit']=TRUE;
 $db['ncserver']['stricton']=FALSE;
+
 

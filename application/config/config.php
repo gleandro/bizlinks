@@ -33,7 +33,7 @@ foreach ($possibleHostSources as $source)
 }
 $root = preg_replace('/:\d+$/', '', $host);
 
-$config['base_url']	= 'http://'.$root.':99/';
+$config['base_url']	= 'http://'.$root.':90/';
 
 /*
 |--------------------------------------------------------------------------
